@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#8B0000">
+<meta name="description" content="ShubhCard - Free Bio Data, Shadi Card, Shok Patra Maker in Hindi.">
+<title>ShubhCard - Bio Data, Shadi Card, Shok Patra Maker</title>
+
+<link rel="manifest" href='data:application/manifest+json,{"name":"ShubhCard","short_name":"ShubhCard","start_url":".","display":"standalone","background_color":"%23fff8f0","theme_color":"%238B0000","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22><rect width=%22192%22 height=%22192%22 fill=%22%238B0000%22/><text x=%2296%22 y=%22130%22 font-size=%22120%22 text-anchor=%22middle%22 fill=%22gold%22>ॐ</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+:root {
+  --maroon: #8B0000;
+  --maroon-dark: #5C0000;
+  --gold: #D4A017;
+  --gold-light: #F4D03F;
+  --cream: #FFF8F0;
+  --cream-dark: #F5E6D3;
+  --ink: #2C1810;
+  --saffron: #FF9933;
+  --shadow: 0 4px 20px rgba(139, 0, 0, 0.15);
+  --shadow-lg: 0 10px 40px rgba(139, 0, 0, 0.25);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Sans Devanagari', 'Marcellus', serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(212, 160, 23, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(139, 0, 0, 0.06) 0%, transparent 50%);
+}
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+  color: var(--cream);
+  padding: 14px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+  border-bottom: 3px solid var(--gold);
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.logo { display: flex; align-items: center; gap: 10px; font-family: 'Marcellus', serif; }
+.logo-icon {
+  width: 40px; height: 40px;
+  background: var(--gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--maroon-dark); font-weight: bold;
+  box-shadow: 0 0 0 2px var(--cream), 0 0 0 4px var(--gold);
+}
+.logo-text h1 { font-size: 22px; font-weight: 700; line-height: 1; }
+.logo-text p { font-size: 10px; opacity: 0.85; margin-top: 2px; }
+.header-actions { display: flex; gap: 8px; }
+.btn-premium {
+  background: var(--gold); color: var(--maroon-dark);
+  border: none; padding: 8px 14px; border-radius: 20px;
+  font-weight: 700; font-size: 12px; cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  font-family: inherit;
+}
+
+/* HERO */
+.hero { padding: 30px 16px 20px; text-align: center; position: relative; }
+.hero::before, .hero::after {
+  content: '❀'; position: absolute; top: 10px;
+  font-size: 24px; color: var(--gold); opacity: 0.5;
+}
+.hero::before { left: 20px; }
+.hero::after { right: 20px; }
+.hero h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; color: var(--maroon);
+  margin-bottom: 8px; font-weight: 700;
+}
+.hero p { font-size: 14px; opacity: 0.75; max-width: 500px; margin: 0 auto; }
+.hero-divider { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; }
+.hero-divider span { height: 1px; width: 40px; background: var(--gold); }
+.hero-divider .om { color: var(--maroon); font-size: 18px; }
+
+/* SECTION TITLE */
+.section-title {
+  text-align: center; margin: 24px 0 16px;
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--maroon); font-size: 22px; font-weight: 600;
+}
+.section-title::before, .section-title::after {
+  content: ''; display: inline-block;
+  width: 30px; height: 1px; background: var(--gold);
+  vertical-align: middle; margin: 0 12px;
+}
+
+/* CATEGORIES */
+.categories {
+  max-width: 1200px; margin: 0 auto; padding: 0 16px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+}
+@media (min-width: 600px) { .categories { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 900px) { .categories { grid-template-columns: repeat(4, 1fr); } }
+
+.cat-card {
+  background: white; border-radius: 16px; padding: 18px 12px;
+  text-align: center; cursor: pointer;
+  border: 2px solid transparent;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  position: relative; overflow: hidden;
+}
+.cat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--maroon), var(--gold), var(--maroon));
+}
+.cat-card:active { transform: translateY(-2px); border-color: var(--gold); }
+.cat-icon { font-size: 36px; margin-bottom: 8px; display: block; }
+.cat-name { font-size: 13px; font-weight: 600; color: var(--maroon); line-height: 1.3; }
+.cat-name-en { font-size: 10px; opacity: 0.6; margin-top: 2px; }
+.cat-badge {
+  position: absolute; top: 8px; right: 8px;
+  background: var(--gold); color: var(--maroon-dark);
+  font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: 700;
+}
+.cat-badge.new { background: #4CAF50; color: white; }
+.cat-badge.hot { background: #FF5722; color: white; }
+
+/* AD SLOT */
+.ad-slot { max-width: 728px; margin: 24px auto; padding: 0 16px; text-align: center; }
+.ad-container {
+  background: rgba(212, 160, 23, 0.05);
+  border: 1px dashed rgba(139, 0, 0, 0.2);
+  border-radius: 12px; padding: 12px; min-height: 90px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: rgba(0,0,0,0.4);
+}
+
+/* FEATURES */
+.features {
+  max-width: 1200px; margin: 24px auto; padding: 0 16px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+}
+@media (min-width: 600px) { .features { grid-template-columns: repeat(4, 1fr); } }
+.feature-item {
+  background: white; padding: 12px 8px; border-radius: 10px;
+  text-align: center; border-left: 3px solid var(--gold);
+  font-size: 11px; font-weight: 500;
+}
+.feature-item .ico { font-size: 18px; display: block; margin-bottom: 4px; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 1000; display: none;
+  align-items: flex-start; justify-content: center;
+  overflow-y: auto; backdrop-filter: blur(4px);
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--cream); width: 100%; max-width: 800px;
+  min-height: 100vh; position: relative;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-header {
+  background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
+  color: var(--cream); padding: 14px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+  border-bottom: 2px solid var(--gold);
+}
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; }
+.btn-close {
+  background: rgba(255,255,255,0.2); border: none; color: white;
+  width: 32px; height: 32px; border-radius: 50%;
+  font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit;
+}
+.modal-body { padding: 16px; padding-bottom: 100px; }
+
+/* FORMS */
+.form-section {
+  background: white; border-radius: 12px;
+  padding: 16px; margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  border-top: 3px solid var(--gold);
+  position: relative;
+}
+.form-section h3 {
+  color: var(--maroon); font-size: 15px; margin-bottom: 12px;
+  font-weight: 700; display: flex; align-items: center; gap: 6px;
+}
+.section-toggle {
+  position: absolute; top: 14px; right: 14px;
+  background: #f5f5f5; border: 1px solid #ddd;
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px;
+}
+.section-toggle.hidden-section { background: #ffe5e5; color: #c00; }
+
+.form-group { margin-bottom: 12px; position: relative; }
+.form-group.removed { display: none; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.field-actions {
+  position: absolute; top: 0; right: 0;
+  display: flex; gap: 4px;
+}
+.field-action-btn {
+  background: #f5f5f5; border: 1px solid #ddd;
+  width: 22px; height: 22px; border-radius: 50%;
+  cursor: pointer; font-size: 11px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #666;
+}
+.field-action-btn:hover { background: #ffe5e5; color: #c00; }
+
+label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--ink); margin-bottom: 4px;
+  padding-right: 60px;
+}
+
+input, select, textarea {
+  width: 100%; padding: 10px 12px;
+  border: 1.5px solid #e0d5c0; border-radius: 8px;
+  font-size: 14px; font-family: inherit;
+  background: var(--cream); color: var(--ink);
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--maroon); }
+textarea { resize: vertical; min-height: 60px; }
+
+.photo-upload {
+  border: 2px dashed var(--gold); border-radius: 12px;
+  padding: 20px; text-align: center; cursor: pointer;
+  background: rgba(212, 160, 23, 0.05); position: relative;
+}
+.photo-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.photo-upload .icon { font-size: 32px; color: var(--maroon); }
+.photo-upload p { font-size: 12px; margin-top: 6px; }
+
+.photo-preview {
+  width: 100px; height: 130px; margin: 10px auto;
+  border-radius: 8px; overflow: hidden;
+  border: 2px solid var(--gold); display: none;
+}
+.photo-preview.show { display: block; }
+.photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+/* TEMPLATES */
+.template-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-bottom: 12px;
+}
+.template-option {
+  aspect-ratio: 3/4; border: 2px solid #e0d5c0;
+  border-radius: 8px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: var(--maroon);
+  text-align: center; padding: 6px;
+  background: white; position: relative;
+}
+.template-option.selected { border-color: var(--maroon); box-shadow: 0 0 0 2px var(--gold); }
+.template-option.premium::after {
+  content: '👑'; position: absolute; top: 4px; right: 4px; font-size: 12px;
+}
+
+/* CUSTOMIZATION PANEL */
+.customize-panel {
+  background: white; border-radius: 12px;
+  padding: 16px; margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  border-top: 3px solid var(--saffron);
+}
+.customize-panel h3 {
+  color: var(--maroon); font-size: 15px; margin-bottom: 12px;
+  font-weight: 700; display: flex; align-items: center; gap: 6px;
+}
+.color-picker-row {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.color-swatch {
+  width: 36px; height: 36px; border-radius: 50%;
+  cursor: pointer; border: 3px solid white;
+  box-shadow: 0 0 0 1px #ddd;
+}
+.color-swatch.selected { box-shadow: 0 0 0 3px var(--maroon); }
+
+.size-controls { display: flex; gap: 8px; align-items: center; }
+.size-controls button {
+  background: var(--cream); border: 1px solid #ddd;
+  padding: 6px 12px; border-radius: 6px; cursor: pointer;
+  font-family: inherit; font-size: 13px;
+}
+.size-controls button.active { background: var(--maroon); color: white; }
+
+/* ADD CUSTOM FIELD */
+.add-field-btn {
+  width: 100%; padding: 10px;
+  background: rgba(212, 160, 23, 0.1);
+  border: 2px dashed var(--gold);
+  border-radius: 8px; cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--maroon); margin-top: 8px;
+}
+.add-field-btn:hover { background: rgba(212, 160, 23, 0.2); }
+
+.lang-toggle {
+  display: flex; background: #f0e5d0;
+  border-radius: 20px; padding: 3px; margin-bottom: 12px;
+}
+.lang-toggle button {
+  flex: 1; padding: 6px 12px; border: none;
+  background: transparent; border-radius: 18px;
+  font-size: 11px; font-weight: 600;
+  cursor: pointer; font-family: inherit; color: var(--ink);
+}
+.lang-toggle button.active { background: var(--maroon); color: white; }
+
+/* ACTION BAR */
+.action-bar {
+  position: fixed; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 800px;
+  background: white; padding: 10px 12px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+  border-top: 2px solid var(--gold);
+  z-index: 20;
+}
+.btn {
+  padding: 11px 6px; border: none; border-radius: 10px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: inherit;
+  display: flex; align-items: center; justify-content: center;
+  gap: 4px; flex-direction: column;
+}
+.btn .ico { font-size: 16px; }
+.btn:active { transform: scale(0.96); }
+.btn-primary { background: linear-gradient(135deg, var(--maroon), var(--maroon-dark)); color: white; }
+.btn-secondary { background: var(--gold); color: var(--maroon-dark); }
+.btn-success { background: #25D366; color: white; }
+.btn-info { background: #2196F3; color: white; }
+
+/* PREMIUM MODAL */
+.premium-modal {
+  max-width: 400px; margin: auto; min-height: auto;
+  border-radius: 20px; margin-top: 50px; overflow: hidden;
+}
+.premium-hero {
+  background: linear-gradient(135deg, var(--gold), #FFD700);
+  padding: 30px 20px; text-align: center; color: var(--maroon-dark);
+}
+.premium-hero .crown { font-size: 48px; }
+.premium-hero h2 { font-family: 'Cormorant Garamond', serif; font-size: 26px; margin: 8px 0; }
+.premium-features { padding: 20px; background: white; }
+.premium-features li {
+  list-style: none; padding: 8px 0; font-size: 13px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid #f0e5d0;
+}
+.premium-features li::before { content: '✓'; color: green; font-weight: bold; font-size: 16px; }
+.price-box { background: var(--cream); padding: 16px; text-align: center; border-top: 2px solid var(--gold); }
+.price-box .price { font-size: 32px; color: var(--maroon); font-weight: 700; font-family: 'Cormorant Garamond', serif; }
+.price-box .price small { font-size: 14px; }
+.btn-subscribe {
+  background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
+  color: white; border: none; padding: 14px;
+  width: 100%; border-radius: 10px;
+  font-size: 15px; font-weight: 700; margin-top: 12px;
+  cursor: pointer; font-family: inherit;
+}
+
+/* ADD FIELD MODAL */
+.mini-modal {
+  max-width: 350px; margin: auto;
+  background: white; border-radius: 16px;
+  padding: 20px; margin-top: 100px;
+  min-height: auto;
+}
+.mini-modal h3 { color: var(--maroon); margin-bottom: 12px; }
+.mini-modal .form-group { margin-bottom: 12px; }
+.mini-modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+.mini-modal-actions button {
+  flex: 1; padding: 10px; border: none; border-radius: 8px;
+  font-family: inherit; font-weight: 600; cursor: pointer;
+}
+.mini-modal-actions .cancel { background: #eee; }
+.mini-modal-actions .save { background: var(--maroon); color: white; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 100px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink); color: white;
+  padding: 12px 20px; border-radius: 25px;
+  font-size: 13px; z-index: 2000; display: none;
+}
+.toast.show { display: block; animation: fadeInUp 0.3s; }
+@keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* FOOTER */
+.footer {
+  text-align: center; padding: 30px 16px 20px;
+  opacity: 0.6; font-size: 11px;
+  border-top: 1px solid rgba(139, 0, 0, 0.1); margin-top: 30px;
+}
+.footer .om-line { font-size: 16px; color: var(--maroon); margin-bottom: 8px; }
+
+/* LOADER */
+.loader {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8); z-index: 3000;
+  display: none; align-items: center; justify-content: center;
+  flex-direction: column; color: white;
+}
+.loader.show { display: flex; }
+.loader-spinner {
+  width: 50px; height: 50px;
+  border: 4px solid rgba(212, 160, 23, 0.3);
+  border-top-color: var(--gold); border-radius: 50%;
+  animation: spin 1s linear infinite; margin-bottom: 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* SHARE SHEET */
+.share-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: white; border-radius: 20px 20px 0 0;
+  padding: 20px; z-index: 2500;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+  transform: translateY(100%); transition: transform 0.3s;
+}
+.share-sheet.show { transform: translateY(0); }
+.share-sheet h3 { text-align: center; color: var(--maroon); margin-bottom: 16px; }
+.share-options {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+}
+.share-option {
+  text-align: center; padding: 12px 8px;
+  border-radius: 10px; cursor: pointer;
+  background: var(--cream); border: 1px solid #eee;
+}
+.share-option .ico { font-size: 28px; display: block; margin-bottom: 4px; }
+.share-option .label { font-size: 11px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">ॐ</div>
+      <div class="logo-text">
+        <h1>ShubhCard</h1>
+        <p>शुभ कार्ड निर्माता</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-premium" onclick="openPremium()">👑 Premium</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <h2>हर शुभ अवसर के लिए</h2>
+  <p>Bio-Data, Shadi Card, Shok Patra और बहुत कुछ — सिर्फ़ कुछ ही पल में बनाएं</p>
+  <div class="hero-divider"><span></span><span class="om">❁</span><span></span></div>
+</section>
+
+<div class="ad-slot"><div class="ad-container">Advertisement</div></div>
+
+<h2 class="section-title">सेवाएं चुनें</h2>
+<div class="categories" id="categoryGrid"></div>
+
+<h2 class="section-title">क्यों ShubhCard?</h2>
+<div class="features">
+  <div class="feature-item"><span class="ico">🆓</span>100% Free</div>
+  <div class="feature-item"><span class="ico">✏️</span>Full Edit</div>
+  <div class="feature-item"><span class="ico">🎤</span>Voice Input</div>
+  <div class="feature-item"><span class="ico">📲</span>WhatsApp Share</div>
+  <div class="feature-item"><span class="ico">🎨</span>Color Customize</div>
+  <div class="feature-item"><span class="ico">🔒</span>No Signup</div>
+  <div class="feature-item"><span class="ico">➕</span>Custom Fields</div>
+  <div class="feature-item"><span class="ico">📄</span>HD PDF + JPG</div>
+</div>
+
+<div class="ad-slot"><div class="ad-container">Advertisement</div></div>
+
+<footer class="footer">
+  <div class="om-line">❁ ॐ श्री गणेशाय नमः ❁</div>
+  <p>ShubhCard © 2026 | Made with ❤️ in Bharat</p>
+</footer>
+
+<!-- BUILDER MODAL -->
+<div class="modal-overlay" id="builderModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="builderTitle">Builder</div>
+      <button class="btn-close" onclick="closeBuilder()">✕</button>
+    </div>
+    <div class="modal-body" id="builderBody"></div>
+    <div class="action-bar">
+      <button class="btn btn-secondary" onclick="previewDoc()"><span class="ico">👁️</span>Preview</button>
+      <button class="btn btn-primary" onclick="downloadPDF()"><span class="ico">📄</span>PDF</button>
+      <button class="btn btn-info" onclick="downloadJPG()"><span class="ico">🖼️</span>JPG</button>
+      <button class="btn btn-success" onclick="openShareSheet()"><span class="ico">📲</span>Share</button>
+    </div>
+  </div>
+</div>
+
+<!-- PREMIUM MODAL -->
+<div class="modal-overlay" id="premiumModal">
+  <div class="modal premium-modal">
+    <div class="premium-hero">
+      <div class="crown">👑</div>
+      <h2>ShubhCard Premium</h2>
+      <p>सभी Premium Features Unlock करें</p>
+    </div>
+    <ul class="premium-features">
+      <li>कोई Ads नहीं</li>
+      <li>50+ Premium Templates</li>
+      <li>HD Quality PDF</li>
+      <li>Watermark नहीं</li>
+      <li>Cloud Save & Edit</li>
+      <li>Unlimited Downloads</li>
+      <li>Priority Support</li>
+    </ul>
+    <div class="price-box">
+      <div class="price">₹99<small>/महीना</small></div>
+      <div style="font-size:11px; color:#888; margin-top:4px">या ₹799/साल (33% बचत)</div>
+      <button class="btn-subscribe" onclick="subscribePremium()">Premium लें</button>
+      <button onclick="closePremium()" style="background:none;border:none;color:#888;font-size:12px;margin-top:8px;cursor:pointer;font-family:inherit">बाद में</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CUSTOM FIELD MODAL -->
+<div class="modal-overlay" id="addFieldModal">
+  <div class="modal mini-modal">
+    <h3>➕ नया Field जोड़ें</h3>
+    <div class="form-group">
+      <label>Field का नाम (label)</label>
+      <input type="text" id="newFieldLabel" placeholder="जैसे: दादा जी का नाम, Property">
+    </div>
+    <div class="form-group">
+      <label>Section चुनें</label>
+      <select id="newFieldSection"></select>
+    </div>
+    <div class="form-group">
+      <label>Type</label>
+      <select id="newFieldType">
+        <option value="text">Text (एक लाइन)</option>
+        <option value="textarea">Long Text (कई लाइन)</option>
+        <option value="number">Number</option>
+        <option value="date">Date</option>
+        <option value="tel">Phone</option>
+      </select>
+    </div>
+    <div class="mini-modal-actions">
+      <button class="cancel" onclick="closeAddField()">रद्द करें</button>
+      <button class="save" onclick="saveCustomField()">जोड़ें</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE SHEET -->
+<div class="share-sheet" id="shareSheet">
+  <h3>📤 Share करें</h3>
+  <div class="share-options">
+    <div class="share-option" onclick="shareWhatsAppPDF()">
+      <span class="ico">💬</span>
+      <span class="label">WhatsApp</span>
+    </div>
+    <div class="share-option" onclick="shareGeneric()">
+      <span class="ico">📤</span>
+      <span class="label">Other Apps</span>
+    </div>
+    <div class="share-option" onclick="copyShareLink()">
+      <span class="ico">🔗</span>
+      <span class="label">Copy Link</span>
+    </div>
+    <div class="share-option" onclick="printDoc()">
+      <span class="ico">🖨️</span>
+      <span class="label">Print</span>
+    </div>
+  </div>
+  <button onclick="closeShareSheet()" style="width:100%; margin-top:16px; padding:12px; background:#eee; border:none; border-radius:10px; font-family:inherit; font-weight:600;">रद्द करें</button>
+</div>
+
+<div class="toast" id="toast">Message</div>
+
+<div class="loader" id="loader">
+  <div class="loader-spinner"></div>
+  <div id="loaderText">PDF बन रहा है...</div>
+</div>
+
+<script>
+// ============================================
+// CONSTANTS
+// ============================================
+const CATEGORIES = [
+  { id: 'biodata', icon: '💍', name: 'शादी Bio-Data', nameEn: 'Marriage Biodata', badge: 'hot' },
+  { id: 'shadicard', icon: '🪔', name: 'शादी कार्ड', nameEn: 'Wedding Card', badge: 'hot' },
+  { id: 'shokpatra', icon: '🕊️', name: 'शोक पत्र', nameEn: 'Condolence', badge: 'new' },
+  { id: 'birthday', icon: '🎂', name: 'जन्मदिन कार्ड', nameEn: 'Birthday Card' },
+  { id: 'anniversary', icon: '💐', name: 'सालगिरह', nameEn: 'Anniversary' },
+  { id: 'mundan', icon: '👶', name: 'मुंडन / नामकरण', nameEn: 'Mundan/Namkaran' },
+  { id: 'grihapravesh', icon: '🏠', name: 'गृह प्रवेश', nameEn: 'Griha Pravesh' },
+  { id: 'visiting', icon: '💼', name: 'विजिटिंग कार्ड', nameEn: 'Visiting Card' },
+  { id: 'resume', icon: '📋', name: 'Resume / CV', nameEn: 'Resume Maker' },
+  { id: 'certificate', icon: '🏆', name: 'प्रमाण पत्र', nameEn: 'Certificate' },
+  { id: 'receipt', icon: '🧾', name: 'रसीद / बिल', nameEn: 'Receipt/Bill' },
+  { id: 'affidavit', icon: '📜', name: 'शपथ पत्र', nameEn: 'Affidavit' }
+];
+
+// FORM SCHEMA - sections with editable fields
+const FORM_SCHEMAS = {
+  biodata: [
+    { id: 'photo', title: '📸 फोटो', removable: true, type: 'photo' },
+    { id: 'personal', title: '👤 व्यक्तिगत जानकारी', removable: false, fields: [
+      { name: 'name', label: 'नाम / Name', type: 'text', removable: false },
+      { name: 'dob', label: 'जन्म तिथि', type: 'date', removable: true },
+      { name: 'birthtime', label: 'जन्म समय', type: 'time', removable: true },
+      { name: 'birthplace', label: 'जन्म स्थान', type: 'text', removable: true },
+      { name: 'rashi', label: 'राशि', type: 'select', options: ['','मेष','वृषभ','मिथुन','कर्क','सिंह','कन्या','तुला','वृश्चिक','धनु','मकर','कुंभ','मीन'], removable: true },
+      { name: 'nakshatra', label: 'नक्षत्र', type: 'text', removable: true },
+      { name: 'height', label: 'कद / Height', type: 'text', placeholder: '5\'7"', removable: true },
+      { name: 'complexion', label: 'रंग / Complexion', type: 'select', options: ['','गोरा','गेहुंआ','सांवला'], removable: true },
+      { name: 'manglik', label: 'मांगलिक', type: 'select', options: ['','नहीं','हाँ','आंशिक'], removable: true },
+      { name: 'gotra', label: 'गोत्र', type: 'text', removable: true },
+      { name: 'caste', label: 'जाति / समाज', type: 'text', removable: true }
+    ]},
+    { id: 'education', title: '🎓 शिक्षा व पेशा', removable: true, fields: [
+      { name: 'education', label: 'उच्च शिक्षा', type: 'text', placeholder: 'B.Tech, MBA', removable: true },
+      { name: 'school', label: 'विद्यालय / कॉलेज', type: 'text', removable: true },
+      { name: 'occupation', label: 'व्यवसाय', type: 'text', removable: true },
+      { name: 'income', label: 'वार्षिक आय', type: 'text', removable: true },
+      { name: 'workplace', label: 'कार्यस्थल', type: 'text', removable: true }
+    ]},
+    { id: 'family', title: '👨‍👩‍👧 पारिवारिक जानकारी', removable: true, fields: [
+      { name: 'father', label: 'पिता का नाम', type: 'text', removable: true },
+      { name: 'fatherOcc', label: 'पिता का व्यवसाय', type: 'text', removable: true },
+      { name: 'mother', label: 'माता का नाम', type: 'text', removable: true },
+      { name: 'motherOcc', label: 'माता का व्यवसाय', type: 'text', removable: true },
+      { name: 'brothers', label: 'भाई', type: 'number', removable: true },
+      { name: 'sisters', label: 'बहन', type: 'number', removable: true }
+    ]},
+    { id: 'contact', title: '📞 संपर्क', removable: true, fields: [
+      { name: 'mobile', label: 'मोबाइल नंबर', type: 'tel', removable: true },
+      { name: 'email', label: 'ईमेल', type: 'email', removable: true },
+      { name: 'address', label: 'पूरा पता', type: 'textarea', removable: true }
+    ]}
+  ],
+  shadicard: [
+    { id: 'couple', title: '💑 वर-वधू', removable: false, fields: [
+      { name: 'groomName', label: 'वर का नाम', type: 'text', removable: false },
+      { name: 'groomFather', label: 'वर के पिता', type: 'text', removable: true },
+      { name: 'brideName', label: 'वधू का नाम', type: 'text', removable: false },
+      { name: 'brideFather', label: 'वधू के पिता', type: 'text', removable: true }
+    ]},
+    { id: 'event', title: '📅 कार्यक्रम', removable: false, fields: [
+      { name: 'weddingDate', label: 'विवाह तिथि', type: 'date', removable: false },
+      { name: 'weddingTime', label: 'मुहूर्त समय', type: 'time', removable: true },
+      { name: 'venue', label: 'विवाह स्थल', type: 'text', removable: true },
+      { name: 'venueAddress', label: 'पूरा पता', type: 'textarea', removable: true }
+    ]},
+    { id: 'others', title: '🎉 अन्य समारोह', removable: true, fields: [
+      { name: 'haldi', label: 'हल्दी', type: 'date', removable: true },
+      { name: 'mehendi', label: 'मेहंदी', type: 'date', removable: true },
+      { name: 'sangeet', label: 'संगीत', type: 'date', removable: true },
+      { name: 'reception', label: 'रिसेप्शन', type: 'date', removable: true }
+    ]},
+    { id: 'hosts', title: '🙏 निवेदक', removable: true, fields: [
+      { name: 'hosts', label: 'परिवार के नाम', type: 'textarea', removable: true },
+      { name: 'contact', label: 'संपर्क नंबर', type: 'tel', removable: true }
+    ]}
+  ],
+  shokpatra: [
+    { id: 'photo', title: '📸 फोटो', removable: true, type: 'photo' },
+    { id: 'deceased', title: '🕊️ दिवंगत की जानकारी', removable: false, fields: [
+      { name: 'deceasedName', label: 'दिवंगत का नाम', type: 'text', removable: false },
+      { name: 'relation', label: 'रिश्ता', type: 'text', removable: true },
+      { name: 'dob', label: 'जन्म तिथि', type: 'date', removable: true },
+      { name: 'dod', label: 'देहावसान तिथि', type: 'date', removable: true },
+      { name: 'age', label: 'आयु', type: 'number', removable: true }
+    ]},
+    { id: 'tervi', title: '🙏 तेरहवीं / श्राद्ध', removable: true, fields: [
+      { name: 'tervi', label: 'तेरहवीं तिथि', type: 'date', removable: true },
+      { name: 'terviTime', label: 'समय', type: 'time', removable: true },
+      { name: 'terviVenue', label: 'स्थान', type: 'text', removable: true },
+      { name: 'terviAddress', label: 'पता', type: 'textarea', removable: true }
+    ]},
+    { id: 'family', title: '👨‍👩‍👧 शोक संतप्त परिवार', removable: true, fields: [
+      { name: 'familyMembers', label: 'परिवार के सदस्य', type: 'textarea', removable: true },
+      { name: 'contactPerson', label: 'संपर्क व्यक्ति', type: 'text', removable: true },
+      { name: 'contactNumber', label: 'मोबाइल', type: 'tel', removable: true }
+    ]},
+    { id: 'message', title: '📝 संदेश', removable: true, fields: [
+      { name: 'message', label: 'श्रद्धांजलि संदेश', type: 'textarea', removable: true }
+    ]}
+  ],
+  birthday: [
+    { id: 'photo', title: '📸 फोटो', removable: true, type: 'photo' },
+    { id: 'main', title: '🎂 जन्मदिन विवरण', removable: false, fields: [
+      { name: 'name', label: 'नाम', type: 'text', removable: false },
+      { name: 'age', label: 'आयु', type: 'number', removable: true },
+      { name: 'date', label: 'तिथि', type: 'date', removable: false },
+      { name: 'time', label: 'समय', type: 'time', removable: true },
+      { name: 'venue', label: 'स्थान', type: 'text', removable: true },
+      { name: 'venueAddress', label: 'पता', type: 'textarea', removable: true },
+      { name: 'hosts', label: 'परिवार के नाम', type: 'text', removable: true },
+      { name: 'contact', label: 'संपर्क', type: 'tel', removable: true }
+    ]}
+  ],
+  anniversary: [
+    { id: 'main', title: '💐 सालगिरह विवरण', removable: false, fields: [
+      { name: 'husband', label: 'पति का नाम', type: 'text', removable: false },
+      { name: 'wife', label: 'पत्नी का नाम', type: 'text', removable: false },
+      { name: 'years', label: 'कितने वर्ष', type: 'number', removable: true },
+      { name: 'date', label: 'तिथि', type: 'date', removable: false },
+      { name: 'venue', label: 'स्थान', type: 'text', removable: true },
+      { name: 'hosts', label: 'निवेदक', type: 'textarea', removable: true },
+      { name: 'contact', label: 'संपर्क', type: 'tel', removable: true }
+    ]}
+  ],
+  mundan: [
+    { id: 'main', title: '👶 मुंडन / नामकरण', removable: false, fields: [
+      { name: 'childName', label: 'बच्चे का नाम', type: 'text', removable: false },
+      { name: 'ceremony', label: 'समारोह', type: 'select', options: ['मुंडन','नामकरण','अन्नप्राशन'], removable: false },
+      { name: 'date', label: 'तिथि', type: 'date', removable: false },
+      { name: 'time', label: 'समय', type: 'time', removable: true },
+      { name: 'venue', label: 'स्थान', type: 'text', removable: true },
+      { name: 'parents', label: 'माता-पिता का नाम', type: 'text', removable: true },
+      { name: 'contact', label: 'संपर्क', type: 'tel', removable: true }
+    ]}
+  ],
+  grihapravesh: [
+    { id: 'main', title: '🏠 गृह प्रवेश', removable: false, fields: [
+      { name: 'hostName', label: 'गृह स्वामी', type: 'text', removable: false },
+      { name: 'date', label: 'तिथि', type: 'date', removable: false },
+      { name: 'time', label: 'मुहूर्त समय', type: 'time', removable: true },
+      { name: 'newAddress', label: 'नया पता', type: 'textarea', removable: true },
+      { name: 'contact', label: 'संपर्क', type: 'tel', removable: true }
+    ]}
+  ],
+  visiting: [
+    { id: 'photo', title: '📸 फोटो', removable: true, type: 'photo' },
+    { id: 'main', title: '💼 विजिटिंग कार्ड', removable: false, fields: [
+      { name: 'name', label: 'नाम', type: 'text', removable: false },
+      { name: 'designation', label: 'पद', type: 'text', removable: true },
+      { name: 'company', label: 'कंपनी', type: 'text', removable: true },
+      { name: 'mobile', label: 'मोबाइल', type: 'tel', removable: true },
+      { name: 'email', label: 'ईमेल', type: 'email', removable: true },
+      { name: 'website', label: 'वेबसाइट', type: 'text', removable: true },
+      { name: 'address', label: 'पता', type: 'textarea', removable: true }
+    ]}
+  ],
+  resume: [
+    { id: 'photo', title: '📸 Photo', removable: true, type: 'photo' },
+    { id: 'personal', title: '📋 Personal Info', removable: false, fields: [
+      { name: 'name', label: 'Full Name', type: 'text', removable: false },
+      { name: 'email', label: 'Email', type: 'email', removable: true },
+      { name: 'mobile', label: 'Mobile', type: 'tel', removable: true },
+      { name: 'address', label: 'Address', type: 'textarea', removable: true },
+      { name: 'objective', label: 'Career Objective', type: 'textarea', removable: true }
+    ]},
+    { id: 'edu', title: '🎓 Education', removable: true, fields: [
+      { name: 'education', label: 'Education Details', type: 'textarea', removable: true }
+    ]},
+    { id: 'exp', title: '💼 Experience & Skills', removable: true, fields: [
+      { name: 'experience', label: 'Work Experience', type: 'textarea', removable: true },
+      { name: 'skills', label: 'Skills', type: 'textarea', removable: true },
+      { name: 'languages', label: 'Languages', type: 'textarea', removable: true }
+    ]}
+  ],
+  certificate: [
+    { id: 'main', title: '🏆 प्रमाण पत्र', removable: false, fields: [
+      { name: 'recipient', label: 'नाम (किसे)', type: 'text', removable: false },
+      { name: 'reason', label: 'किस लिए', type: 'textarea', removable: true },
+      { name: 'date', label: 'तिथि', type: 'date', removable: true },
+      { name: 'issuer', label: 'जारीकर्ता', type: 'text', removable: true },
+      { name: 'place', label: 'स्थान', type: 'text', removable: true }
+    ]}
+  ],
+  receipt: [
+    { id: 'main', title: '🧾 रसीद', removable: false, fields: [
+      { name: 'receiptNo', label: 'रसीद नंबर', type: 'text', removable: true },
+      { name: 'date', label: 'तिथि', type: 'date', removable: true },
+      { name: 'receivedFrom', label: 'किस से प्राप्त', type: 'text', removable: false },
+      { name: 'amount', label: 'राशि', type: 'number', removable: false },
+      { name: 'amountWords', label: 'राशि शब्दों में', type: 'text', removable: true },
+      { name: 'purpose', label: 'किस लिए', type: 'textarea', removable: true },
+      { name: 'receivedBy', label: 'प्राप्तकर्ता', type: 'text', removable: true }
+    ]}
+  ],
+  affidavit: [
+    { id: 'main', title: '📜 शपथ पत्र', removable: false, fields: [
+      { name: 'name', label: 'नाम', type: 'text', removable: false },
+      { name: 'fatherName', label: 'पिता का नाम', type: 'text', removable: true },
+      { name: 'age', label: 'आयु', type: 'number', removable: true },
+      { name: 'address', label: 'पता', type: 'textarea', removable: true },
+      { name: 'declaration', label: 'घोषणा का विषय', type: 'textarea', removable: false },
+      { name: 'place', label: 'स्थान', type: 'text', removable: true },
+      { name: 'date', label: 'तिथि', type: 'date', removable: true }
+    ]}
+  ]
+};
+
+// COLOR THEMES
+const COLOR_THEMES = [
+  { id: 'maroon', name: 'मरून', primary: '#8B0000', accent: '#D4A017', bg: '#FFF8F0' },
+  { id: 'royal', name: 'रॉयल', primary: '#B8860B', accent: '#8B0000', bg: '#FFFEF7' },
+  { id: 'blue', name: 'ब्लू', primary: '#1E4D8C', accent: '#D4A017', bg: '#F0F6FC' },
+  { id: 'green', name: 'ग्रीन', primary: '#006400', accent: '#FFD700', bg: '#F0FFF0' },
+  { id: 'purple', name: 'पर्पल', primary: '#5B2C6F', accent: '#F1C40F', bg: '#F5EEF8' },
+  { id: 'pink', name: 'पिंक', primary: '#C2185B', accent: '#FFD700', bg: '#FCE4EC' },
+  { id: 'black', name: 'क्लासिक', primary: '#2C2C2C', accent: '#888', bg: '#FAFAFA' }
+];
+
+// STATE
+let currentCategory = null;
+let currentLang = 'hi';
+let formData = {};
+let photoData = null;
+let isPremium = localStorage.getItem('shubhcard_premium') === 'true';
+let currentTheme = 'maroon';
+let textSize = 'medium';
+let removedFields = new Set();
+let removedSections = new Set();
+let customFields = [];
+
+// ============================================
+// INIT
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+  renderCategories();
+});
+
+function renderCategories() {
+  const grid = document.getElementById('categoryGrid');
+  grid.innerHTML = CATEGORIES.map(cat => `
+    <div class="cat-card" onclick="openBuilder('${cat.id}')">
+      ${cat.badge ? `<span class="cat-badge ${cat.badge}">${cat.badge.toUpperCase()}</span>` : ''}
+      <span class="cat-icon">${cat.icon}</span>
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-name-en">${cat.nameEn}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================
+// BUILDER
+// ============================================
+function openBuilder(categoryId) {
+  currentCategory = categoryId;
+  const saved = loadDraftFor(categoryId);
+  formData = saved.formData || {};
+  photoData = saved.photoData || null;
+  removedFields = new Set(saved.removedFields || []);
+  removedSections = new Set(saved.removedSections || []);
+  customFields = saved.customFields || [];
+  currentTheme = saved.currentTheme || 'maroon';
+  textSize = saved.textSize || 'medium';
+
+  const cat = CATEGORIES.find(c => c.id === categoryId);
+  document.getElementById('builderTitle').textContent = cat.name;
+  renderBuilder();
+
+  document.getElementById('builderModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBuilder() {
+  saveDraft();
+  document.getElementById('builderModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function renderBuilder() {
+  const schema = FORM_SCHEMAS[currentCategory];
+  if (!schema) return;
+
+  let html = `
+    <!-- Customization Panel -->
+    <div class="customize-panel">
+      <h3>🎨 Customize करें</h3>
+      <div class="lang-toggle">
+        <button class="${currentLang==='hi'?'active':''}" onclick="setLang('hi')">हिंदी</button>
+        <button class="${currentLang==='en'?'active':''}" onclick="setLang('en')">English</button>
+        <button class="${currentLang==='hien'?'active':''}" onclick="setLang('hien')">Both</button>
+      </div>
+      <label style="margin-top:10px;">रंग चुनें / Color</label>
+      <div class="color-picker-row">
+        ${COLOR_THEMES.map(t => `
+          <div class="color-swatch ${currentTheme===t.id?'selected':''}" 
+               style="background:${t.primary}" 
+               onclick="setTheme('${t.id}')" 
+               title="${t.name}"></div>
+        `).join('')}
+      </div>
+      <label>Text Size</label>
+      <div class="size-controls">
+        <button class="${textSize==='small'?'active':''}" onclick="setTextSize('small')">छोटा</button>
+        <button class="${textSize==='medium'?'active':''}" onclick="setTextSize('medium')">मध्यम</button>
+        <button class="${textSize==='large'?'active':''}" onclick="setTextSize('large')">बड़ा</button>
+      </div>
+    </div>
+  `;
+
+  // Render sections
+  schema.forEach(section => {
+    if (removedSections.has(section.id)) return;
+
+    if (section.type === 'photo') {
+      html += `
+        <div class="form-section">
+          ${section.removable ? `<button class="section-toggle" onclick="removeSection('${section.id}')" title="Section हटाएं">✕</button>` : ''}
+          <h3>${section.title}</h3>
+          <div class="photo-upload">
+            <span class="icon">📷</span>
+            <p>Tap to upload photo</p>
+            <input type="file" accept="image/*" onchange="handlePhotoUpload(event)">
+          </div>
+          <div class="photo-preview ${photoData?'show':''}" id="photoPreview">
+            <img src="${photoData||''}" alt="Preview">
+          </div>
+          ${photoData ? `<button onclick="removePhoto()" style="display:block;margin:8px auto;background:#ffe5e5;color:#c00;border:1px solid #fcc;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">Photo हटाएं</button>` : ''}
+        </div>
+      `;
+      return;
+    }
+
+    html += `<div class="form-section">`;
+    if (section.removable) {
+      html += `<button class="section-toggle" onclick="removeSection('${section.id}')" title="Section हटाएं">✕</button>`;
+    }
+    html += `<h3>${section.title}</h3>`;
+
+    section.fields.forEach(field => {
+      if (removedFields.has(field.name)) return;
+      html += renderField(field);
+    });
+
+    // Custom fields for this section
+    customFields.filter(cf => cf.sectionId === section.id).forEach(cf => {
+      html += renderField({ name: cf.name, label: cf.label, type: cf.type, removable: true, isCustom: true });
+    });
+
+    html += `<button class="add-field-btn" onclick="openAddField('${section.id}')">➕ नया Field जोड़ें</button>`;
+    html += `</div>`;
+  });
+
+  // Show removed sections to restore
+  const hiddenSections = (FORM_SCHEMAS[currentCategory] || []).filter(s => removedSections.has(s.id));
+  if (hiddenSections.length > 0) {
+    html += `<div class="form-section" style="border-top-color:#888;">
+      <h3>🗑️ हटाए गए Sections</h3>`;
+    hiddenSections.forEach(s => {
+      html += `<button onclick="restoreSection('${s.id}')" style="display:block;width:100%;margin:6px 0;padding:8px;background:#f5f5f5;border:1px dashed #aaa;border-radius:6px;font-family:inherit;cursor:pointer;text-align:left;">↩️ ${s.title} वापस लाएं</button>`;
+    });
+    html += `</div>`;
+  }
+
+  // Show removed fields to restore
+  if (removedFields.size > 0) {
+    const allFields = [];
+    (FORM_SCHEMAS[currentCategory] || []).forEach(s => {
+      if (s.fields) s.fields.forEach(f => allFields.push(f));
+    });
+    const hiddenFields = allFields.filter(f => removedFields.has(f.name));
+    if (hiddenFields.length > 0) {
+      html += `<div class="form-section" style="border-top-color:#888;">
+        <h3>🗑️ हटाए गए Fields</h3>`;
+      hiddenFields.forEach(f => {
+        html += `<button onclick="restoreField('${f.name}')" style="display:block;width:100%;margin:6px 0;padding:8px;background:#f5f5f5;border:1px dashed #aaa;border-radius:6px;font-family:inherit;cursor:pointer;text-align:left;">↩️ ${f.label} वापस लाएं</button>`;
+      });
+      html += `</div>`;
+    }
+  }
+
+  document.getElementById('builderBody').innerHTML = html;
+}
+
+function renderField(field) {
+  const val = formData[field.name] || '';
+  const removeBtn = field.removable !== false ? 
+    `<div class="field-actions"><button class="field-action-btn" onclick="removeField('${field.name}')" title="Field हटाएं">✕</button></div>` : '';
+
+  let inputHTML = '';
+  if (field.type === 'select') {
+    inputHTML = `<select name="${field.name}" oninput="updateField(this)">
+      ${field.options.map(o => `<option value="${o}" ${val===o?'selected':''}>${o||'-- चुनें --'}</option>`).join('')}
+    </select>`;
+  } else if (field.type === 'textarea') {
+    inputHTML = `<textarea name="${field.name}" placeholder="${field.placeholder||''}" oninput="updateField(this)">${val}</textarea>`;
+  } else {
+    inputHTML = `<input type="${field.type}" name="${field.name}" placeholder="${field.placeholder||''}" value="${val}" oninput="updateField(this)">`;
+  }
+
+  return `
+    <div class="form-group">
+      ${removeBtn}
+      <label>${field.label}</label>
+      ${inputHTML}
+    </div>
+  `;
+}
+
+// ============================================
+// FIELD/SECTION MANAGEMENT
+// ============================================
+function updateField(input) {
+  formData[input.name] = input.value;
+  saveDraft();
+}
+
+function removeField(name) {
+  removedFields.add(name);
+  delete formData[name];
+  // Also check custom fields
+  customFields = customFields.filter(cf => cf.name !== name);
+  saveDraft();
+  renderBuilder();
+  showToast('Field हटा दिया');
+}
+
+function restoreField(name) {
+  removedFields.delete(name);
+  saveDraft();
+  renderBuilder();
+}
+
+function removeSection(id) {
+  removedSections.add(id);
+  saveDraft();
+  renderBuilder();
+  showToast('Section हटा दिया');
+}
+
+function restoreSection(id) {
+  removedSections.delete(id);
+  saveDraft();
+  renderBuilder();
+}
+
+function removePhoto() {
+  photoData = null;
+  saveDraft();
+  renderBuilder();
+}
+
+// ============================================
+// CUSTOM FIELDS
+// ============================================
+function openAddField(sectionId) {
+  const select = document.getElementById('newFieldSection');
+  const sections = (FORM_SCHEMAS[currentCategory] || []).filter(s => !s.type && !removedSections.has(s.id));
+  select.innerHTML = sections.map(s => 
+    `<option value="${s.id}" ${s.id===sectionId?'selected':''}>${s.title}</option>`
+  ).join('');
+  document.getElementById('newFieldLabel').value = '';
+  document.getElementById('addFieldModal').classList.add('active');
+}
+
+function closeAddField() {
+  document.getElementById('addFieldModal').classList.remove('active');
+}
+
+function saveCustomField() {
+  const label = document.getElementById('newFieldLabel').value.trim();
+  const sectionId = document.getElementById('newFieldSection').value;
+  const type = document.getElementById('newFieldType').value;
+  
+  if (!label) {
+    showToast('Field का नाम लिखें');
+    return;
+  }
+  
+  const name = 'custom_' + Date.now();
+  customFields.push({ name, label, type, sectionId });
+  saveDraft();
+  closeAddField();
+  renderBuilder();
+  showToast('✓ Field जोड़ दिया');
+}
+
+// ============================================
+// CUSTOMIZATION
+// ============================================
+function setLang(lang) {
+  currentLang = lang;
+  saveDraft();
+  renderBuilder();
+}
+
+function setTheme(themeId) {
+  currentTheme = themeId;
+  saveDraft();
+  renderBuilder();
+}
+
+function setTextSize(size) {
+  textSize = size;
+  saveDraft();
+  renderBuilder();
+}
+
+// ============================================
+// PHOTO
+// ============================================
+function handlePhotoUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    photoData = ev.target.result;
+    saveDraft();
+    renderBuilder();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ============================================
+// DRAFT SAVE/LOAD
+// ============================================
+function saveDraft() {
+  if (!currentCategory) return;
+  try {
+    const drafts = JSON.parse(localStorage.getItem('shubhcard_drafts_v2') || '{}');
+    drafts[currentCategory] = {
+      formData, photoData,
+      removedFields: [...removedFields],
+      removedSections: [...removedSections],
+      customFields, currentTheme, textSize
+    };
+    localStorage.setItem('shubhcard_drafts_v2', JSON.stringify(drafts));
+  } catch(e) { console.error(e); }
+}
+
+function loadDraftFor(categoryId) {
+  try {
+    const drafts = JSON.parse(localStorage.getItem('shubhcard_drafts_v2') || '{}');
+    return drafts[categoryId] || {};
+  } catch(e) { return {}; }
+}
+
+// ============================================
+// HTML GENERATION FOR DOCUMENTS
+// ============================================
+function getTheme() {
+  return COLOR_THEMES.find(t => t.id === currentTheme) || COLOR_THEMES[0];
+}
+
+function getTextSizes() {
+  const sizes = {
+    small: { title: 32, name: 28, body: 12, label: 13 },
+    medium: { title: 36, name: 32, body: 14, label: 15 },
+    large: { title: 42, name: 38, body: 16, label: 17 }
+  };
+  return sizes[textSize];
+}
+
+function generateDocHTML() {
+  switch(currentCategory) {
+    case 'biodata': return biodataHTML();
+    case 'shadicard': return shadiCardHTML();
+    case 'shokpatra': return shokPatraHTML();
+    case 'birthday': return birthdayHTML();
+    case 'anniversary': return anniversaryHTML();
+    case 'mundan': return mundanHTML();
+    case 'grihapravesh': return grihaPraveshHTML();
+    case 'visiting': return visitingHTML();
+    case 'resume': return resumeHTML();
+    case 'certificate': return certificateHTML();
+    case 'receipt': return receiptHTML();
+    case 'affidavit': return affidavitHTML();
+    default: return '<div>No template</div>';
+  }
+}
+
+const docStyles = `
+  font-family: 'Noto Sans Devanagari', 'Cormorant Garamond', serif;
+  width: 794px;
+  min-height: 1050px;
+  background: white;
+  padding: 40px 40px 70px 40px;
+  box-sizing: border-box;
+  position: relative;
+  color: #2C1810;
+`;
+
+// Helper to render rows for biodata table
+function bdRow(label, value, theme) {
+  if (!value || value === '') return '';
+  return `<tr><td style="color:${theme.primary}; font-weight:600; padding-right:15px; vertical-align:top;">${label}</td><td>: ${value}</td></tr>`;
+}
+
+function bdRowDouble(label1, val1, label2, val2, theme) {
+  if (!val1 && !val2) return '';
+  return `<tr>
+    <td style="color:${theme.primary}; font-weight:600;">${label1}</td><td>: ${val1||'—'}</td>
+    <td style="color:${theme.primary}; font-weight:600;">${label2}</td><td>: ${val2||'—'}</td>
+  </tr>`;
+}
+
+function biodataHTML() {
+  const f = formData;
+  const t = getTheme();
+  const s = getTextSizes();
+  const isShown = (name) => !removedFields.has(name);
+  const isSecShown = (id) => !removedSections.has(id);
+  
+  // Build personal section dynamically
+  const personalRows = [];
+  if (isShown('dob')) personalRows.push(bdRow('जन्म तिथि', formatDate(f.dob), t));
+  if (isShown('birthtime')) personalRows.push(bdRow('जन्म समय', f.birthtime, t));
+  if (isShown('birthplace')) personalRows.push(bdRow('जन्म स्थान', f.birthplace, t));
+  if ((isShown('rashi')||isShown('nakshatra')) && (f.rashi||f.nakshatra)) {
+    personalRows.push(bdRow('राशि / नक्षत्र', `${f.rashi||'—'} / ${f.nakshatra||'—'}`, t));
+  }
+  
+  const detailRows = [];
+  if (isShown('height') && f.height) detailRows.push(bdRow('कद / Height', f.height, t));
+  if (isShown('complexion') && f.complexion) detailRows.push(bdRow('रंग / Complexion', f.complexion, t));
+  if (isShown('manglik') && f.manglik) detailRows.push(bdRow('मांगलिक', f.manglik, t));
+  if (isShown('gotra') && f.gotra) detailRows.push(bdRow('गोत्र', f.gotra, t));
+  if (isShown('caste') && f.caste) detailRows.push(bdRow('जाति / समाज', f.caste, t));
+  
+  // Custom personal fields
+  customFields.filter(cf => cf.sectionId === 'personal').forEach(cf => {
+    if (f[cf.name]) detailRows.push(bdRow(cf.label, f[cf.name], t));
+  });
+
+  // Education section
+  const eduRows = [];
+  if (isSecShown('education')) {
+    if (isShown('education') && f.education) eduRows.push(bdRow('शिक्षा', f.education, t));
+    if (isShown('school') && f.school) eduRows.push(bdRow('विद्यालय / कॉलेज', f.school, t));
+    if (isShown('occupation') && f.occupation) eduRows.push(bdRow('व्यवसाय', f.occupation, t));
+    if (isShown('income') && f.income) eduRows.push(bdRow('वार्षिक आय', f.income, t));
+    if (isShown('workplace') && f.workplace) eduRows.push(bdRow('कार्यस्थल', f.workplace, t));
+    customFields.filter(cf => cf.sectionId === 'education').forEach(cf => {
+      if (f[cf.name]) eduRows.push(bdRow(cf.label, f[cf.name], t));
+    });
+  }
+
+  // Family section
+  const familyRows = [];
+  if (isSecShown('family')) {
+    if (isShown('father') && f.father) {
+      const occ = (isShown('fatherOcc') && f.fatherOcc) ? ` (${f.fatherOcc})` : '';
+      familyRows.push(bdRow('पिता का नाम', f.father + occ, t));
+    }
+    if (isShown('mother') && f.mother) {
+      const occ = (isShown('motherOcc') && f.motherOcc) ? ` (${f.motherOcc})` : '';
+      familyRows.push(bdRow('माता का नाम', f.mother + occ, t));
+    }
+    if ((isShown('brothers') || isShown('sisters')) && (f.brothers || f.sisters)) {
+      familyRows.push(bdRow('भाई / बहन', `${f.brothers||0} भाई, ${f.sisters||0} बहन`, t));
+    }
+    customFields.filter(cf => cf.sectionId === 'family').forEach(cf => {
+      if (f[cf.name]) familyRows.push(bdRow(cf.label, f[cf.name], t));
+    });
+  }
+
+  // Contact section
+  const contactRows = [];
+  if (isSecShown('contact')) {
+    if (isShown('mobile') && f.mobile) contactRows.push(bdRow('मोबाइल', f.mobile, t));
+    if (isShown('email') && f.email) contactRows.push(bdRow('ईमेल', f.email, t));
+    if (isShown('address') && f.address) contactRows.push(bdRow('पता', f.address, t));
+    customFields.filter(cf => cf.sectionId === 'contact').forEach(cf => {
+      if (f[cf.name]) contactRows.push(bdRow(cf.label, f[cf.name], t));
+    });
+  }
+
+  return `
+    <div style="${docStyles} background: ${t.bg}; border: 8px double ${t.primary}; padding: 30px 30px 70px 30px;">
+      <div style="text-align:center; margin-bottom:20px; border-bottom: 2px solid ${t.accent}; padding-bottom:15px;">
+        <div style="font-size:26px; color:${t.primary};">॥ ॐ श्री गणेशाय नमः ॥</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:${s.title}px; font-weight:700; color:${t.primary}; margin-top:8px;">बायो डेटा / Bio-Data</div>
+        <div style="font-size:13px; color:${t.accent}; margin-top:4px;">❁ ❁ ❁</div>
+      </div>
+
+      <div style="display:flex; gap:25px; margin-bottom:25px;">
+        ${photoData ? `
+          <div style="width:140px; height:180px; border:4px solid ${t.accent}; flex-shrink:0; background:#eee;">
+            <img src="${photoData}" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+        ` : ''}
+        <div style="flex:1;">
+          <div style="font-size:${s.label-2}px; color:${t.primary};">नाम / Name</div>
+          <div style="font-size:${s.name}px; font-weight:700; color:${t.primary}; font-family:'Cormorant Garamond',serif; margin-bottom:8px;">${f.name||'____________'}</div>
+          <div style="height:2px; background:${t.accent}; width:60%; margin-bottom:12px;"></div>
+          <table style="font-size:${s.body}px; line-height:1.8;">
+            ${personalRows.join('')}
+          </table>
+        </div>
+      </div>
+
+      ${detailRows.length > 0 ? `
+        <div style="margin-bottom:20px;">
+          <div style="background:${t.primary}; color:white; padding:8px 15px; font-size:${s.label}px; font-weight:600;">व्यक्तिगत विवरण / Personal Details</div>
+          <table style="width:100%; font-size:${s.body}px; line-height:2; padding:10px 15px;">
+            ${detailRows.join('')}
+          </table>
+        </div>
+      ` : ''}
+
+      ${eduRows.length > 0 ? `
+        <div style="margin-bottom:20px;">
+          <div style="background:${t.primary}; color:white; padding:8px 15px; font-size:${s.label}px; font-weight:600;">शिक्षा व पेशा / Education & Profession</div>
+          <table style="width:100%; font-size:${s.body}px; line-height:2; padding:10px 15px;">
+            ${eduRows.join('')}
+          </table>
+        </div>
+      ` : ''}
+
+      ${familyRows.length > 0 ? `
+        <div style="margin-bottom:20px;">
+          <div style="background:${t.primary}; color:white; padding:8px 15px; font-size:${s.label}px; font-weight:600;">पारिवारिक विवरण / Family Details</div>
+          <table style="width:100%; font-size:${s.body}px; line-height:2; padding:10px 15px;">
+            ${familyRows.join('')}
+          </table>
+        </div>
+      ` : ''}
+
+      ${contactRows.length > 0 ? `
+        <div style="margin-bottom:20px;">
+          <div style="background:${t.primary}; color:white; padding:8px 15px; font-size:${s.label}px; font-weight:600;">संपर्क / Contact</div>
+          <table style="width:100%; font-size:${s.body}px; line-height:2; padding:10px 15px;">
+            ${contactRows.join('')}
+          </table>
+        </div>
+      ` : ''}
+
+      <div style="text-align:center; margin-top:20px; color:${t.primary}; font-size:13px; border-top:2px solid ${t.accent}; padding-top:15px;">
+        ❁ शुभम् भवतु ❁
+      </div>
+    </div>
+  `;
+}
+
+function shadiCardHTML() {
+  const f = formData;
+  const t = getTheme();
+  return `
+    <div style="${docStyles} background: linear-gradient(135deg, ${t.bg} 0%, #FFE4C4 100%); border: 12px double ${t.primary}; padding: 50px 40px 80px 40px;">
+      <div style="text-align:center;">
+        <div style="font-size:30px; color:${t.primary};">॥ श्री गणेशाय नमः ॥</div>
+        <div style="font-size:60px; margin:20px 0; color:${t.accent};">❁</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:42px; color:${t.primary}; font-weight:700;">शुभ विवाह</div>
+        <div style="font-size:16px; color:#666; margin:10px 0 30px;">सादर निमंत्रण</div>
+        
+        <div style="border:2px solid ${t.accent}; padding:30px; margin:20px 0; background:rgba(255,255,255,0.7);">
+          <div style="font-size:14px; color:${t.primary};">वर / Groom</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:34px; color:${t.primary}; font-weight:700; margin:8px 0;">${f.groomName||'____________'}</div>
+          ${f.groomFather?`<div style="font-size:13px; color:#555;">सुपुत्र: ${f.groomFather}</div>`:''}
+          
+          <div style="font-size:32px; color:${t.accent}; margin:20px 0;">❤</div>
+          
+          <div style="font-size:14px; color:${t.primary};">वधू / Bride</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:34px; color:${t.primary}; font-weight:700; margin:8px 0;">${f.brideName||'____________'}</div>
+          ${f.brideFather?`<div style="font-size:13px; color:#555;">सुपुत्री: ${f.brideFather}</div>`:''}
+        </div>
+
+        <div style="margin:25px 0; padding:20px; background:${t.primary}; color:white;">
+          <div style="font-size:14px; opacity:0.9;">शुभ विवाह मुहूर्त</div>
+          <div style="font-size:24px; font-weight:700; margin:8px 0;">${formatDate(f.weddingDate)}</div>
+          ${f.weddingTime?`<div style="font-size:16px;">समय: ${f.weddingTime}</div>`:''}
+          ${f.venue?`<div style="font-size:14px; margin-top:10px;">📍 ${f.venue}</div>`:''}
+          ${f.venueAddress?`<div style="font-size:12px; opacity:0.9;">${f.venueAddress}</div>`:''}
+        </div>
+
+        ${(f.haldi||f.mehendi||f.sangeet||f.reception) ? `
+          <div style="margin:20px 0; font-size:13px;">
+            <div style="color:${t.primary}; font-weight:600; margin-bottom:8px;">अन्य कार्यक्रम</div>
+            ${f.haldi ? `<div>हल्दी: ${formatDate(f.haldi)}</div>` : ''}
+            ${f.mehendi ? `<div>मेहंदी: ${formatDate(f.mehendi)}</div>` : ''}
+            ${f.sangeet ? `<div>संगीत: ${formatDate(f.sangeet)}</div>` : ''}
+            ${f.reception ? `<div>रिसेप्शन: ${formatDate(f.reception)}</div>` : ''}
+          </div>
+        ` : ''}
+
+        ${f.hosts?`
+          <div style="margin-top:30px; padding-top:20px; border-top:1px solid ${t.accent};">
+            <div style="font-size:13px; color:#666;">सादर निवेदक</div>
+            <div style="font-size:15px; color:${t.primary}; font-weight:600; margin:6px 0; white-space:pre-line;">${f.hosts}</div>
+            ${f.contact ? `<div style="font-size:12px; color:#666;">📞 ${f.contact}</div>` : ''}
+          </div>
+        `:''}
+      </div>
+    </div>
+  `;
+}
+
+function shokPatraHTML() {
+  const f = formData;
+  return `
+    <div style="${docStyles} background:#FAFAFA; border: 6px solid #333; padding: 40px 40px 70px 40px;">
+      <div style="text-align:center; border-bottom:2px solid #555; padding-bottom:20px;">
+        <div style="font-size:28px; color:#333;">॥ ॐ शान्ति ॥</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:36px; color:#333; font-weight:700; margin-top:10px;">शोक संदेश</div>
+        <div style="font-size:14px; color:#888;">श्रद्धांजलि</div>
+      </div>
+
+      <div style="text-align:center; margin:30px 0;">
+        ${photoData ? `
+          <div style="width:150px; height:180px; margin:0 auto; border:5px solid #555; padding:4px; background:white;">
+            <img src="${photoData}" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);">
+          </div>
+        ` : ''}
+        <div style="font-family:'Cormorant Garamond',serif; font-size:32px; color:#333; font-weight:700; margin-top:15px;">स्व. ${f.deceasedName||'____________'}</div>
+        ${f.relation ? `<div style="font-size:14px; color:#666; margin-top:4px;">(${f.relation})</div>` : ''}
+        <div style="display:flex; justify-content:center; gap:30px; margin-top:15px; font-size:13px; color:#555;">
+          ${f.dob ? `<div><b>जन्म:</b> ${formatDate(f.dob)}</div>` : ''}
+          ${f.dod ? `<div><b>देहावसान:</b> ${formatDate(f.dod)}</div>` : ''}
+          ${f.age ? `<div><b>आयु:</b> ${f.age} वर्ष</div>` : ''}
+        </div>
+      </div>
+
+      <div style="background:white; padding:20px; margin:20px 0; border-left:4px solid #555; font-size:14px; line-height:1.8; text-align:center; font-style:italic; color:#444;">
+        ${f.message || 'अत्यंत दुख के साथ सूचित किया जाता है कि हमारे प्रिय का स्वर्गवास हो गया है। ईश्वर उनकी आत्मा को शांति प्रदान करें।'}
+      </div>
+
+      ${(f.tervi || f.terviVenue) ? `
+        <div style="margin:25px 0; padding:20px; background:#F0F0F0; border:1px solid #ccc;">
+          <div style="font-size:18px; color:#333; font-weight:700; text-align:center; margin-bottom:12px;">तेरहवीं संस्कार</div>
+          <table style="width:100%; font-size:14px; line-height:2;">
+            ${f.tervi ? `<tr><td style="font-weight:600; width:30%;">तिथि</td><td>: ${formatDate(f.tervi)}</td></tr>` : ''}
+            ${f.terviTime ? `<tr><td style="font-weight:600;">समय</td><td>: ${f.terviTime}</td></tr>` : ''}
+            ${f.terviVenue ? `<tr><td style="font-weight:600;">स्थान</td><td>: ${f.terviVenue}</td></tr>` : ''}
+            ${f.terviAddress ? `<tr><td style="font-weight:600; vertical-align:top;">पता</td><td>: ${f.terviAddress}</td></tr>` : ''}
+          </table>
+        </div>
+      ` : ''}
+
+      ${f.familyMembers?`
+        <div style="margin-top:30px; text-align:center;">
+          <div style="font-size:14px; color:#666; margin-bottom:10px;">शोक संतप्त परिवार</div>
+          <div style="font-size:14px; color:#333; white-space:pre-line; line-height:1.8;">${f.familyMembers}</div>
+          ${f.contactPerson ? `<div style="margin-top:15px; font-size:13px; color:#555;">संपर्क: ${f.contactPerson} ${f.contactNumber ? '| 📞 '+f.contactNumber : ''}</div>` : ''}
+        </div>
+      `:''}
+
+      <div style="text-align:center; margin-top:30px; padding-top:20px; border-top:1px solid #ccc; font-size:13px; color:#666;">
+        ॐ शान्तिः शान्तिः शान्तिः
+      </div>
+    </div>
+  `;
+}
+
+function birthdayHTML() {
+  const f = formData;
+  return `
+    <div style="${docStyles} background:linear-gradient(135deg,#FFE4E1,#FFF0F5); border:8px solid #FF1493; padding:40px 40px 70px 40px; text-align:center;">
+      <div style="font-size:60px;">🎂</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:42px; color:#FF1493; font-weight:700; margin:20px 0;">जन्मदिन निमंत्रण</div>
+      ${photoData?`<div style="width:160px;height:160px;margin:20px auto;border-radius:50%;overflow:hidden;border:5px solid #FFD700;"><img src="${photoData}" style="width:100%;height:100%;object-fit:cover;"></div>`:''}
+      <div style="font-size:32px; color:#8B0000; font-weight:700;">${f.name||'____________'}</div>
+      ${f.age?`<div style="font-size:18px; margin:10px 0; color:#FF1493;">${f.age} वें जन्मदिन की खुशी में</div>`:''}
+      <div style="background:#FF1493; color:white; padding:20px; margin:20px 0; border-radius:10px;">
+        <div style="font-size:24px;">${formatDate(f.date)}</div>
+        ${f.time?`<div>समय: ${f.time}</div>`:''}
+        ${f.venue?`<div style="margin-top:8px;">📍 ${f.venue}</div>`:''}
+        ${f.venueAddress?`<div style="font-size:12px;">${f.venueAddress}</div>`:''}
+      </div>
+      ${f.hosts?`<div style="margin-top:20px;">${f.hosts}</div>`:''}
+      ${f.contact?`<div style="font-size:13px; color:#666;">📞 ${f.contact}</div>`:''}
+    </div>
+  `;
+}
+
+function anniversaryHTML() {
+  const f = formData;
+  const t = getTheme();
+  return `
+    <div style="${docStyles} background:${t.bg}; border:10px double ${t.primary}; padding:40px 40px 70px 40px; text-align:center;">
+      <div style="font-size:50px; color:${t.primary};">💐</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:42px; color:${t.primary}; font-weight:700; margin:15px 0;">शुभ विवाह वर्षगांठ</div>
+      ${f.years?`<div style="font-size:80px; color:${t.accent}; font-weight:700; font-family:'Cormorant Garamond',serif;">${f.years}</div><div style="font-size:16px; color:#666;">वर्ष पूर्ण होने पर</div>`:''}
+      <div style="margin:30px 0;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:32px; color:${t.primary};">${f.husband||'____________'}</div>
+        <div style="font-size:24px; color:${t.accent}; margin:10px 0;">❤</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:32px; color:${t.primary};">${f.wife||'____________'}</div>
+      </div>
+      <div style="background:${t.primary}; color:white; padding:20px; margin:20px 0;">
+        <div style="font-size:22px;">${formatDate(f.date)}</div>
+        ${f.venue?`<div>📍 ${f.venue}</div>`:''}
+      </div>
+      ${f.hosts?`<div style="margin-top:20px; white-space:pre-line;">${f.hosts}</div>`:''}
+      ${f.contact?`<div style="font-size:13px; color:#666;">📞 ${f.contact}</div>`:''}
+    </div>
+  `;
+}
+
+function mundanHTML() {
+  const f = formData;
+  return `
+    <div style="${docStyles} background:#FFFEF7; border:8px double #FF9933; padding:40px 40px 70px 40px; text-align:center;">
+      <div style="font-size:28px; color:#8B0000;">॥ श्री गणेशाय नमः ॥</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:38px; color:#8B0000; font-weight:700; margin:20px 0;">${f.ceremony||'मुंडन'} संस्कार</div>
+      <div style="font-size:60px;">👶</div>
+      <div style="font-size:18px; color:#666; margin:10px 0;">हमारे लाडले / लाडली</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:36px; color:#FF9933; font-weight:700;">${f.childName||'____________'}</div>
+      <div style="background:#FF9933; color:white; padding:20px; margin:20px 0;">
+        <div style="font-size:22px;">${formatDate(f.date)}</div>
+        ${f.time?`<div>समय: ${f.time}</div>`:''}
+        ${f.venue?`<div style="margin-top:8px;">📍 ${f.venue}</div>`:''}
+      </div>
+      ${f.parents?`<div>${f.parents}</div>`:''}
+      ${f.contact?`<div style="font-size:13px; color:#666;">📞 ${f.contact}</div>`:''}
+    </div>
+  `;
+}
+
+function grihaPraveshHTML() {
+  const f = formData;
+  return `
+    <div style="${docStyles} background:#FFF8F0; border:8px double #8B0000; padding:40px 40px 70px 40px; text-align:center;">
+      <div style="font-size:28px; color:#8B0000;">॥ ॐ श्री गणेशाय नमः ॥</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:42px; color:#8B0000; font-weight:700; margin:20px 0;">गृह प्रवेश</div>
+      <div style="font-size:80px;">🏠</div>
+      <div style="font-size:16px; color:#666; margin:15px 0;">सादर आमंत्रण</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:28px; color:#8B0000;">${f.hostName||'____________'}</div>
+      <div style="background:#8B0000; color:white; padding:20px; margin:20px 0;">
+        <div style="font-size:22px;">${formatDate(f.date)}</div>
+        ${f.time?`<div>मुहूर्त: ${f.time}</div>`:''}
+        ${f.newAddress?`<div style="margin-top:10px; font-size:14px;">${f.newAddress}</div>`:''}
+      </div>
+      ${f.contact?`<div style="font-size:13px; color:#666;">📞 ${f.contact}</div>`:''}
+    </div>
+  `;
+}
+
+function visitingHTML() {
+  const f = formData;
+  return `
+    <div style="width:794px; padding:40px 40px 80px 40px; background:#f5f5f5; min-height:1050px; box-sizing:border-box; position:relative;">
+      <div style="width:500px; height:280px; margin:50px auto; background:linear-gradient(135deg,#1E4D8C,#2C5F9E); color:white; padding:30px; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:8px; position:relative;">
+        ${photoData?`<div style="position:absolute;top:30px;right:30px;width:80px;height:80px;border-radius:50%;overflow:hidden;border:3px solid #D4A017;"><img src="${photoData}" style="width:100%;height:100%;object-fit:cover;"></div>`:''}
+        <div style="font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:700;">${f.name||'Your Name'}</div>
+        ${f.designation?`<div style="font-size:14px; color:#D4A017; margin:4px 0;">${f.designation}</div>`:''}
+        ${f.company?`<div style="font-size:16px; margin:8px 0;">${f.company}</div>`:''}
+        <div style="height:2px; background:#D4A017; width:80px; margin:15px 0;"></div>
+        <div style="font-size:11px; line-height:1.8;">
+          ${f.mobile?`📞 ${f.mobile}<br>`:''}
+          ${f.email?`✉️ ${f.email}<br>`:''}
+          ${f.website?`🌐 ${f.website}<br>`:''}
+          ${f.address?`📍 ${f.address}`:''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function resumeHTML() {
+  const f = formData;
+  return `
+    <div style="${docStyles} padding:0 0 70px 0;">
+      <div style="background:#1E4D8C; color:white; padding:30px; display:flex; gap:20px; align-items:center;">
+        ${photoData?`<div style="width:120px;height:120px;border-radius:50%;overflow:hidden;border:4px solid #D4A017;flex-shrink:0;"><img src="${photoData}" style="width:100%;height:100%;object-fit:cover;"></div>`:''}
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:700;">${f.name||'Your Name'}</div>
+          <div style="font-size:13px; margin-top:8px;">📞 ${f.mobile||'—'} | ✉️ ${f.email||'—'}</div>
+          ${f.address?`<div style="font-size:12px;">📍 ${f.address}</div>`:''}
+        </div>
+      </div>
+      <div style="padding:30px;">
+        ${f.objective?`<div style="margin-bottom:25px;">
+          <div style="background:#D4A017; color:white; padding:6px 12px; font-size:14px; font-weight:600;">CAREER OBJECTIVE</div>
+          <div style="padding:10px; font-size:13px; line-height:1.6;">${f.objective}</div>
+        </div>`:''}
+        ${f.education?`<div style="margin-bottom:25px;">
+          <div style="background:#D4A017; color:white; padding:6px 12px; font-size:14px; font-weight:600;">EDUCATION</div>
+          <div style="padding:10px; font-size:13px; line-height:1.6; white-space:pre-line;">${f.education}</div>
+        </div>`:''}
+        ${f.experience?`<div style="margin-bottom:25px;">
+          <div style="background:#D4A017; color:white; padding:6px 12px; font-size:14px; font-weight:600;">EXPERIENCE</div>
+          <div style="padding:10px; font-size:13px; line-height:1.6; white-space:pre-line;">${f.experience}</div>
+        </div>`:''}
+        ${f.skills?`<div style="margin-bottom:25px;">
+          <div style="background:#D4A017; color:white; padding:6px 12px; font-size:14px; font-weight:600;">SKILLS</div>
+          <div style="padding:10px; font-size:13px; line-height:1.6; white-space:pre-line;">${f.skills}</div>
+        </div>`:''}
+        ${f.languages?`<div>
+          <div style="background:#D4A017; color:white; padding:6px 12px; font-size:14px; font-weight:600;">LANGUAGES</div>
+          <div style="padding:10px; font-size:13px;">${f.languages}</div>
+        </div>`:''}
+      </div>
+    </div>
+  `;
+}
+
+function certificateHTML() {
+  const f = formData;
+  return `
+    <div style="${docStyles} background:#FFFEF7; border:15px double #D4A017; padding:60px 60px 80px 60px; text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:50px; color:#8B0000; font-weight:700;">प्रमाण पत्र</div>
+      <div style="font-size:18px; color:#666; margin:10px 0;">Certificate of Achievement</div>
+      <div style="font-size:50px; margin:20px 0; color:#D4A017;">🏆</div>
+      <div style="font-size:16px; margin-top:30px;">यह प्रमाणित किया जाता है कि</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:40px; color:#8B0000; font-weight:700; margin:20px 0; border-bottom:2px solid #D4A017; padding-bottom:10px;">${f.recipient||'____________'}</div>
+      ${f.reason?`<div style="font-size:16px; line-height:1.8; max-width:500px; margin:20px auto;">${f.reason}</div>`:''}
+      <div style="display:flex; justify-content:space-between; margin-top:60px; padding:0 40px;">
+        <div>
+          <div style="border-top:1px solid #333; padding-top:5px; font-size:13px;">${f.date?formatDate(f.date):'दिनांक'}</div>
+          <div style="font-size:11px; color:#666;">तिथि</div>
+        </div>
+        <div>
+          <div style="border-top:1px solid #333; padding-top:5px; font-size:13px;">${f.issuer||'जारीकर्ता'}</div>
+          <div style="font-size:11px; color:#666;">हस्ताक्षर</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function receiptHTML() {
+  const f = formData;
+  return `
+    <div style="${docStyles} padding:40px 40px 80px 40px;">
+      <div style="border:2px solid #333; padding:30px;">
+        <div style="text-align:center; border-bottom:2px solid #333; padding-bottom:15px; margin-bottom:20px;">
+          <div style="font-size:28px; font-weight:700;">रसीद / RECEIPT</div>
+        </div>
+        <table style="width:100%; font-size:15px; line-height:2.5;">
+          ${f.receiptNo?`<tr><td><b>रसीद नं:</b></td><td colspan="3">${f.receiptNo}</td></tr>`:''}
+          ${f.date?`<tr><td><b>तिथि:</b></td><td colspan="3">${formatDate(f.date)}</td></tr>`:''}
+          <tr><td><b>प्राप्त किया:</b></td><td colspan="3">${f.receivedFrom||'—'} से</td></tr>
+          <tr><td><b>राशि:</b></td><td colspan="3" style="font-size:24px; color:#8B0000; font-weight:700;">₹ ${f.amount||'0'}</td></tr>
+          ${f.amountWords?`<tr><td><b>शब्दों में:</b></td><td colspan="3">${f.amountWords}</td></tr>`:''}
+          ${f.purpose?`<tr><td><b>किस लिए:</b></td><td colspan="3">${f.purpose}</td></tr>`:''}
+        </table>
+        <div style="text-align:right; margin-top:60px;">
+          <div style="border-top:1px solid #333; display:inline-block; padding:5px 40px;">${f.receivedBy||'प्राप्तकर्ता'}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function affidavitHTML() {
+  const f = formData;
+  return `
+    <div style="${docStyles} padding:50px 50px 80px 50px; font-size:14px; line-height:2;">
+      <div style="text-align:center; font-size:24px; font-weight:700; margin-bottom:30px;">शपथ पत्र / AFFIDAVIT</div>
+      <p>मैं, <b>${f.name||'____________'}</b>${f.fatherName?`, पुत्र/पुत्री श्री <b>${f.fatherName}</b>`:''}${f.age?`, आयु लगभग <b>${f.age}</b> वर्ष`:''}${f.address?`, निवासी <b>${f.address}</b>`:''}, शपथ लेकर बयान करता/करती हूं कि:</p>
+      <p style="margin:20px 0;">${f.declaration||'____________'}</p>
+      <p>उपरोक्त कथन मेरे ज्ञान और विश्वास के अनुसार सत्य है। यदि कोई बात असत्य पाई जाए तो मैं कानूनी कार्यवाही के लिए उत्तरदायी रहूंगा/रहूंगी।</p>
+      <div style="display:flex; justify-content:space-between; margin-top:50px;">
+        <div>
+          ${f.place?`स्थान: ${f.place}<br>`:''}
+          ${f.date?`तिथि: ${formatDate(f.date)}`:''}
+        </div>
+        <div style="text-align:center;">
+          <div style="border-top:1px solid #000; padding-top:5px; min-width:150px;">शपथकर्ता</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================
+// PDF / IMAGE GENERATION
+// ============================================
+async function captureCanvas() {
+  const docHTML = generateDocHTML();
+  const container = document.createElement('div');
+  container.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;background:white;';
+  container.innerHTML = docHTML;
+  document.body.appendChild(container);
+  
+  await new Promise(r => setTimeout(r, 600));
+  
+  const canvas = await html2canvas(container.firstElementChild, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    logging: false
+  });
+  
+  document.body.removeChild(container);
+  return canvas;
+}
+
+async function downloadPDF() {
+  if (!currentCategory) return;
+  showLoader('PDF बन रहा है...');
+  try {
+    const canvas = await captureCanvas();
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 210;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, imgWidth, Math.min(imgHeight, 297));
+    
+    if (!isPremium) {
+      pdf.setFontSize(7);
+      pdf.setTextColor(180);
+      pdf.text('Made with ShubhCard App', 105, 293, { align: 'center' });
+    }
+    
+    const filename = `${currentCategory}_${Date.now()}.pdf`;
+    pdf.save(filename);
+    
+    // Store PDF blob for sharing
+    window._lastPdfBlob = pdf.output('blob');
+    window._lastPdfName = filename;
+    
+    hideLoader();
+    showToast('✓ PDF Download हो गया!');
+  } catch(err) {
+    console.error(err);
+    hideLoader();
+    showToast('❌ कुछ गड़बड़ हुई');
+  }
+}
+
+async function downloadJPG() {
+  if (!currentCategory) return;
+  showLoader('Image बन रही है...');
+  try {
+    const canvas = await captureCanvas();
+    const link = document.createElement('a');
+    link.download = `${currentCategory}_${Date.now()}.jpg`;
+    link.href = canvas.toDataURL('image/jpeg', 0.95);
+    link.click();
+    
+    // Store for sharing
+    canvas.toBlob(blob => {
+      window._lastImgBlob = blob;
+      window._lastImgName = link.download;
+    }, 'image/jpeg', 0.95);
+    
+    hideLoader();
+    showToast('✓ Image Download हो गई!');
+  } catch(err) {
+    console.error(err);
+    hideLoader();
+    showToast('❌ कुछ गड़बड़ हुई');
+  }
+}
+
+function previewDoc() {
+  const html = generateDocHTML();
+  const win = window.open('', '_blank');
+  if (!win) {
+    showToast('Popup blocked. Please allow popups');
+    return;
+  }
+  win.document.write(`
+    <html><head><title>Preview - ShubhCard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>body{margin:0;padding:20px;background:#eee;display:flex;justify-content:center;}</style>
+    </head><body>${html}</body></html>
+  `);
+  win.document.close();
+}
+
+// ============================================
+// SHARE FUNCTIONS (FIXED!)
+// ============================================
+function openShareSheet() {
+  document.getElementById('shareSheet').classList.add('show');
+}
+
+function closeShareSheet() {
+  document.getElementById('shareSheet').classList.remove('show');
+}
+
+async function shareWhatsAppPDF() {
+  closeShareSheet();
+  showLoader('PDF तैयार हो रहा है...');
+  try {
+    const canvas = await captureCanvas();
+    
+    // Try Web Share API with file (modern browsers)
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], `shubhcard_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'ShubhCard',
+            text: 'मैंने ShubhCard app से बनाया है'
+          });
+          hideLoader();
+          showToast('✓ Share हो गया');
+        } catch(err) {
+          if (err.name !== 'AbortError') {
+            hideLoader();
+            // Fallback: download then open WhatsApp
+            fallbackWhatsAppShare();
+          } else {
+            hideLoader();
+          }
+        }
+      } else {
+        hideLoader();
+        fallbackWhatsAppShare();
+      }
+    }, 'image/jpeg', 0.95);
+  } catch(err) {
+    console.error(err);
+    hideLoader();
+    fallbackWhatsAppShare();
+  }
+}
+
+function fallbackWhatsAppShare() {
+  // Download image first, then open WhatsApp
+  showToast('Image download हो रही है, फिर WhatsApp खुलेगा');
+  downloadJPG().then(() => {
+    setTimeout(() => {
+      const text = encodeURIComponent('मैंने ShubhCard app से ये बनाया है। आप भी free में बनाएं: ' + window.location.href);
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    }, 1000);
+  });
+}
+
+async function shareGeneric() {
+  closeShareSheet();
+  showLoader('तैयार हो रहा है...');
+  try {
+    const canvas = await captureCanvas();
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], `shubhcard_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'ShubhCard',
+            text: 'मैंने ShubhCard app से बनाया है'
+          });
+        } catch(err) {
+          if (err.name !== 'AbortError') showToast('Share नहीं हो पाया');
+        }
+      } else if (navigator.share) {
+        await navigator.share({
+          title: 'ShubhCard',
+          text: 'ShubhCard app try करें: ' + window.location.href,
+          url: window.location.href
+        });
+      } else {
+        copyShareLink();
+      }
+      hideLoader();
+    }, 'image/jpeg', 0.95);
+  } catch(err) {
+    hideLoader();
+    showToast('Share नहीं हो पाया');
+  }
+}
+
+function copyShareLink() {
+  closeShareSheet();
+  const text = `ShubhCard app — Free में Bio-data, Shadi Card, Shok Patra बनाएं! ${window.location.href}`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('✓ Link copy हो गया');
+    });
+  } else {
+    showToast('Copy नहीं हो पाया');
+  }
+}
+
+function printDoc() {
+  closeShareSheet();
+  const html = generateDocHTML();
+  const win = window.open('', '_blank');
+  if (!win) { showToast('Popup blocked'); return; }
+  win.document.write(`
+    <html><head><title>Print - ShubhCard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>body{margin:0;padding:0;}@media print{body{margin:0;}}</style>
+    </head><body onload="setTimeout(()=>window.print(),500)">${html}</body></html>
+  `);
+  win.document.close();
+}
+
+// ============================================
+// HELPERS
+// ============================================
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const months = ['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  } catch(e) { return dateStr; }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function showLoader(text) {
+  document.getElementById('loaderText').textContent = text || 'Loading...';
+  document.getElementById('loader').classList.add('show');
+}
+
+function hideLoader() {
+  document.getElementById('loader').classList.remove('show');
+}
+
+// ============================================
+// PREMIUM
+// ============================================
+function openPremium() { document.getElementById('premiumModal').classList.add('active'); }
+function closePremium() { document.getElementById('premiumModal').classList.remove('active'); }
+function subscribePremium() { showToast('Payment gateway जल्द ही...'); }
+
+// ============================================
+// SERVICE WORKER
+// ============================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const swCode = `
+      const CACHE = 'shubhcard-v2';
+      self.addEventListener('install', e => {
+        e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./'])));
+      });
+      self.addEventListener('fetch', e => {
+        e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+      });
+    `;
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
