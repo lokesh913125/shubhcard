@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import "./global.css";
 import { View, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -12,7 +13,7 @@ import { COLORS } from './src/constants/appConstants';
 
 // Screens
 import CardBuilderScreen from './src/screens/CardBuilderScreen';
-import HomeScreen from './src/screens/Home';
+import HomeScreen from './src/screens/HomeScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
 
