@@ -2,1964 +2,2321 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<meta name="theme-color" content="#8B0000">
-<meta name="description" content="ShubhCard - Free Bio Data, Shadi Card, Shok Patra Maker in Hindi.">
-<title>ShubhCard - Bio Data, Shadi Card, Shok Patra Maker</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,viewport-fit=cover">
+<meta name="theme-color" content="#D97706">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="ShubhCard Pro — भारत का #1 Hindi Document Maker. Resume, Biodata, Visiting Card, ID Card और 15+ documents एक मिनट में।">
+<meta name="keywords" content="hindi resume maker, biodata maker hindi, shubhcard, visiting card maker india">
+<title>ShubhCard Pro — हिंदी डॉक्यूमेंट मेकर</title>
 
-<link rel="manifest" href='data:application/manifest+json,{"name":"ShubhCard","short_name":"ShubhCard","start_url":".","display":"standalone","background_color":"%23fff8f0","theme_color":"%238B0000","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22><rect width=%22192%22 height=%22192%22 fill=%22%238B0000%22/><text x=%2296%22 y=%22130%22 font-size=%22120%22 text-anchor=%22middle%22 fill=%22gold%22>ॐ</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- PDF: pdf-lib for clean vector PDFs + html2canvas fallback -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-:root {
-  --maroon: #8B0000;
-  --maroon-dark: #5C0000;
-  --gold: #D4A017;
-  --gold-light: #F4D03F;
-  --cream: #FFF8F0;
-  --cream-dark: #F5E6D3;
-  --ink: #2C1810;
-  --saffron: #FF9933;
-  --shadow: 0 4px 20px rgba(139, 0, 0, 0.15);
-  --shadow-lg: 0 10px 40px rgba(139, 0, 0, 0.25);
+:root{
+  --bg:#FFF8EE;
+  --bg-2:#F5E6C8;
+  --ink:#1A1208;
+  --ink-soft:#6B5B3E;
+  --ink-muted:#9A8862;
+  --saffron:#D97706;
+  --saffron-deep:#B45309;
+  --saffron-light:#FEF3C7;
+  --maroon:#7C2D12;
+  --gold:#CA8A04;
+  --sage:#4D7C0F;
+  --card:#FFFFFF;
+  --line:#E8DCC0;
+  --line-strong:#D4C393;
+  --shadow-sm:0 1px 2px rgba(26,18,8,.04);
+  --shadow:0 1px 2px rgba(26,18,8,.06),0 8px 24px rgba(26,18,8,.08);
+  --shadow-lg:0 4px 8px rgba(26,18,8,.06),0 24px 48px rgba(26,18,8,.1);
+  --r:14px;
+  --r-sm:10px;
+  --r-lg:20px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-top:env(safe-area-inset-top,0px);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+[data-theme="dark"]{
+  --bg:#14100A;
+  --bg-2:#1F1810;
+  --ink:#F5E6C8;
+  --ink-soft:#B8A584;
+  --ink-muted:#7A6B4E;
+  --card:#1F1810;
+  --line:#3A2E1E;
+  --line-strong:#4D3E28;
+  --saffron-light:#2A1F0E;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.5);
+  --shadow-lg:0 4px 8px rgba(0,0,0,.5),0 24px 48px rgba(0,0,0,.6);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html { scroll-behavior: smooth; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{overflow-x:hidden;overscroll-behavior-y:none}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter','Tiro Devanagari Hindi',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.6;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background .3s var(--ease),color .3s var(--ease);
+  padding-top:var(--safe-top);
+}
+.hindi{font-family:'Tiro Devanagari Hindi',serif;font-weight:400}
+.display{font-family:'Fraunces',serif;font-weight:600;letter-spacing:-.02em}
 
-body {
-  font-family: 'Noto Sans Devanagari', 'Marcellus', serif;
-  background: var(--cream);
-  color: var(--ink);
-  min-height: 100vh;
-  overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(212, 160, 23, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 90% 80%, rgba(139, 0, 0, 0.06) 0%, transparent 50%);
+/* ===== Decorative background ===== */
+.bg-pattern{
+  position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:
+    radial-gradient(circle at 20% 10%,rgba(217,119,6,.15),transparent 40%),
+    radial-gradient(circle at 80% 80%,rgba(124,45,18,.1),transparent 40%),
+    radial-gradient(circle at 50% 50%,rgba(202,138,4,.06),transparent 50%);
 }
+[data-theme="dark"] .bg-pattern{opacity:.7}
 
-/* HEADER */
-.header {
-  background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
-  color: var(--cream);
-  padding: 14px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: var(--shadow);
-  border-bottom: 3px solid var(--gold);
+/* ===== Skeleton loader ===== */
+.skeleton{
+  background:linear-gradient(90deg,var(--line) 25%,var(--bg-2) 50%,var(--line) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.5s infinite;
+  border-radius:8px;
 }
-.header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.logo { display: flex; align-items: center; gap: 10px; font-family: 'Marcellus', serif; }
-.logo-icon {
-  width: 40px; height: 40px;
-  background: var(--gold);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; color: var(--maroon-dark); font-weight: bold;
-  box-shadow: 0 0 0 2px var(--cream), 0 0 0 4px var(--gold);
-}
-.logo-text h1 { font-size: 22px; font-weight: 700; line-height: 1; }
-.logo-text p { font-size: 10px; opacity: 0.85; margin-top: 2px; }
-.header-actions { display: flex; gap: 8px; }
-.btn-premium {
-  background: var(--gold); color: var(--maroon-dark);
-  border: none; padding: 8px 14px; border-radius: 20px;
-  font-weight: 700; font-size: 12px; cursor: pointer;
-  display: flex; align-items: center; gap: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  font-family: inherit;
-}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* HERO */
-.hero { padding: 30px 16px 20px; text-align: center; position: relative; }
-.hero::before, .hero::after {
-  content: '❀'; position: absolute; top: 10px;
-  font-size: 24px; color: var(--gold); opacity: 0.5;
+/* ===== Topbar ===== */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:color-mix(in srgb,var(--bg) 85%,transparent);
+  backdrop-filter:blur(16px) saturate(180%);
+  -webkit-backdrop-filter:blur(16px) saturate(180%);
+  border-bottom:1px solid var(--line);
 }
-.hero::before { left: 20px; }
-.hero::after { right: 20px; }
-.hero h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 28px; color: var(--maroon);
-  margin-bottom: 8px; font-weight: 700;
+.topbar-inner{
+  max-width:1200px;margin:0 auto;padding:12px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
 }
-.hero p { font-size: 14px; opacity: 0.75; max-width: 500px; margin: 0 auto; }
-.hero-divider { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; }
-.hero-divider span { height: 1px; width: 40px; background: var(--gold); }
-.hero-divider .om { color: var(--maroon); font-size: 18px; }
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;flex:1;min-width:0;user-select:none}
+.logo:active .logo-mark{transform:scale(.92) rotate(-5deg)}
+.logo-mark{
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--saffron),var(--maroon));
+  display:grid;place-items:center;color:#FFF8EE;
+  font-family:'Fraunces',serif;font-weight:800;font-size:22px;
+  box-shadow:0 4px 14px rgba(217,119,6,.35),inset 0 1px 0 rgba(255,255,255,.2);
+  transition:transform .2s var(--ease);
+}
+.logo-text{display:flex;flex-direction:column;line-height:1.1;min-width:0}
+.logo-text strong{font-family:'Fraunces',serif;font-size:19px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+.logo-text .pro-tag{font-size:9px;color:var(--saffron);vertical-align:top;margin-left:3px;font-weight:700;letter-spacing:.1em}
+.logo-text small{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-soft);font-weight:500}
+.topbar-actions{display:flex;gap:6px;align-items:center}
+.icon-btn{
+  width:40px;height:40px;border:1px solid var(--line);background:var(--card);
+  border-radius:12px;cursor:pointer;color:var(--ink);
+  display:grid;place-items:center;font-size:16px;
+  transition:all .2s var(--ease);
+  position:relative;
+}
+.icon-btn:active{transform:scale(.9)}
+.icon-btn:hover{border-color:var(--saffron);color:var(--saffron);box-shadow:var(--shadow-sm)}
+.icon-btn .dot{position:absolute;top:8px;right:8px;width:7px;height:7px;background:var(--sage);border-radius:50%;display:none;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.3);opacity:.7}}
 
-/* SECTION TITLE */
-.section-title {
-  text-align: center; margin: 24px 0 16px;
-  font-family: 'Cormorant Garamond', serif;
-  color: var(--maroon); font-size: 22px; font-weight: 600;
-}
-.section-title::before, .section-title::after {
-  content: ''; display: inline-block;
-  width: 30px; height: 1px; background: var(--gold);
-  vertical-align: middle; margin: 0 12px;
-}
+/* ===== Shell ===== */
+.shell{max-width:1200px;margin:0 auto;padding:16px 18px calc(120px + var(--safe-bottom))}
 
-/* CATEGORIES */
-.categories {
-  max-width: 1200px; margin: 0 auto; padding: 0 16px;
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+/* ===== Hero ===== */
+.hero{
+  background:linear-gradient(135deg,var(--saffron) 0%,var(--maroon) 100%);
+  color:#FFF8EE;border-radius:var(--r-lg);padding:28px 22px;margin-bottom:22px;
+  position:relative;overflow:hidden;
+  box-shadow:0 20px 40px -10px rgba(217,119,6,.3);
 }
-@media (min-width: 600px) { .categories { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 900px) { .categories { grid-template-columns: repeat(4, 1fr); } }
+.hero::before{
+  content:"";position:absolute;inset:0;opacity:.12;
+  background-image:radial-gradient(circle at 1px 1px,#FFF8EE 1px,transparent 0);
+  background-size:16px 16px;
+}
+.hero::after{
+  content:"";position:absolute;top:-40px;right:-40px;width:180px;height:180px;
+  background:radial-gradient(circle,rgba(255,248,238,.2),transparent 70%);
+  border-radius:50%;
+}
+.hero .badge{
+  display:inline-block;padding:4px 12px;background:rgba(255,248,238,.2);
+  border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;margin-bottom:12px;position:relative;
+  backdrop-filter:blur(10px);
+}
+.hero h1{font-family:'Fraunces',serif;font-size:30px;font-weight:800;line-height:1.05;margin-bottom:10px;position:relative}
+.hero p{font-size:14px;opacity:.95;position:relative;max-width:480px}
+.hero-stats{display:flex;gap:24px;margin-top:18px;position:relative;flex-wrap:wrap}
+.hero-stat strong{display:block;font-family:'Fraunces',serif;font-size:24px;font-weight:800}
+.hero-stat span{font-size:10px;opacity:.85;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
 
-.cat-card {
-  background: white; border-radius: 16px; padding: 18px 12px;
-  text-align: center; cursor: pointer;
-  border: 2px solid transparent;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
-  position: relative; overflow: hidden;
+/* ===== Section ===== */
+.section-title{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin:28px 0 14px;gap:12px;
 }
-.cat-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-  background: linear-gradient(90deg, var(--maroon), var(--gold), var(--maroon));
-}
-.cat-card:active { transform: translateY(-2px); border-color: var(--gold); }
-.cat-icon { font-size: 36px; margin-bottom: 8px; display: block; }
-.cat-name { font-size: 13px; font-weight: 600; color: var(--maroon); line-height: 1.3; }
-.cat-name-en { font-size: 10px; opacity: 0.6; margin-top: 2px; }
-.cat-badge {
-  position: absolute; top: 8px; right: 8px;
-  background: var(--gold); color: var(--maroon-dark);
-  font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: 700;
-}
-.cat-badge.new { background: #4CAF50; color: white; }
-.cat-badge.hot { background: #FF5722; color: white; }
+.section-title h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;letter-spacing:-.01em}
+.section-title .sub{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;font-weight:600}
 
-/* AD SLOT */
-.ad-slot { max-width: 728px; margin: 24px auto; padding: 0 16px; text-align: center; }
-.ad-container {
-  background: rgba(212, 160, 23, 0.05);
-  border: 1px dashed rgba(139, 0, 0, 0.2);
-  border-radius: 12px; padding: 12px; min-height: 90px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; color: rgba(0,0,0,0.4);
+/* ===== Search bar ===== */
+.search-wrap{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r);padding:0 16px;margin-bottom:18px;
+  display:flex;align-items:center;gap:10px;
+  transition:all .2s var(--ease);
 }
-
-/* FEATURES */
-.features {
-  max-width: 1200px; margin: 24px auto; padding: 0 16px;
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
-}
-@media (min-width: 600px) { .features { grid-template-columns: repeat(4, 1fr); } }
-.feature-item {
-  background: white; padding: 12px 8px; border-radius: 10px;
-  text-align: center; border-left: 3px solid var(--gold);
-  font-size: 11px; font-weight: 500;
-}
-.feature-item .ico { font-size: 18px; display: block; margin-bottom: 4px; }
-
-/* MODAL */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-  z-index: 1000; display: none;
-  align-items: flex-start; justify-content: center;
-  overflow-y: auto; backdrop-filter: blur(4px);
-}
-.modal-overlay.active { display: flex; }
-.modal {
-  background: var(--cream); width: 100%; max-width: 800px;
-  min-height: 100vh; position: relative;
-  animation: slideUp 0.3s ease;
-}
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-.modal-header {
-  background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
-  color: var(--cream); padding: 14px 16px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 10;
-  border-bottom: 2px solid var(--gold);
-}
-.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; }
-.btn-close {
-  background: rgba(255,255,255,0.2); border: none; color: white;
-  width: 32px; height: 32px; border-radius: 50%;
-  font-size: 18px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-family: inherit;
-}
-.modal-body { padding: 16px; padding-bottom: 100px; }
-
-/* FORMS */
-.form-section {
-  background: white; border-radius: 12px;
-  padding: 16px; margin-bottom: 12px;
-  box-shadow: var(--shadow);
-  border-top: 3px solid var(--gold);
-  position: relative;
-}
-.form-section h3 {
-  color: var(--maroon); font-size: 15px; margin-bottom: 12px;
-  font-weight: 700; display: flex; align-items: center; gap: 6px;
-}
-.section-toggle {
-  position: absolute; top: 14px; right: 14px;
-  background: #f5f5f5; border: 1px solid #ddd;
-  width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 14px;
-}
-.section-toggle.hidden-section { background: #ffe5e5; color: #c00; }
-
-.form-group { margin-bottom: 12px; position: relative; }
-.form-group.removed { display: none; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-.field-actions {
-  position: absolute; top: 0; right: 0;
-  display: flex; gap: 4px;
-}
-.field-action-btn {
-  background: #f5f5f5; border: 1px solid #ddd;
-  width: 22px; height: 22px; border-radius: 50%;
-  cursor: pointer; font-size: 11px; padding: 0;
-  display: flex; align-items: center; justify-content: center;
-  color: #666;
-}
-.field-action-btn:hover { background: #ffe5e5; color: #c00; }
-
-label {
-  display: block; font-size: 12px; font-weight: 600;
-  color: var(--ink); margin-bottom: 4px;
-  padding-right: 60px;
+.search-wrap:focus-within{border-color:var(--saffron);box-shadow:0 0 0 3px rgba(217,119,6,.12)}
+.search-wrap input{
+  flex:1;border:none;padding:14px 0;font-size:14px;background:transparent;color:var(--ink);outline:none;
 }
 
-input, select, textarea {
-  width: 100%; padding: 10px 12px;
-  border: 1.5px solid #e0d5c0; border-radius: 8px;
-  font-size: 14px; font-family: inherit;
-  background: var(--cream); color: var(--ink);
+/* ===== Category chips ===== */
+.cat-scroll{
+  display:flex;gap:8px;overflow-x:auto;padding:0 0 14px;margin:0 -18px 8px;padding:0 18px 14px;
+  scrollbar-width:none;-ms-overflow-style:none;
+  scroll-snap-type:x mandatory;
 }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--maroon); }
-textarea { resize: vertical; min-height: 60px; }
+.cat-scroll::-webkit-scrollbar{display:none}
+.cat-chip{
+  padding:8px 14px;background:var(--card);border:1px solid var(--line);
+  border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;
+  white-space:nowrap;transition:all .2s var(--ease);color:var(--ink);
+  scroll-snap-align:start;
+}
+.cat-chip.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cat-chip:not(.active):hover{border-color:var(--saffron);color:var(--saffron)}
 
-.photo-upload {
-  border: 2px dashed var(--gold); border-radius: 12px;
-  padding: 20px; text-align: center; cursor: pointer;
-  background: rgba(212, 160, 23, 0.05); position: relative;
+/* ===== Document grid ===== */
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.doc-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px 14px;cursor:pointer;transition:all .25s var(--ease);
+  position:relative;overflow:hidden;
+  animation:fadeUp .5s var(--ease) backwards;
 }
-.photo-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.photo-upload .icon { font-size: 32px; color: var(--maroon); }
-.photo-upload p { font-size: 12px; margin-top: 6px; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}}
+.doc-card:nth-child(1){animation-delay:.05s}
+.doc-card:nth-child(2){animation-delay:.1s}
+.doc-card:nth-child(3){animation-delay:.15s}
+.doc-card:nth-child(4){animation-delay:.2s}
+.doc-card:nth-child(5){animation-delay:.25s}
+.doc-card:nth-child(6){animation-delay:.3s}
+.doc-card:nth-child(7){animation-delay:.35s}
+.doc-card:nth-child(8){animation-delay:.4s}
+.doc-card:active{transform:scale(.96);transition-duration:.1s}
+.doc-card:hover{border-color:var(--saffron);box-shadow:var(--shadow);transform:translateY(-2px)}
+.doc-card:hover .emoji{transform:scale(1.15) rotate(-5deg)}
+.doc-card .emoji{font-size:30px;margin-bottom:8px;display:block;transition:transform .3s var(--ease)}
+.doc-card h3{font-size:14px;font-weight:700;margin-bottom:3px}
+.doc-card p{font-size:11px;color:var(--ink-soft)}
+.doc-card .badge{
+  position:absolute;top:8px;right:8px;
+  color:#fff;font-size:9px;font-weight:800;
+  padding:3px 8px;border-radius:10px;letter-spacing:.05em;
+}
+.doc-card .badge.new{background:var(--sage)}
+.doc-card .badge.hot{background:#DC2626}
+.doc-card .badge.pro{background:var(--gold)}
 
-.photo-preview {
-  width: 100px; height: 130px; margin: 10px auto;
-  border-radius: 8px; overflow: hidden;
-  border: 2px solid var(--gold); display: none;
+.doc-grid.hidden{display:none}
+.empty-state{
+  text-align:center;padding:40px 20px;color:var(--ink-soft);
 }
-.photo-preview.show { display: block; }
-.photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+.empty-state .emoji{font-size:40px;margin-bottom:10px;display:block}
 
-/* TEMPLATES */
-.template-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 8px; margin-bottom: 12px;
-}
-.template-option {
-  aspect-ratio: 3/4; border: 2px solid #e0d5c0;
-  border-radius: 8px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600; color: var(--maroon);
-  text-align: center; padding: 6px;
-  background: white; position: relative;
-}
-.template-option.selected { border-color: var(--maroon); box-shadow: 0 0 0 2px var(--gold); }
-.template-option.premium::after {
-  content: '👑'; position: absolute; top: 4px; right: 4px; font-size: 12px;
-}
+/* ===== Editor ===== */
+.editor{display:none}
+.editor.active{display:block;animation:slideIn .3s var(--ease)}
+.home-view.hidden{display:none}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}}
 
-/* CUSTOMIZATION PANEL */
-.customize-panel {
-  background: white; border-radius: 12px;
-  padding: 16px; margin-bottom: 12px;
-  box-shadow: var(--shadow);
-  border-top: 3px solid var(--saffron);
+.editor-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:16px;
+  background:var(--card);padding:10px 12px;border-radius:var(--r);border:1px solid var(--line);
+  position:sticky;top:calc(66px + var(--safe-top));z-index:30;
+  box-shadow:var(--shadow-sm);
 }
-.customize-panel h3 {
-  color: var(--maroon); font-size: 15px; margin-bottom: 12px;
-  font-weight: 700; display: flex; align-items: center; gap: 6px;
+.back-btn{
+  width:36px;height:36px;background:transparent;border:1px solid var(--line);
+  border-radius:10px;cursor:pointer;color:var(--ink);
+  display:grid;place-items:center;font-size:18px;flex-shrink:0;
+  transition:all .2s var(--ease);
 }
-.color-picker-row {
-  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+.back-btn:active{transform:scale(.9)}
+.back-btn:hover{border-color:var(--saffron);color:var(--saffron)}
+.editor-head h2{font-size:16px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.save-pill{
+  font-size:10px;color:var(--sage);display:flex;align-items:center;gap:4px;
+  padding:4px 8px;background:rgba(77,124,15,.12);border-radius:20px;
+  font-weight:600;flex-shrink:0;
+  transition:opacity .3s var(--ease);
 }
-.color-swatch {
-  width: 36px; height: 36px; border-radius: 50%;
-  cursor: pointer; border: 3px solid white;
-  box-shadow: 0 0 0 1px #ddd;
-}
-.color-swatch.selected { box-shadow: 0 0 0 3px var(--maroon); }
+.save-pill::before{content:"●";animation:pulse 2s infinite;font-size:8px}
+.save-pill.saving{color:var(--saffron);background:rgba(217,119,6,.12)}
 
-.size-controls { display: flex; gap: 8px; align-items: center; }
-.size-controls button {
-  background: var(--cream); border: 1px solid #ddd;
-  padding: 6px 12px; border-radius: 6px; cursor: pointer;
-  font-family: inherit; font-size: 13px;
-}
-.size-controls button.active { background: var(--maroon); color: white; }
+.editor-layout{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:900px){.editor-layout{grid-template-columns:1fr 1fr}}
 
-/* ADD CUSTOM FIELD */
-.add-field-btn {
-  width: 100%; padding: 10px;
-  background: rgba(212, 160, 23, 0.1);
-  border: 2px dashed var(--gold);
-  border-radius: 8px; cursor: pointer;
-  font-family: inherit; font-size: 13px; font-weight: 600;
-  color: var(--maroon); margin-top: 8px;
+.card{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r);padding:18px;
+  box-shadow:var(--shadow-sm);
 }
-.add-field-btn:hover { background: rgba(212, 160, 23, 0.2); }
-
-.lang-toggle {
-  display: flex; background: #f0e5d0;
-  border-radius: 20px; padding: 3px; margin-bottom: 12px;
-}
-.lang-toggle button {
-  flex: 1; padding: 6px 12px; border: none;
-  background: transparent; border-radius: 18px;
-  font-size: 11px; font-weight: 600;
-  cursor: pointer; font-family: inherit; color: var(--ink);
-}
-.lang-toggle button.active { background: var(--maroon); color: white; }
-
-/* ACTION BAR */
-.action-bar {
-  position: fixed; bottom: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 100%; max-width: 800px;
-  background: white; padding: 10px 12px;
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-  border-top: 2px solid var(--gold);
-  z-index: 20;
-}
-.btn {
-  padding: 11px 6px; border: none; border-radius: 10px;
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  font-family: inherit;
-  display: flex; align-items: center; justify-content: center;
-  gap: 4px; flex-direction: column;
-}
-.btn .ico { font-size: 16px; }
-.btn:active { transform: scale(0.96); }
-.btn-primary { background: linear-gradient(135deg, var(--maroon), var(--maroon-dark)); color: white; }
-.btn-secondary { background: var(--gold); color: var(--maroon-dark); }
-.btn-success { background: #25D366; color: white; }
-.btn-info { background: #2196F3; color: white; }
-
-/* PREMIUM MODAL */
-.premium-modal {
-  max-width: 400px; margin: auto; min-height: auto;
-  border-radius: 20px; margin-top: 50px; overflow: hidden;
-}
-.premium-hero {
-  background: linear-gradient(135deg, var(--gold), #FFD700);
-  padding: 30px 20px; text-align: center; color: var(--maroon-dark);
-}
-.premium-hero .crown { font-size: 48px; }
-.premium-hero h2 { font-family: 'Cormorant Garamond', serif; font-size: 26px; margin: 8px 0; }
-.premium-features { padding: 20px; background: white; }
-.premium-features li {
-  list-style: none; padding: 8px 0; font-size: 13px;
-  display: flex; align-items: center; gap: 8px;
-  border-bottom: 1px solid #f0e5d0;
-}
-.premium-features li::before { content: '✓'; color: green; font-weight: bold; font-size: 16px; }
-.price-box { background: var(--cream); padding: 16px; text-align: center; border-top: 2px solid var(--gold); }
-.price-box .price { font-size: 32px; color: var(--maroon); font-weight: 700; font-family: 'Cormorant Garamond', serif; }
-.price-box .price small { font-size: 14px; }
-.btn-subscribe {
-  background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
-  color: white; border: none; padding: 14px;
-  width: 100%; border-radius: 10px;
-  font-size: 15px; font-weight: 700; margin-top: 12px;
-  cursor: pointer; font-family: inherit;
+.card h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card h3::before{
+  content:"";width:3px;height:16px;background:linear-gradient(to bottom,var(--saffron),var(--maroon));border-radius:2px;
 }
 
-/* ADD FIELD MODAL */
-.mini-modal {
-  max-width: 350px; margin: auto;
-  background: white; border-radius: 16px;
-  padding: 20px; margin-top: 100px;
-  min-height: auto;
+/* ===== Tabs ===== */
+.tabs{
+  display:flex;gap:0;margin-bottom:14px;
+  background:var(--bg-2);padding:4px;border-radius:12px;
+  position:relative;
 }
-.mini-modal h3 { color: var(--maroon); margin-bottom: 12px; }
-.mini-modal .form-group { margin-bottom: 12px; }
-.mini-modal-actions { display: flex; gap: 8px; margin-top: 16px; }
-.mini-modal-actions button {
-  flex: 1; padding: 10px; border: none; border-radius: 8px;
-  font-family: inherit; font-weight: 600; cursor: pointer;
+.tab{
+  flex:1;padding:9px 12px;border:none;background:transparent;cursor:pointer;
+  font-size:12px;font-weight:700;color:var(--ink-soft);font-family:inherit;
+  border-radius:8px;transition:all .2s var(--ease);
+  z-index:2;position:relative;
 }
-.mini-modal-actions .cancel { background: #eee; }
-.mini-modal-actions .save { background: var(--maroon); color: white; }
+.tab.active{color:var(--ink);background:var(--card);box-shadow:var(--shadow-sm)}
 
-/* TOAST */
-.toast {
-  position: fixed; bottom: 100px; left: 50%;
-  transform: translateX(-50%);
-  background: var(--ink); color: white;
-  padding: 12px 20px; border-radius: 25px;
-  font-size: 13px; z-index: 2000; display: none;
+/* ===== Form ===== */
+.form-group{margin-bottom:14px;animation:fadeUp .4s var(--ease) backwards}
+label{font-size:12px;font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;color:var(--ink-soft);letter-spacing:.02em}
+label .req{color:#DC2626;margin-left:2px}
+.label-voice{
+  background:none;border:none;color:var(--saffron);cursor:pointer;font-size:11px;
+  display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;
+  font-weight:600;transition:all .15s;
 }
-.toast.show { display: block; animation: fadeInUp 0.3s; }
-@keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.label-voice:hover{background:var(--saffron-light)}
+.label-voice.listening{color:#DC2626;background:rgba(220,38,38,.1);animation:pulse 1s infinite}
 
-/* FOOTER */
-.footer {
-  text-align: center; padding: 30px 16px 20px;
-  opacity: 0.6; font-size: 11px;
-  border-top: 1px solid rgba(139, 0, 0, 0.1); margin-top: 30px;
+input,textarea,select{
+  width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+  font-size:14px;font-family:inherit;background:var(--bg);color:var(--ink);
+  transition:all .2s var(--ease);
 }
-.footer .om-line { font-size: 16px; color: var(--maroon); margin-bottom: 8px; }
+input:focus,textarea:focus,select:focus{
+  outline:none;border-color:var(--saffron);background:var(--card);
+  box-shadow:0 0 0 3px rgba(217,119,6,.15);
+}
+textarea{min-height:84px;resize:vertical;line-height:1.5}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.row{grid-template-columns:1fr}}
 
-/* LOADER */
-.loader {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.8); z-index: 3000;
-  display: none; align-items: center; justify-content: center;
-  flex-direction: column; color: white;
+/* Photo upload */
+.photo-upload{
+  width:110px;height:130px;border:2px dashed var(--line-strong);
+  border-radius:10px;display:grid;place-items:center;cursor:pointer;
+  background:var(--bg);color:var(--ink-soft);font-size:11px;text-align:center;
+  overflow:hidden;margin-bottom:8px;transition:all .2s var(--ease);
+  position:relative;
 }
-.loader.show { display: flex; }
-.loader-spinner {
-  width: 50px; height: 50px;
-  border: 4px solid rgba(212, 160, 23, 0.3);
-  border-top-color: var(--gold); border-radius: 50%;
-  animation: spin 1s linear infinite; margin-bottom: 16px;
+.photo-upload:hover{border-color:var(--saffron);color:var(--saffron);background:var(--saffron-light)}
+.photo-upload img{width:100%;height:100%;object-fit:cover}
+.photo-upload .remove-photo{
+  position:absolute;top:4px;right:4px;width:22px;height:22px;
+  background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;
+  cursor:pointer;font-size:12px;display:grid;place-items:center;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 
-/* SHARE SHEET */
-.share-sheet {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: white; border-radius: 20px 20px 0 0;
-  padding: 20px; z-index: 2500;
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
-  transform: translateY(100%); transition: transform 0.3s;
+/* ===== Theme picker ===== */
+.theme-picker{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
+.theme-chip{
+  aspect-ratio:1;border-radius:50%;cursor:pointer;
+  border:3px solid transparent;transition:all .2s var(--ease);
+  position:relative;box-shadow:var(--shadow-sm);
 }
-.share-sheet.show { transform: translateY(0); }
-.share-sheet h3 { text-align: center; color: var(--maroon); margin-bottom: 16px; }
-.share-options {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+.theme-chip:hover{transform:scale(1.1)}
+.theme-chip.active{border-color:var(--ink)}
+.theme-chip.active::after{
+  content:"✓";position:absolute;inset:0;display:grid;place-items:center;
+  color:#fff;font-weight:900;font-size:14px;text-shadow:0 1px 2px rgba(0,0,0,.4);
 }
-.share-option {
-  text-align: center; padding: 12px 8px;
-  border-radius: 10px; cursor: pointer;
-  background: var(--cream); border: 1px solid #eee;
+
+/* ===== Template picker ===== */
+.template-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.template-chip{
+  aspect-ratio:3/4;border:2px solid var(--line);border-radius:10px;
+  cursor:pointer;overflow:hidden;position:relative;
+  background:var(--card);transition:all .2s var(--ease);
+  display:flex;flex-direction:column;
 }
-.share-option .ico { font-size: 28px; display: block; margin-bottom: 4px; }
-.share-option .label { font-size: 11px; font-weight: 600; }
+.template-chip:active{transform:scale(.95)}
+.template-chip.active{border-color:var(--saffron);box-shadow:0 0 0 3px rgba(217,119,6,.2)}
+.template-chip .tpl-preview{flex:1;position:relative;overflow:hidden}
+.template-chip .tpl-label{font-size:10px;font-weight:700;padding:4px;text-align:center;border-top:1px solid var(--line);background:var(--card)}
+
+/* Template previews */
+.tpl-classic{background:#fff}
+.tpl-classic::before{content:"";position:absolute;top:0;left:0;right:0;height:20%;background:var(--saffron)}
+.tpl-classic::after{content:"";position:absolute;top:30%;left:10%;right:10%;height:4px;background:#ddd;box-shadow:0 10px 0 #ddd,0 20px 0 #ddd,0 30px 0 #ddd}
+
+.tpl-modern{background:#fff;display:flex}
+.tpl-modern::before{content:"";width:35%;height:100%;background:var(--maroon)}
+.tpl-modern::after{content:"";position:absolute;top:30%;right:10%;width:50%;height:4px;background:#ddd;box-shadow:0 10px 0 #ddd,0 20px 0 #ddd}
+
+.tpl-minimal{background:#fff}
+.tpl-minimal::before{content:"";position:absolute;top:15%;left:50%;transform:translateX(-50%);width:30%;height:2px;background:#333}
+.tpl-minimal::after{content:"";position:absolute;top:40%;left:20%;right:20%;height:3px;background:#eee;box-shadow:0 8px 0 #eee,0 16px 0 #eee,0 24px 0 #eee}
+
+/* ===== Preview ===== */
+.preview-wrap{position:relative}
+.preview-toolbar{
+  display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center;
+}
+.tool-btn{
+  padding:7px 12px;font-size:11px;border:1px solid var(--line);
+  background:var(--card);border-radius:8px;cursor:pointer;color:var(--ink);
+  font-weight:600;transition:all .15s;font-family:inherit;
+  display:inline-flex;align-items:center;gap:4px;
+}
+.tool-btn:active{transform:scale(.95)}
+.tool-btn:hover{border-color:var(--saffron);color:var(--saffron)}
+.zoom-display{font-size:11px;color:var(--ink-soft);font-weight:600;min-width:38px;text-align:center}
+
+.preview-box{
+  background:var(--bg-2);border-radius:12px;padding:16px;
+  overflow-x:auto;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+.preview{
+  background:#fff;color:#000;min-height:500px;padding:28px;
+  border-radius:8px;box-shadow:var(--shadow-lg);font-size:12px;
+  overflow:hidden;position:relative;
+  transform-origin:top center;
+  transition:transform .25s var(--ease);
+  width:560px;max-width:none;
+  margin:0 auto;
+}
+.preview.watermark::after{
+  content:"ShubhCard";position:absolute;inset:0;
+  display:grid;place-items:center;
+  font-family:'Fraunces',serif;font-size:100px;font-weight:800;
+  color:rgba(217,119,6,.05);transform:rotate(-30deg);
+  pointer-events:none;letter-spacing:.1em;white-space:nowrap;
+}
+
+/* ===== Actions Bar ===== */
+.actions{
+  position:fixed;bottom:0;left:0;right:0;z-index:40;
+  background:color-mix(in srgb,var(--bg) 90%,transparent);
+  backdrop-filter:blur(16px) saturate(180%);
+  -webkit-backdrop-filter:blur(16px) saturate(180%);
+  border-top:1px solid var(--line);
+  padding:12px 16px calc(12px + var(--safe-bottom));
+  display:none;gap:8px;
+  box-shadow:0 -10px 40px rgba(0,0,0,.06);
+}
+.editor.active~.actions{display:flex}
+.actions .btn{flex:1}
+.btn{
+  padding:14px 16px;border:none;border-radius:12px;
+  font-size:14px;font-weight:700;cursor:pointer;
+  font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all .15s var(--ease);
+  user-select:none;
+}
+.btn:active{transform:scale(.96)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--saffron),var(--saffron-deep));
+  color:#FFF8EE;box-shadow:0 6px 16px -4px rgba(217,119,6,.5);
+}
+.btn-primary:hover{box-shadow:0 8px 20px -4px rgba(217,119,6,.6)}
+.btn-ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--saffron);color:var(--saffron)}
+
+/* ===== Toast ===== */
+.toast{
+  position:fixed;bottom:calc(100px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:30px;
+  font-size:13px;font-weight:600;z-index:100;
+  transition:all .3s var(--ease);box-shadow:var(--shadow-lg);
+  opacity:0;pointer-events:none;
+  max-width:90%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== Modal ===== */
+.modal-backdrop{
+  position:fixed;inset:0;z-index:90;
+  background:rgba(26,18,8,.6);backdrop-filter:blur(6px);
+  display:none;align-items:flex-end;justify-content:center;
+  animation:fadeBg .2s var(--ease);
+}
+.modal-backdrop.show{display:flex}
+@keyframes fadeBg{from{opacity:0}}
+
+.modal{
+  background:var(--card);width:100%;max-width:500px;
+  border-radius:20px 20px 0 0;padding:24px 20px calc(40px + var(--safe-bottom));
+  animation:slideUp .35s var(--ease);
+  max-height:85vh;overflow-y:auto;
+  position:relative;
+}
+@media(min-width:640px){
+  .modal-backdrop{align-items:center;padding:20px}
+  .modal{border-radius:20px;max-height:80vh}
+}
+@keyframes slideUp{from{transform:translateY(100%)}}
+.modal h3{font-family:'Fraunces',serif;font-size:22px;margin-bottom:8px}
+.modal p{color:var(--ink-soft);margin-bottom:14px;font-size:13px}
+.modal-close{
+  position:absolute;top:14px;right:14px;width:32px;height:32px;
+  background:var(--bg-2);border:none;font-size:20px;cursor:pointer;color:var(--ink);
+  border-radius:50%;display:grid;place-items:center;
+}
+.modal-close:active{transform:scale(.9)}
+.modal-handle{
+  width:40px;height:4px;background:var(--line-strong);
+  border-radius:2px;margin:-10px auto 16px;
+}
+@media(min-width:640px){.modal-handle{display:none}}
+
+/* ===== Pro feature list ===== */
+.pro-feature{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 0;
+  border-bottom:1px dashed var(--line);
+}
+.pro-feature:last-child{border:none}
+.pro-feature .check{
+  color:var(--sage);font-size:18px;flex-shrink:0;
+  background:rgba(77,124,15,.12);width:26px;height:26px;
+  border-radius:50%;display:grid;place-items:center;
+}
+.pro-feature strong{display:block;font-size:14px;margin-bottom:2px}
+.pro-feature span{font-size:12px;color:var(--ink-soft)}
+
+/* ===== PDF Progress Overlay ===== */
+.pdf-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(26,18,8,.85);backdrop-filter:blur(8px);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  color:#FFF8EE;padding:20px;
+}
+.pdf-overlay.show{display:flex;animation:fadeBg .2s}
+.pdf-spinner{
+  width:60px;height:60px;border:4px solid rgba(255,248,238,.2);
+  border-top-color:var(--saffron);border-radius:50%;
+  animation:spin 1s linear infinite;margin-bottom:20px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pdf-progress{font-family:'Fraunces',serif;font-size:20px;margin-bottom:6px}
+.pdf-status{font-size:13px;opacity:.8}
+
+/* ===== Recent docs ===== */
+.recent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.recent-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:12px;cursor:pointer;transition:all .2s var(--ease);
+  position:relative;
+}
+.recent-card:hover{border-color:var(--saffron);transform:translateY(-2px);box-shadow:var(--shadow)}
+.recent-card h4{font-size:13px;font-weight:700;margin-bottom:2px}
+.recent-card p{font-size:10px;color:var(--ink-soft)}
+.recent-card time{font-size:9px;color:var(--ink-muted);display:block;margin-top:4px;font-weight:500}
+.recent-card .recent-emoji{font-size:22px;margin-bottom:6px;display:block}
+.recent-del{
+  position:absolute;top:6px;right:6px;width:22px;height:22px;
+  background:transparent;border:none;color:var(--ink-muted);cursor:pointer;
+  border-radius:6px;font-size:12px;opacity:0;transition:all .2s;
+  display:grid;place-items:center;
+}
+.recent-card:hover .recent-del{opacity:1}
+.recent-del:hover{background:rgba(220,38,38,.1);color:#DC2626}
+
+/* ===== Install prompt ===== */
+.install-banner{
+  background:linear-gradient(135deg,var(--saffron),var(--maroon));
+  color:#fff;padding:14px 16px;border-radius:var(--r);
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+  box-shadow:var(--shadow);
+}
+.install-banner .ib-icon{font-size:28px}
+.install-banner .ib-text{flex:1;font-size:13px}
+.install-banner .ib-text strong{display:block;margin-bottom:2px;font-size:14px}
+.install-banner button{
+  background:#fff;color:var(--maroon);border:none;padding:8px 16px;
+  border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;
+}
+.install-banner .ib-close{
+  background:transparent;color:#fff;width:28px;padding:0;font-size:18px;
+}
+
+/* ===== Mobile optimizations ===== */
+@media(max-width:640px){
+  .hero{padding:22px 18px}
+  .hero h1{font-size:26px}
+  .hero p{font-size:13px}
+  .doc-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .doc-card{padding:14px 12px}
+  .doc-card .emoji{font-size:26px}
+  .preview{padding:24px;width:100%;min-width:320px}
+  .preview-box{padding:10px}
+  .shell{padding:14px 14px calc(110px + var(--safe-bottom))}
+  .section-title h2{font-size:20px}
+  .theme-picker{grid-template-columns:repeat(6,1fr)}
+  .recent-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:380px){
+  .logo-text small{display:none}
+  .hero h1{font-size:22px}
+}
+
+/* ===== Print ===== */
+@media print{
+  .topbar,.actions,.editor-head,.card:not(.preview-card),.preview-toolbar,.bg-pattern{display:none!important}
+  .preview{box-shadow:none;padding:0;width:100%!important;transform:none!important}
+  body{background:#fff}
+  .shell{padding:0}
+}
+
+/* ===== Ripple effect ===== */
+.ripple{position:relative;overflow:hidden}
+.ripple-effect{
+  position:absolute;border-radius:50%;transform:scale(0);
+  background:rgba(255,255,255,.4);animation:ripple .6s var(--ease);
+  pointer-events:none;
+}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="header-inner">
-    <div class="logo">
-      <div class="logo-icon">ॐ</div>
+<div class="bg-pattern"></div>
+
+<!-- ============ TOPBAR ============ -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="logo" onclick="goHome()">
+      <div class="logo-mark">श</div>
       <div class="logo-text">
-        <h1>ShubhCard</h1>
-        <p>शुभ कार्ड निर्माता</p>
+        <strong>ShubhCard<span class="pro-tag">PRO</span></strong>
+        <small>हिंदी डॉक्यूमेंट मेकर</small>
       </div>
     </div>
-    <div class="header-actions">
-      <button class="btn-premium" onclick="openPremium()">👑 Premium</button>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="toggleTheme()" title="Theme" id="themeBtn">🌙</button>
+      <button class="icon-btn" onclick="openModal('proModal')" title="Pro">⭐</button>
+      <button class="icon-btn" onclick="openModal('menuModal')" title="Menu">⋮</button>
     </div>
   </div>
 </header>
 
-<section class="hero">
-  <h2>हर शुभ अवसर के लिए</h2>
-  <p>Bio-Data, Shadi Card, Shok Patra और बहुत कुछ — सिर्फ़ कुछ ही पल में बनाएं</p>
-  <div class="hero-divider"><span></span><span class="om">❁</span><span></span></div>
+<!-- ============ HOME VIEW ============ -->
+<main class="shell home-view" id="homeView">
+
+  <div class="install-banner" id="installBanner" style="display:none">
+    <div class="ib-icon">📱</div>
+    <div class="ib-text">
+      <strong>App install karein</strong>
+      Home screen pe add karo, offline bhi kaam karega
+    </div>
+    <button onclick="installPWA()">Install</button>
+    <button class="ib-close" onclick="dismissInstall()">×</button>
+  </div>
+
+  <div class="hero">
+    <span class="badge">🇮🇳 Made in India</span>
+    <h1 class="display">India's Best Hindi<br>Document Maker</h1>
+    <p class="hindi">Resume, Biodata, Visiting Card, ID Card — सब कुछ 1 मिनट में बनाएँ।</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>15+</strong><span>Documents</span></div>
+      <div class="hero-stat"><strong>12</strong><span>Themes</span></div>
+      <div class="hero-stat"><strong>3×</strong><span>Templates</span></div>
+      <div class="hero-stat"><strong>🎤</strong><span>Voice Input</span></div>
+    </div>
+  </div>
+
+  <!-- Recent documents -->
+  <div id="recentSection" style="display:none">
+    <div class="section-title">
+      <h2 class="display">Recent Documents</h2>
+      <button class="tool-btn" onclick="clearRecent()" style="font-size:10px">Clear All</button>
+    </div>
+    <div class="recent-grid" id="recentGrid"></div>
+  </div>
+
+  <div class="section-title">
+    <h2 class="display">Create New</h2>
+    <span class="sub">15+ Templates</span>
+  </div>
+
+  <div class="search-wrap">
+    <span style="color:var(--ink-muted)">🔍</span>
+    <input type="text" placeholder="Search — resume, biodata, invoice..." id="docSearch" oninput="filterDocs()">
+  </div>
+
+  <div class="cat-scroll" id="categoryChips">
+    <div class="cat-chip active" data-cat="all" onclick="filterCat('all')">All</div>
+    <div class="cat-chip" data-cat="career" onclick="filterCat('career')">📄 Career</div>
+    <div class="cat-chip" data-cat="personal" onclick="filterCat('personal')">👤 Personal</div>
+    <div class="cat-chip" data-cat="business" onclick="filterCat('business')">💼 Business</div>
+    <div class="cat-chip" data-cat="legal" onclick="filterCat('legal')">⚖️ Legal</div>
+    <div class="cat-chip" data-cat="receipt" onclick="filterCat('receipt')">🧾 Finance</div>
+  </div>
+
+  <div class="doc-grid" id="docGrid"></div>
+
+  <div class="section-title">
+    <h2 class="display">Why ShubhCard?</h2>
+  </div>
+  <div class="card">
+    <div class="pro-feature"><span class="check">✓</span><div><strong>हिंदी First Design</strong><span>Devanagari fonts, proper layout</span></div></div>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>Voice Typing</strong><span>बोल कर form भरें — Hindi + English</span></div></div>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>Auto-Save</strong><span>आपका data कभी नहीं खोएगा</span></div></div>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>High-Quality PDF</strong><span>Print-ready, professional output</span></div></div>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>100% Offline</strong><span>PWA, internet ke bina bhi kaam</span></div></div>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>Share on WhatsApp</strong><span>Direct one-click share</span></div></div>
+  </div>
+
+</main>
+
+<!-- ============ EDITOR VIEW ============ -->
+<section class="shell editor" id="editorView">
+  <div class="editor-head">
+    <button class="back-btn" onclick="goHome()" aria-label="Back">←</button>
+    <h2 id="editorTitle">Resume</h2>
+    <span class="save-pill" id="savePill">Saved</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="content" onclick="switchTab('content')">✎ Content</button>
+    <button class="tab" data-tab="design" onclick="switchTab('design')">🎨 Design</button>
+    <button class="tab" data-tab="preview" onclick="switchTab('preview')">👁 Preview</button>
+  </div>
+
+  <div class="editor-layout">
+    <div id="formPanel">
+      <div class="card" id="contentPanel">
+        <h3>Details भरें</h3>
+        <div id="formFields"></div>
+      </div>
+
+      <div class="card" id="designPanel" style="display:none;margin-top:16px">
+        <h3>Template चुनें</h3>
+        <div class="template-picker" id="templatePicker">
+          <div class="template-chip active" data-tpl="classic" onclick="setTemplate('classic')">
+            <div class="tpl-preview tpl-classic"></div>
+            <div class="tpl-label">Classic</div>
+          </div>
+          <div class="template-chip" data-tpl="modern" onclick="setTemplate('modern')">
+            <div class="tpl-preview tpl-modern"></div>
+            <div class="tpl-label">Modern</div>
+          </div>
+          <div class="template-chip" data-tpl="minimal" onclick="setTemplate('minimal')">
+            <div class="tpl-preview tpl-minimal"></div>
+            <div class="tpl-label">Minimal</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px">Color Theme</h3>
+        <div class="theme-picker" id="themePicker"></div>
+
+        <h3 style="margin-top:22px">Paper Size</h3>
+        <div style="display:flex;gap:8px">
+          <button class="tool-btn" onclick="setPaperSize('a4')" id="paperA4">A4</button>
+          <button class="tool-btn" onclick="setPaperSize('letter')" id="paperLetter">Letter</button>
+          <button class="tool-btn" onclick="setPaperSize('a5')" id="paperA5">A5</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-wrap">
+      <div class="card">
+        <h3>Live Preview</h3>
+        <div class="preview-toolbar">
+          <button class="tool-btn" onclick="zoomPreview(-.1)">−</button>
+          <span class="zoom-display" id="zoomDisplay">100%</span>
+          <button class="tool-btn" onclick="zoomPreview(.1)">+</button>
+          <button class="tool-btn" onclick="zoomPreview('fit')">Fit</button>
+          <button class="tool-btn" onclick="toggleWatermark()" id="wmBtn" title="Watermark">💧</button>
+        </div>
+        <div class="preview-box">
+          <div class="preview" id="preview"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<div class="ad-slot"><div class="ad-container">Advertisement</div></div>
-
-<h2 class="section-title">सेवाएं चुनें</h2>
-<div class="categories" id="categoryGrid"></div>
-
-<h2 class="section-title">क्यों ShubhCard?</h2>
-<div class="features">
-  <div class="feature-item"><span class="ico">🆓</span>100% Free</div>
-  <div class="feature-item"><span class="ico">✏️</span>Full Edit</div>
-  <div class="feature-item"><span class="ico">🎤</span>Voice Input</div>
-  <div class="feature-item"><span class="ico">📲</span>WhatsApp Share</div>
-  <div class="feature-item"><span class="ico">🎨</span>Color Customize</div>
-  <div class="feature-item"><span class="ico">🔒</span>No Signup</div>
-  <div class="feature-item"><span class="ico">➕</span>Custom Fields</div>
-  <div class="feature-item"><span class="ico">📄</span>HD PDF + JPG</div>
+<!-- ============ ACTIONS ============ -->
+<div class="actions">
+  <button class="btn btn-ghost ripple" onclick="shareDocument()">📤 Share</button>
+  <button class="btn btn-primary ripple" onclick="downloadPDF()">⬇ Download PDF</button>
 </div>
 
-<div class="ad-slot"><div class="ad-container">Advertisement</div></div>
+<!-- ============ PDF LOADING ============ -->
+<div class="pdf-overlay" id="pdfOverlay">
+  <div class="pdf-spinner"></div>
+  <div class="pdf-progress" id="pdfProgress">Tayyar ho raha hai...</div>
+  <div class="pdf-status" id="pdfStatus">High quality PDF banaya ja raha hai</div>
+</div>
 
-<footer class="footer">
-  <div class="om-line">❁ ॐ श्री गणेशाय नमः ❁</div>
-  <p>ShubhCard © 2026 | Made with ❤️ in Bharat</p>
-</footer>
-
-<!-- BUILDER MODAL -->
-<div class="modal-overlay" id="builderModal">
+<!-- ============ MODALS ============ -->
+<div class="modal-backdrop" id="proModal" onclick="if(event.target===this)closeModal('proModal')">
   <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="builderTitle">Builder</div>
-      <button class="btn-close" onclick="closeBuilder()">✕</button>
-    </div>
-    <div class="modal-body" id="builderBody"></div>
-    <div class="action-bar">
-      <button class="btn btn-secondary" onclick="previewDoc()"><span class="ico">👁️</span>Preview</button>
-      <button class="btn btn-primary" onclick="downloadPDF()"><span class="ico">📄</span>PDF</button>
-      <button class="btn btn-info" onclick="downloadJPG()"><span class="ico">🖼️</span>JPG</button>
-      <button class="btn btn-success" onclick="openShareSheet()"><span class="ico">📲</span>Share</button>
-    </div>
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('proModal')">×</button>
+    <h3>⭐ ShubhCard Pro</h3>
+    <p>₹99/month — Sab features unlock karo</p>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>Watermark हटाएँ</strong><span>Clean professional PDFs</span></div></div>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>HD PDF Export</strong><span>Print-ready 300 DPI</span></div></div>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>Premium Templates</strong><span>10+ exclusive designs</span></div></div>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>Ad-free</strong><span>No ads, pure focus</span></div></div>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>Unlimited Documents</strong><span>No limits</span></div></div>
+    <div class="pro-feature"><span class="check">✓</span><div><strong>Cloud Backup</strong><span>Coming soon</span></div></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:20px" onclick="upgradePro()">Upgrade — ₹99/month</button>
+    <p style="text-align:center;font-size:11px;color:var(--ink-muted);margin-top:10px">Razorpay secure payment</p>
   </div>
 </div>
 
-<!-- PREMIUM MODAL -->
-<div class="modal-overlay" id="premiumModal">
-  <div class="modal premium-modal">
-    <div class="premium-hero">
-      <div class="crown">👑</div>
-      <h2>ShubhCard Premium</h2>
-      <p>सभी Premium Features Unlock करें</p>
-    </div>
-    <ul class="premium-features">
-      <li>कोई Ads नहीं</li>
-      <li>50+ Premium Templates</li>
-      <li>HD Quality PDF</li>
-      <li>Watermark नहीं</li>
-      <li>Cloud Save & Edit</li>
-      <li>Unlimited Downloads</li>
-      <li>Priority Support</li>
-    </ul>
-    <div class="price-box">
-      <div class="price">₹99<small>/महीना</small></div>
-      <div style="font-size:11px; color:#888; margin-top:4px">या ₹799/साल (33% बचत)</div>
-      <button class="btn-subscribe" onclick="subscribePremium()">Premium लें</button>
-      <button onclick="closePremium()" style="background:none;border:none;color:#888;font-size:12px;margin-top:8px;cursor:pointer;font-family:inherit">बाद में</button>
-    </div>
+<div class="modal-backdrop" id="menuModal" onclick="if(event.target===this)closeModal('menuModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('menuModal')">×</button>
+    <h3>Menu</h3>
+    <div class="pro-feature" onclick="exportAllData()" style="cursor:pointer"><span class="check">💾</span><div><strong>Backup Data</strong><span>Apna data JSON mein export karo</span></div></div>
+    <div class="pro-feature" onclick="importData()" style="cursor:pointer"><span class="check">📥</span><div><strong>Restore Backup</strong><span>Previous data import karo</span></div></div>
+    <div class="pro-feature" onclick="document.getElementById('importFile').click()" style="cursor:pointer;display:none"><input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)"></div>
+    <div class="pro-feature" onclick="showAbout()" style="cursor:pointer"><span class="check">ℹ️</span><div><strong>About</strong><span>ShubhCard Pro v2.1</span></div></div>
+    <div class="pro-feature" onclick="window.open('https://wa.me/?text=' + encodeURIComponent('Check out ShubhCard — Hindi Document Maker: https://shubhcard.vercel.app'))" style="cursor:pointer"><span class="check">💬</span><div><strong>Share with Friends</strong><span>WhatsApp pe bhejo</span></div></div>
+    <div class="pro-feature" onclick="if(confirm('Sab data delete ho jayega. Sure?')){localStorage.clear();location.reload()}" style="cursor:pointer"><span class="check" style="background:rgba(220,38,38,.12);color:#DC2626">🗑</span><div><strong>Reset App</strong><span>Sab data clear karo</span></div></div>
   </div>
 </div>
 
-<!-- ADD CUSTOM FIELD MODAL -->
-<div class="modal-overlay" id="addFieldModal">
-  <div class="modal mini-modal">
-    <h3>➕ नया Field जोड़ें</h3>
-    <div class="form-group">
-      <label>Field का नाम (label)</label>
-      <input type="text" id="newFieldLabel" placeholder="जैसे: दादा जी का नाम, Property">
-    </div>
-    <div class="form-group">
-      <label>Section चुनें</label>
-      <select id="newFieldSection"></select>
-    </div>
-    <div class="form-group">
-      <label>Type</label>
-      <select id="newFieldType">
-        <option value="text">Text (एक लाइन)</option>
-        <option value="textarea">Long Text (कई लाइन)</option>
-        <option value="number">Number</option>
-        <option value="date">Date</option>
-        <option value="tel">Phone</option>
-      </select>
-    </div>
-    <div class="mini-modal-actions">
-      <button class="cancel" onclick="closeAddField()">रद्द करें</button>
-      <button class="save" onclick="saveCustomField()">जोड़ें</button>
-    </div>
-  </div>
-</div>
-
-<!-- SHARE SHEET -->
-<div class="share-sheet" id="shareSheet">
-  <h3>📤 Share करें</h3>
-  <div class="share-options">
-    <div class="share-option" onclick="shareWhatsAppPDF()">
-      <span class="ico">💬</span>
-      <span class="label">WhatsApp</span>
-    </div>
-    <div class="share-option" onclick="shareGeneric()">
-      <span class="ico">📤</span>
-      <span class="label">Other Apps</span>
-    </div>
-    <div class="share-option" onclick="copyShareLink()">
-      <span class="ico">🔗</span>
-      <span class="label">Copy Link</span>
-    </div>
-    <div class="share-option" onclick="printDoc()">
-      <span class="ico">🖨️</span>
-      <span class="label">Print</span>
-    </div>
-  </div>
-  <button onclick="closeShareSheet()" style="width:100%; margin-top:16px; padding:12px; background:#eee; border:none; border-radius:10px; font-family:inherit; font-weight:600;">रद्द करें</button>
-</div>
-
-<div class="toast" id="toast">Message</div>
-
-<div class="loader" id="loader">
-  <div class="loader-spinner"></div>
-  <div id="loaderText">PDF बन रहा है...</div>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ============================================
-// CONSTANTS
-// ============================================
-const CATEGORIES = [
-  { id: 'biodata', icon: '💍', name: 'शादी Bio-Data', nameEn: 'Marriage Biodata', badge: 'hot' },
-  { id: 'shadicard', icon: '🪔', name: 'शादी कार्ड', nameEn: 'Wedding Card', badge: 'hot' },
-  { id: 'shokpatra', icon: '🕊️', name: 'शोक पत्र', nameEn: 'Condolence', badge: 'new' },
-  { id: 'birthday', icon: '🎂', name: 'जन्मदिन कार्ड', nameEn: 'Birthday Card' },
-  { id: 'anniversary', icon: '💐', name: 'सालगिरह', nameEn: 'Anniversary' },
-  { id: 'mundan', icon: '👶', name: 'मुंडन / नामकरण', nameEn: 'Mundan/Namkaran' },
-  { id: 'grihapravesh', icon: '🏠', name: 'गृह प्रवेश', nameEn: 'Griha Pravesh' },
-  { id: 'visiting', icon: '💼', name: 'विजिटिंग कार्ड', nameEn: 'Visiting Card' },
-  { id: 'resume', icon: '📋', name: 'Resume / CV', nameEn: 'Resume Maker' },
-  { id: 'certificate', icon: '🏆', name: 'प्रमाण पत्र', nameEn: 'Certificate' },
-  { id: 'receipt', icon: '🧾', name: 'रसीद / बिल', nameEn: 'Receipt/Bill' },
-  { id: 'affidavit', icon: '📜', name: 'शपथ पत्र', nameEn: 'Affidavit' }
+'use strict';
+
+/* ============================================================
+   DATA: Documents, Themes, Schemas
+   ============================================================ */
+
+const DOCS = [
+  {id:'resume',emoji:'📄',title:'Resume',desc:'Professional CV',badge:'hot',cat:'career'},
+  {id:'biodata',emoji:'💍',title:'Marriage Biodata',desc:'शादी के लिए',badge:'new',cat:'personal'},
+  {id:'vcard',emoji:'💼',title:'Visiting Card',desc:'With QR code',badge:'new',cat:'business'},
+  {id:'idcard',emoji:'🪪',title:'ID Card',desc:'Student/Employee',badge:'new',cat:'personal'},
+  {id:'certificate',emoji:'🏆',title:'Certificate',desc:'Award/Achievement',cat:'personal'},
+  {id:'invoice',emoji:'🧾',title:'Invoice',desc:'Bill / रसीद',cat:'receipt'},
+  {id:'letter',emoji:'✉️',title:'Application Letter',desc:'आवेदन पत्र',cat:'career'},
+  {id:'affidavit',emoji:'⚖️',title:'Affidavit',desc:'शपथ पत्र',cat:'legal'},
+  {id:'nda',emoji:'🔒',title:'NDA',desc:'Non-disclosure',cat:'legal'},
+  {id:'rentagreement',emoji:'🏠',title:'Rent Agreement',desc:'किरायानामा',cat:'legal'},
+  {id:'noc',emoji:'📜',title:'NOC',desc:'No Objection Cert.',cat:'legal'},
+  {id:'experience',emoji:'🎓',title:'Experience Letter',desc:'अनुभव प्रमाण',cat:'career'},
+  {id:'offer',emoji:'📨',title:'Offer Letter',desc:'Job offer',cat:'career'},
+  {id:'receipt',emoji:'🧮',title:'Receipt',desc:'रसीद',cat:'receipt'},
+  {id:'quotation',emoji:'💰',title:'Quotation',desc:'Price quote',cat:'business'},
 ];
 
-// FORM SCHEMA - sections with editable fields
-const FORM_SCHEMAS = {
-  biodata: [
-    { id: 'photo', title: '📸 फोटो', removable: true, type: 'photo' },
-    { id: 'personal', title: '👤 व्यक्तिगत जानकारी', removable: false, fields: [
-      { name: 'name', label: 'नाम / Name', type: 'text', removable: false },
-      { name: 'dob', label: 'जन्म तिथि', type: 'date', removable: true },
-      { name: 'birthtime', label: 'जन्म समय', type: 'time', removable: true },
-      { name: 'birthplace', label: 'जन्म स्थान', type: 'text', removable: true },
-      { name: 'rashi', label: 'राशि', type: 'select', options: ['','मेष','वृषभ','मिथुन','कर्क','सिंह','कन्या','तुला','वृश्चिक','धनु','मकर','कुंभ','मीन'], removable: true },
-      { name: 'nakshatra', label: 'नक्षत्र', type: 'text', removable: true },
-      { name: 'height', label: 'कद / Height', type: 'text', placeholder: '5\'7"', removable: true },
-      { name: 'complexion', label: 'रंग / Complexion', type: 'select', options: ['','गोरा','गेहुंआ','सांवला'], removable: true },
-      { name: 'manglik', label: 'मांगलिक', type: 'select', options: ['','नहीं','हाँ','आंशिक'], removable: true },
-      { name: 'gotra', label: 'गोत्र', type: 'text', removable: true },
-      { name: 'caste', label: 'जाति / समाज', type: 'text', removable: true }
-    ]},
-    { id: 'education', title: '🎓 शिक्षा व पेशा', removable: true, fields: [
-      { name: 'education', label: 'उच्च शिक्षा', type: 'text', placeholder: 'B.Tech, MBA', removable: true },
-      { name: 'school', label: 'विद्यालय / कॉलेज', type: 'text', removable: true },
-      { name: 'occupation', label: 'व्यवसाय', type: 'text', removable: true },
-      { name: 'income', label: 'वार्षिक आय', type: 'text', removable: true },
-      { name: 'workplace', label: 'कार्यस्थल', type: 'text', removable: true }
-    ]},
-    { id: 'family', title: '👨‍👩‍👧 पारिवारिक जानकारी', removable: true, fields: [
-      { name: 'father', label: 'पिता का नाम', type: 'text', removable: true },
-      { name: 'fatherOcc', label: 'पिता का व्यवसाय', type: 'text', removable: true },
-      { name: 'mother', label: 'माता का नाम', type: 'text', removable: true },
-      { name: 'motherOcc', label: 'माता का व्यवसाय', type: 'text', removable: true },
-      { name: 'brothers', label: 'भाई', type: 'number', removable: true },
-      { name: 'sisters', label: 'बहन', type: 'number', removable: true }
-    ]},
-    { id: 'contact', title: '📞 संपर्क', removable: true, fields: [
-      { name: 'mobile', label: 'मोबाइल नंबर', type: 'tel', removable: true },
-      { name: 'email', label: 'ईमेल', type: 'email', removable: true },
-      { name: 'address', label: 'पूरा पता', type: 'textarea', removable: true }
-    ]}
-  ],
-  shadicard: [
-    { id: 'couple', title: '💑 वर-वधू', removable: false, fields: [
-      { name: 'groomName', label: 'वर का नाम', type: 'text', removable: false },
-      { name: 'groomFather', label: 'वर के पिता', type: 'text', removable: true },
-      { name: 'brideName', label: 'वधू का नाम', type: 'text', removable: false },
-      { name: 'brideFather', label: 'वधू के पिता', type: 'text', removable: true }
-    ]},
-    { id: 'event', title: '📅 कार्यक्रम', removable: false, fields: [
-      { name: 'weddingDate', label: 'विवाह तिथि', type: 'date', removable: false },
-      { name: 'weddingTime', label: 'मुहूर्त समय', type: 'time', removable: true },
-      { name: 'venue', label: 'विवाह स्थल', type: 'text', removable: true },
-      { name: 'venueAddress', label: 'पूरा पता', type: 'textarea', removable: true }
-    ]},
-    { id: 'others', title: '🎉 अन्य समारोह', removable: true, fields: [
-      { name: 'haldi', label: 'हल्दी', type: 'date', removable: true },
-      { name: 'mehendi', label: 'मेहंदी', type: 'date', removable: true },
-      { name: 'sangeet', label: 'संगीत', type: 'date', removable: true },
-      { name: 'reception', label: 'रिसेप्शन', type: 'date', removable: true }
-    ]},
-    { id: 'hosts', title: '🙏 निवेदक', removable: true, fields: [
-      { name: 'hosts', label: 'परिवार के नाम', type: 'textarea', removable: true },
-      { name: 'contact', label: 'संपर्क नंबर', type: 'tel', removable: true }
-    ]}
-  ],
-  shokpatra: [
-    { id: 'photo', title: '📸 फोटो', removable: true, type: 'photo' },
-    { id: 'deceased', title: '🕊️ दिवंगत की जानकारी', removable: false, fields: [
-      { name: 'deceasedName', label: 'दिवंगत का नाम', type: 'text', removable: false },
-      { name: 'relation', label: 'रिश्ता', type: 'text', removable: true },
-      { name: 'dob', label: 'जन्म तिथि', type: 'date', removable: true },
-      { name: 'dod', label: 'देहावसान तिथि', type: 'date', removable: true },
-      { name: 'age', label: 'आयु', type: 'number', removable: true }
-    ]},
-    { id: 'tervi', title: '🙏 तेरहवीं / श्राद्ध', removable: true, fields: [
-      { name: 'tervi', label: 'तेरहवीं तिथि', type: 'date', removable: true },
-      { name: 'terviTime', label: 'समय', type: 'time', removable: true },
-      { name: 'terviVenue', label: 'स्थान', type: 'text', removable: true },
-      { name: 'terviAddress', label: 'पता', type: 'textarea', removable: true }
-    ]},
-    { id: 'family', title: '👨‍👩‍👧 शोक संतप्त परिवार', removable: true, fields: [
-      { name: 'familyMembers', label: 'परिवार के सदस्य', type: 'textarea', removable: true },
-      { name: 'contactPerson', label: 'संपर्क व्यक्ति', type: 'text', removable: true },
-      { name: 'contactNumber', label: 'मोबाइल', type: 'tel', removable: true }
-    ]},
-    { id: 'message', title: '📝 संदेश', removable: true, fields: [
-      { name: 'message', label: 'श्रद्धांजलि संदेश', type: 'textarea', removable: true }
-    ]}
-  ],
-  birthday: [
-    { id: 'photo', title: '📸 फोटो', removable: true, type: 'photo' },
-    { id: 'main', title: '🎂 जन्मदिन विवरण', removable: false, fields: [
-      { name: 'name', label: 'नाम', type: 'text', removable: false },
-      { name: 'age', label: 'आयु', type: 'number', removable: true },
-      { name: 'date', label: 'तिथि', type: 'date', removable: false },
-      { name: 'time', label: 'समय', type: 'time', removable: true },
-      { name: 'venue', label: 'स्थान', type: 'text', removable: true },
-      { name: 'venueAddress', label: 'पता', type: 'textarea', removable: true },
-      { name: 'hosts', label: 'परिवार के नाम', type: 'text', removable: true },
-      { name: 'contact', label: 'संपर्क', type: 'tel', removable: true }
-    ]}
-  ],
-  anniversary: [
-    { id: 'main', title: '💐 सालगिरह विवरण', removable: false, fields: [
-      { name: 'husband', label: 'पति का नाम', type: 'text', removable: false },
-      { name: 'wife', label: 'पत्नी का नाम', type: 'text', removable: false },
-      { name: 'years', label: 'कितने वर्ष', type: 'number', removable: true },
-      { name: 'date', label: 'तिथि', type: 'date', removable: false },
-      { name: 'venue', label: 'स्थान', type: 'text', removable: true },
-      { name: 'hosts', label: 'निवेदक', type: 'textarea', removable: true },
-      { name: 'contact', label: 'संपर्क', type: 'tel', removable: true }
-    ]}
-  ],
-  mundan: [
-    { id: 'main', title: '👶 मुंडन / नामकरण', removable: false, fields: [
-      { name: 'childName', label: 'बच्चे का नाम', type: 'text', removable: false },
-      { name: 'ceremony', label: 'समारोह', type: 'select', options: ['मुंडन','नामकरण','अन्नप्राशन'], removable: false },
-      { name: 'date', label: 'तिथि', type: 'date', removable: false },
-      { name: 'time', label: 'समय', type: 'time', removable: true },
-      { name: 'venue', label: 'स्थान', type: 'text', removable: true },
-      { name: 'parents', label: 'माता-पिता का नाम', type: 'text', removable: true },
-      { name: 'contact', label: 'संपर्क', type: 'tel', removable: true }
-    ]}
-  ],
-  grihapravesh: [
-    { id: 'main', title: '🏠 गृह प्रवेश', removable: false, fields: [
-      { name: 'hostName', label: 'गृह स्वामी', type: 'text', removable: false },
-      { name: 'date', label: 'तिथि', type: 'date', removable: false },
-      { name: 'time', label: 'मुहूर्त समय', type: 'time', removable: true },
-      { name: 'newAddress', label: 'नया पता', type: 'textarea', removable: true },
-      { name: 'contact', label: 'संपर्क', type: 'tel', removable: true }
-    ]}
-  ],
-  visiting: [
-    { id: 'photo', title: '📸 फोटो', removable: true, type: 'photo' },
-    { id: 'main', title: '💼 विजिटिंग कार्ड', removable: false, fields: [
-      { name: 'name', label: 'नाम', type: 'text', removable: false },
-      { name: 'designation', label: 'पद', type: 'text', removable: true },
-      { name: 'company', label: 'कंपनी', type: 'text', removable: true },
-      { name: 'mobile', label: 'मोबाइल', type: 'tel', removable: true },
-      { name: 'email', label: 'ईमेल', type: 'email', removable: true },
-      { name: 'website', label: 'वेबसाइट', type: 'text', removable: true },
-      { name: 'address', label: 'पता', type: 'textarea', removable: true }
-    ]}
-  ],
+const THEMES = [
+  {id:'saffron',name:'केसरिया',color:'#D97706',accent:'#7C2D12'},
+  {id:'maroon',name:'मरून',color:'#991B1B',accent:'#450A0A'},
+  {id:'indigo',name:'इंडिगो',color:'#4338CA',accent:'#1E1B4B'},
+  {id:'emerald',name:'पन्ना',color:'#047857',accent:'#064E3B'},
+  {id:'gold',name:'सुनहरा',color:'#CA8A04',accent:'#713F12'},
+  {id:'rose',name:'गुलाबी',color:'#BE185D',accent:'#500724'},
+  {id:'sky',name:'आसमानी',color:'#0369A1',accent:'#0C4A6E'},
+  {id:'slate',name:'स्लेट',color:'#334155',accent:'#0F172A'},
+  {id:'teal',name:'टील',color:'#0F766E',accent:'#134E4A'},
+  {id:'violet',name:'वायलेट',color:'#6D28D9',accent:'#2E1065'},
+  {id:'amber',name:'एम्बर',color:'#B45309',accent:'#451A03'},
+  {id:'black',name:'काला',color:'#1F2937',accent:'#000000'},
+];
+
+const SCHEMAS = {
   resume: [
-    { id: 'photo', title: '📸 Photo', removable: true, type: 'photo' },
-    { id: 'personal', title: '📋 Personal Info', removable: false, fields: [
-      { name: 'name', label: 'Full Name', type: 'text', removable: false },
-      { name: 'email', label: 'Email', type: 'email', removable: true },
-      { name: 'mobile', label: 'Mobile', type: 'tel', removable: true },
-      { name: 'address', label: 'Address', type: 'textarea', removable: true },
-      { name: 'objective', label: 'Career Objective', type: 'textarea', removable: true }
+    {type:'photo',key:'photo',label:'Photo (optional)'},
+    {type:'text',key:'name',label:'पूरा नाम / Full Name',placeholder:'लोकेश पटेल',required:true},
+    {type:'text',key:'title',label:'पद / Title',placeholder:'Web Developer'},
+    {type:'row',fields:[
+      {type:'text',key:'phone',label:'Phone',placeholder:'+91 98765 43210'},
+      {type:'text',key:'email',label:'Email',placeholder:'you@email.com'},
     ]},
-    { id: 'edu', title: '🎓 Education', removable: true, fields: [
-      { name: 'education', label: 'Education Details', type: 'textarea', removable: true }
+    {type:'text',key:'address',label:'पता / Address',placeholder:'Bilaspur, Chhattisgarh'},
+    {type:'text',key:'linkedin',label:'LinkedIn / Portfolio URL',placeholder:'linkedin.com/in/...'},
+    {type:'textarea',key:'summary',label:'परिचय / Summary',placeholder:'अपने बारे में 2-3 lines...'},
+    {type:'textarea',key:'skills',label:'Skills (comma separated)',placeholder:'HTML, CSS, JavaScript, React, Git...'},
+    {type:'textarea',key:'experience',label:'अनुभव / Experience',placeholder:'Company Name - Role\n2023-2024\n• Key achievement 1\n• Key achievement 2'},
+    {type:'textarea',key:'education',label:'शिक्षा / Education',placeholder:'B.Com - DLS PG College (2023-2026)'},
+    {type:'textarea',key:'languages',label:'भाषा / Languages',placeholder:'Hindi, English, Chhattisgarhi'},
+  ],
+  biodata: [
+    {type:'photo',key:'photo',label:'Photo'},
+    {type:'text',key:'name',label:'नाम / Name',required:true},
+    {type:'row',fields:[
+      {type:'text',key:'dob',label:'जन्म तिथि / DOB',placeholder:'01/01/2000'},
+      {type:'text',key:'birthplace',label:'जन्म स्थान / Birth Place'},
     ]},
-    { id: 'exp', title: '💼 Experience & Skills', removable: true, fields: [
-      { name: 'experience', label: 'Work Experience', type: 'textarea', removable: true },
-      { name: 'skills', label: 'Skills', type: 'textarea', removable: true },
-      { name: 'languages', label: 'Languages', type: 'textarea', removable: true }
-    ]}
+    {type:'row',fields:[
+      {type:'text',key:'height',label:'ऊँचाई / Height',placeholder:"5'8\""},
+      {type:'text',key:'weight',label:'वज़न / Weight',placeholder:'65kg'},
+    ]},
+    {type:'row',fields:[
+      {type:'select',key:'religion',label:'धर्म / Religion',options:['Hindu','Muslim','Sikh','Christian','Jain','Buddhist']},
+      {type:'text',key:'caste',label:'जाति / Caste',placeholder:'Patel'},
+    ]},
+    {type:'row',fields:[
+      {type:'text',key:'gotra',label:'गोत्र / Gotra'},
+      {type:'select',key:'mangal',label:'मांगलिक',options:['','No','Yes']},
+    ]},
+    {type:'text',key:'education',label:'शिक्षा / Education'},
+    {type:'text',key:'occupation',label:'व्यवसाय / Occupation'},
+    {type:'text',key:'income',label:'आय / Annual Income',placeholder:'₹5 LPA'},
+    {type:'text',key:'father',label:'पिता का नाम / Father\'s Name'},
+    {type:'text',key:'fatherOcc',label:'पिता का व्यवसाय / Father\'s Occupation'},
+    {type:'text',key:'mother',label:'माता का नाम / Mother\'s Name'},
+    {type:'text',key:'motherOcc',label:'माता का व्यवसाय'},
+    {type:'text',key:'siblings',label:'भाई-बहन / Siblings'},
+    {type:'textarea',key:'address',label:'पता / Address'},
+    {type:'textarea',key:'contact',label:'संपर्क / Contact'},
   ],
-  certificate: [
-    { id: 'main', title: '🏆 प्रमाण पत्र', removable: false, fields: [
-      { name: 'recipient', label: 'नाम (किसे)', type: 'text', removable: false },
-      { name: 'reason', label: 'किस लिए', type: 'textarea', removable: true },
-      { name: 'date', label: 'तिथि', type: 'date', removable: true },
-      { name: 'issuer', label: 'जारीकर्ता', type: 'text', removable: true },
-      { name: 'place', label: 'स्थान', type: 'text', removable: true }
-    ]}
+  vcard: [
+    {type:'text',key:'name',label:'Name',required:true},
+    {type:'text',key:'title',label:'Designation'},
+    {type:'text',key:'company',label:'Company Name'},
+    {type:'row',fields:[
+      {type:'text',key:'phone',label:'Phone'},
+      {type:'text',key:'email',label:'Email'},
+    ]},
+    {type:'text',key:'website',label:'Website'},
+    {type:'textarea',key:'address',label:'Address'},
+    {type:'text',key:'tagline',label:'Tagline',placeholder:'Your brand in one line'},
   ],
-  receipt: [
-    { id: 'main', title: '🧾 रसीद', removable: false, fields: [
-      { name: 'receiptNo', label: 'रसीद नंबर', type: 'text', removable: true },
-      { name: 'date', label: 'तिथि', type: 'date', removable: true },
-      { name: 'receivedFrom', label: 'किस से प्राप्त', type: 'text', removable: false },
-      { name: 'amount', label: 'राशि', type: 'number', removable: false },
-      { name: 'amountWords', label: 'राशि शब्दों में', type: 'text', removable: true },
-      { name: 'purpose', label: 'किस लिए', type: 'textarea', removable: true },
-      { name: 'receivedBy', label: 'प्राप्तकर्ता', type: 'text', removable: true }
-    ]}
+  idcard: [
+    {type:'photo',key:'photo',label:'Photo'},
+    {type:'text',key:'orgName',label:'Organization Name',required:true},
+    {type:'text',key:'name',label:'Name',required:true},
+    {type:'text',key:'idNo',label:'ID Number'},
+    {type:'row',fields:[
+      {type:'text',key:'designation',label:'Designation/Class'},
+      {type:'text',key:'blood',label:'Blood Group'},
+    ]},
+    {type:'row',fields:[
+      {type:'text',key:'validFrom',label:'Valid From'},
+      {type:'text',key:'validTo',label:'Valid Till'},
+    ]},
+    {type:'text',key:'phone',label:'Phone'},
+    {type:'textarea',key:'address',label:'Address'},
+    {type:'text',key:'emergency',label:'Emergency Contact'},
   ],
-  affidavit: [
-    { id: 'main', title: '📜 शपथ पत्र', removable: false, fields: [
-      { name: 'name', label: 'नाम', type: 'text', removable: false },
-      { name: 'fatherName', label: 'पिता का नाम', type: 'text', removable: true },
-      { name: 'age', label: 'आयु', type: 'number', removable: true },
-      { name: 'address', label: 'पता', type: 'textarea', removable: true },
-      { name: 'declaration', label: 'घोषणा का विषय', type: 'textarea', removable: false },
-      { name: 'place', label: 'स्थान', type: 'text', removable: true },
-      { name: 'date', label: 'तिथि', type: 'date', removable: true }
-    ]}
-  ]
+  certificate:[
+    {type:'text',key:'orgName',label:'Organization',required:true},
+    {type:'text',key:'title',label:'Certificate Title',placeholder:'Certificate of Achievement'},
+    {type:'text',key:'name',label:'Recipient Name',required:true},
+    {type:'textarea',key:'reason',label:'For...',placeholder:'outstanding performance in...'},
+    {type:'text',key:'date',label:'Date'},
+    {type:'row',fields:[
+      {type:'text',key:'sign1',label:'Signatory 1'},
+      {type:'text',key:'sign2',label:'Signatory 2'},
+    ]},
+  ],
+  invoice:[
+    {type:'text',key:'businessName',label:'Business Name',required:true},
+    {type:'textarea',key:'businessAddress',label:'Business Address'},
+    {type:'text',key:'businessContact',label:'Business Contact/GSTIN'},
+    {type:'row',fields:[
+      {type:'text',key:'invoiceNo',label:'Invoice #'},
+      {type:'text',key:'date',label:'Date'},
+    ]},
+    {type:'text',key:'clientName',label:'Client Name'},
+    {type:'textarea',key:'clientAddress',label:'Client Address'},
+    {type:'textarea',key:'items',label:'Items (item | qty | price per line)',placeholder:'Web Development | 1 | 15000\nHosting | 1 | 2000'},
+    {type:'row',fields:[
+      {type:'text',key:'gst',label:'GST %',placeholder:'18'},
+      {type:'text',key:'discount',label:'Discount %',placeholder:'0'},
+    ]},
+    {type:'textarea',key:'notes',label:'Notes / Payment Terms'},
+  ],
+  letter:[
+    {type:'text',key:'to',label:'प्रति / To',placeholder:'The Manager, XYZ Company'},
+    {type:'text',key:'subject',label:'विषय / Subject',required:true},
+    {type:'text',key:'salutation',label:'संबोधन',placeholder:'महोदय / Sir'},
+    {type:'textarea',key:'body',label:'पत्र का मुख्य भाग / Body',placeholder:'आवेदन की पूरी जानकारी...'},
+    {type:'text',key:'closing',label:'समापन',placeholder:'आपका आज्ञाकारी'},
+    {type:'text',key:'name',label:'आपका नाम / Your Name'},
+    {type:'text',key:'date',label:'दिनांक / Date'},
+  ],
+  affidavit:[
+    {type:'text',key:'name',label:'Deponent Name',required:true},
+    {type:'text',key:'father',label:'Father/Husband Name'},
+    {type:'text',key:'age',label:'Age'},
+    {type:'textarea',key:'address',label:'Address'},
+    {type:'textarea',key:'content',label:'शपथ का विषय / Affidavit Content',placeholder:'मैं...सत्य प्रतिज्ञा करता हूँ कि...'},
+    {type:'text',key:'place',label:'Place'},
+    {type:'text',key:'date',label:'Date'},
+  ],
+  nda:[
+    {type:'text',key:'party1',label:'Party 1 (Disclosing)',required:true},
+    {type:'text',key:'party2',label:'Party 2 (Receiving)',required:true},
+    {type:'textarea',key:'purpose',label:'Purpose'},
+    {type:'text',key:'duration',label:'Duration',placeholder:'2 years'},
+    {type:'text',key:'jurisdiction',label:'Jurisdiction',placeholder:'Bilaspur, Chhattisgarh'},
+    {type:'text',key:'date',label:'Date'},
+  ],
+  rentagreement:[
+    {type:'text',key:'landlord',label:'मकान मालिक / Landlord',required:true},
+    {type:'text',key:'tenant',label:'किराएदार / Tenant',required:true},
+    {type:'textarea',key:'property',label:'संपत्ति विवरण / Property Details'},
+    {type:'row',fields:[
+      {type:'text',key:'rent',label:'मासिक किराया / Monthly Rent'},
+      {type:'text',key:'deposit',label:'Security Deposit'},
+    ]},
+    {type:'row',fields:[
+      {type:'text',key:'duration',label:'अवधि / Duration'},
+      {type:'text',key:'startDate',label:'Start Date'},
+    ]},
+    {type:'textarea',key:'terms',label:'अतिरिक्त शर्तें / Additional Terms'},
+  ],
+  noc:[
+    {type:'text',key:'issuer',label:'Issuing Authority/Person',required:true},
+    {type:'text',key:'recipient',label:'NOC For (Name)',required:true},
+    {type:'textarea',key:'purpose',label:'Purpose of NOC'},
+    {type:'textarea',key:'details',label:'Additional Details'},
+    {type:'text',key:'date',label:'Date'},
+  ],
+  experience:[
+    {type:'text',key:'company',label:'Company Name',required:true},
+    {type:'text',key:'employee',label:'Employee Name',required:true},
+    {type:'text',key:'designation',label:'Designation'},
+    {type:'row',fields:[
+      {type:'text',key:'from',label:'From Date'},
+      {type:'text',key:'to',label:'To Date'},
+    ]},
+    {type:'textarea',key:'responsibilities',label:'Responsibilities/Remarks'},
+    {type:'text',key:'issuer',label:'Issued By'},
+  ],
+  offer:[
+    {type:'text',key:'company',label:'Company Name',required:true},
+    {type:'text',key:'candidate',label:'Candidate Name',required:true},
+    {type:'text',key:'position',label:'Position Offered'},
+    {type:'text',key:'salary',label:'Salary (CTC)'},
+    {type:'text',key:'joining',label:'Joining Date'},
+    {type:'textarea',key:'terms',label:'Terms & Conditions'},
+    {type:'text',key:'issuer',label:'Issued By / HR'},
+  ],
+  receipt:[
+    {type:'text',key:'businessName',label:'Business Name',required:true},
+    {type:'text',key:'receiptNo',label:'Receipt No.'},
+    {type:'text',key:'date',label:'Date'},
+    {type:'text',key:'receivedFrom',label:'प्राप्त / Received From'},
+    {type:'text',key:'amount',label:'Amount (₹)'},
+    {type:'text',key:'amountWords',label:'Amount in Words'},
+    {type:'textarea',key:'forPayment',label:'For Payment of'},
+    {type:'text',key:'signatory',label:'Authorized Signatory'},
+  ],
+  quotation:[
+    {type:'text',key:'businessName',label:'Business Name',required:true},
+    {type:'text',key:'quoteNo',label:'Quote #'},
+    {type:'text',key:'date',label:'Date'},
+    {type:'text',key:'clientName',label:'Client Name'},
+    {type:'textarea',key:'items',label:'Items (item | qty | price per line)',placeholder:'Logo Design | 1 | 5000'},
+    {type:'text',key:'validity',label:'Valid Until'},
+    {type:'textarea',key:'terms',label:'Terms & Conditions'},
+  ],
 };
 
-// COLOR THEMES
-const COLOR_THEMES = [
-  { id: 'maroon', name: 'मरून', primary: '#8B0000', accent: '#D4A017', bg: '#FFF8F0' },
-  { id: 'royal', name: 'रॉयल', primary: '#B8860B', accent: '#8B0000', bg: '#FFFEF7' },
-  { id: 'blue', name: 'ब्लू', primary: '#1E4D8C', accent: '#D4A017', bg: '#F0F6FC' },
-  { id: 'green', name: 'ग्रीन', primary: '#006400', accent: '#FFD700', bg: '#F0FFF0' },
-  { id: 'purple', name: 'पर्पल', primary: '#5B2C6F', accent: '#F1C40F', bg: '#F5EEF8' },
-  { id: 'pink', name: 'पिंक', primary: '#C2185B', accent: '#FFD700', bg: '#FCE4EC' },
-  { id: 'black', name: 'क्लासिक', primary: '#2C2C2C', accent: '#888', bg: '#FAFAFA' }
-];
+/* ============================================================
+   STATE
+   ============================================================ */
 
-// STATE
-let currentCategory = null;
-let currentLang = 'hi';
-let formData = {};
-let photoData = null;
-let isPremium = localStorage.getItem('shubhcard_premium') === 'true';
-let currentTheme = 'maroon';
-let textSize = 'medium';
-let removedFields = new Set();
-let removedSections = new Set();
-let customFields = [];
+const state = {
+  currentDoc: null,
+  template: 'classic',
+  theme: 'saffron',
+  watermark: true,
+  isPro: false,
+  zoom: 1,
+  paperSize: 'a4',
+  data: {},
+  recent: [],
+  category: 'all',
+  search: '',
+};
 
-// ============================================
-// INIT
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-  renderCategories();
-});
+let deferredPrompt = null;
+let saveTimer = null;
+let renderTimer = null;
 
-function renderCategories() {
-  const grid = document.getElementById('categoryGrid');
-  grid.innerHTML = CATEGORIES.map(cat => `
-    <div class="cat-card" onclick="openBuilder('${cat.id}')">
-      ${cat.badge ? `<span class="cat-badge ${cat.badge}">${cat.badge.toUpperCase()}</span>` : ''}
-      <span class="cat-icon">${cat.icon}</span>
-      <div class="cat-name">${cat.name}</div>
-      <div class="cat-name-en">${cat.nameEn}</div>
-    </div>
+/* ============================================================
+   INIT
+   ============================================================ */
+
+function init(){
+  loadState();
+  renderDocGrid();
+  renderThemePicker();
+  renderRecent();
+
+  // Theme
+  if(localStorage.getItem('sc_darkMode')==='1'){
+    document.body.setAttribute('data-theme','dark');
+    document.getElementById('themeBtn').textContent='☀️';
+  }
+
+  // PWA install prompt
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if(!localStorage.getItem('sc_installDismissed')){
+      document.getElementById('installBanner').style.display='flex';
+    }
+  });
+
+  // Deep link: ?doc=resume
+  const urlDoc = new URLSearchParams(location.search).get('doc');
+  if(urlDoc && DOCS.find(d=>d.id===urlDoc)){
+    setTimeout(()=>openDoc(urlDoc), 100);
+  }
+
+  // Service Worker
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }
+
+  // Ripple effect
+  document.addEventListener('click', e => {
+    const target = e.target.closest('.ripple');
+    if(!target) return;
+    const rect = target.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple-effect';
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size+'px';
+    ripple.style.left = (e.clientX-rect.left-size/2)+'px';
+    ripple.style.top = (e.clientY-rect.top-size/2)+'px';
+    target.appendChild(ripple);
+    setTimeout(()=>ripple.remove(), 600);
+  });
+
+  // Prevent form zoom on iOS
+  document.addEventListener('touchstart',()=>{},{passive:true});
+}
+
+/* ============================================================
+   HOME RENDERING
+   ============================================================ */
+
+function renderDocGrid(){
+  const g = document.getElementById('docGrid');
+  const filtered = DOCS.filter(d => {
+    const catMatch = state.category==='all' || d.cat===state.category;
+    const searchMatch = !state.search || 
+      d.title.toLowerCase().includes(state.search.toLowerCase()) ||
+      d.desc.toLowerCase().includes(state.search.toLowerCase());
+    return catMatch && searchMatch;
+  });
+
+  if(filtered.length === 0){
+    g.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <span class="emoji">🔍</span>
+      <p>Kuch nahi mila. Doosra search karo.</p>
+    </div>`;
+    return;
+  }
+
+  g.innerHTML = filtered.map(d=>`
+    <div class="doc-card ripple" onclick="openDoc('${d.id}')">
+      ${d.badge?`<span class="badge ${d.badge}">${d.badge.toUpperCase()}</span>`:''}
+      <span class="emoji">${d.emoji}</span>
+      <h3>${d.title}</h3>
+      <p>${d.desc}</p>
+    </div>`).join('');
+}
+
+function filterDocs(){
+  state.search = document.getElementById('docSearch').value;
+  renderDocGrid();
+}
+
+function filterCat(cat){
+  state.category = cat;
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.toggle('active', c.dataset.cat===cat));
+  renderDocGrid();
+}
+
+function renderThemePicker(){
+  const p = document.getElementById('themePicker');
+  p.innerHTML = THEMES.map(t=>`
+    <div class="theme-chip ${t.id===state.theme?'active':''}" 
+         data-theme="${t.id}" 
+         style="background:linear-gradient(135deg,${t.color},${t.accent})"
+         title="${t.name}"
+         onclick="setTheme('${t.id}')"></div>
   `).join('');
 }
 
-// ============================================
-// BUILDER
-// ============================================
-function openBuilder(categoryId) {
-  currentCategory = categoryId;
-  const saved = loadDraftFor(categoryId);
-  formData = saved.formData || {};
-  photoData = saved.photoData || null;
-  removedFields = new Set(saved.removedFields || []);
-  removedSections = new Set(saved.removedSections || []);
-  customFields = saved.customFields || [];
-  currentTheme = saved.currentTheme || 'maroon';
-  textSize = saved.textSize || 'medium';
-
-  const cat = CATEGORIES.find(c => c.id === categoryId);
-  document.getElementById('builderTitle').textContent = cat.name;
-  renderBuilder();
-
-  document.getElementById('builderModal').classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeBuilder() {
-  saveDraft();
-  document.getElementById('builderModal').classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-function renderBuilder() {
-  const schema = FORM_SCHEMAS[currentCategory];
-  if (!schema) return;
-
-  let html = `
-    <!-- Customization Panel -->
-    <div class="customize-panel">
-      <h3>🎨 Customize करें</h3>
-      <div class="lang-toggle">
-        <button class="${currentLang==='hi'?'active':''}" onclick="setLang('hi')">हिंदी</button>
-        <button class="${currentLang==='en'?'active':''}" onclick="setLang('en')">English</button>
-        <button class="${currentLang==='hien'?'active':''}" onclick="setLang('hien')">Both</button>
-      </div>
-      <label style="margin-top:10px;">रंग चुनें / Color</label>
-      <div class="color-picker-row">
-        ${COLOR_THEMES.map(t => `
-          <div class="color-swatch ${currentTheme===t.id?'selected':''}" 
-               style="background:${t.primary}" 
-               onclick="setTheme('${t.id}')" 
-               title="${t.name}"></div>
-        `).join('')}
-      </div>
-      <label>Text Size</label>
-      <div class="size-controls">
-        <button class="${textSize==='small'?'active':''}" onclick="setTextSize('small')">छोटा</button>
-        <button class="${textSize==='medium'?'active':''}" onclick="setTextSize('medium')">मध्यम</button>
-        <button class="${textSize==='large'?'active':''}" onclick="setTextSize('large')">बड़ा</button>
-      </div>
-    </div>
-  `;
-
-  // Render sections
-  schema.forEach(section => {
-    if (removedSections.has(section.id)) return;
-
-    if (section.type === 'photo') {
-      html += `
-        <div class="form-section">
-          ${section.removable ? `<button class="section-toggle" onclick="removeSection('${section.id}')" title="Section हटाएं">✕</button>` : ''}
-          <h3>${section.title}</h3>
-          <div class="photo-upload">
-            <span class="icon">📷</span>
-            <p>Tap to upload photo</p>
-            <input type="file" accept="image/*" onchange="handlePhotoUpload(event)">
-          </div>
-          <div class="photo-preview ${photoData?'show':''}" id="photoPreview">
-            <img src="${photoData||''}" alt="Preview">
-          </div>
-          ${photoData ? `<button onclick="removePhoto()" style="display:block;margin:8px auto;background:#ffe5e5;color:#c00;border:1px solid #fcc;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">Photo हटाएं</button>` : ''}
-        </div>
-      `;
-      return;
-    }
-
-    html += `<div class="form-section">`;
-    if (section.removable) {
-      html += `<button class="section-toggle" onclick="removeSection('${section.id}')" title="Section हटाएं">✕</button>`;
-    }
-    html += `<h3>${section.title}</h3>`;
-
-    section.fields.forEach(field => {
-      if (removedFields.has(field.name)) return;
-      html += renderField(field);
-    });
-
-    // Custom fields for this section
-    customFields.filter(cf => cf.sectionId === section.id).forEach(cf => {
-      html += renderField({ name: cf.name, label: cf.label, type: cf.type, removable: true, isCustom: true });
-    });
-
-    html += `<button class="add-field-btn" onclick="openAddField('${section.id}')">➕ नया Field जोड़ें</button>`;
-    html += `</div>`;
-  });
-
-  // Show removed sections to restore
-  const hiddenSections = (FORM_SCHEMAS[currentCategory] || []).filter(s => removedSections.has(s.id));
-  if (hiddenSections.length > 0) {
-    html += `<div class="form-section" style="border-top-color:#888;">
-      <h3>🗑️ हटाए गए Sections</h3>`;
-    hiddenSections.forEach(s => {
-      html += `<button onclick="restoreSection('${s.id}')" style="display:block;width:100%;margin:6px 0;padding:8px;background:#f5f5f5;border:1px dashed #aaa;border-radius:6px;font-family:inherit;cursor:pointer;text-align:left;">↩️ ${s.title} वापस लाएं</button>`;
-    });
-    html += `</div>`;
-  }
-
-  // Show removed fields to restore
-  if (removedFields.size > 0) {
-    const allFields = [];
-    (FORM_SCHEMAS[currentCategory] || []).forEach(s => {
-      if (s.fields) s.fields.forEach(f => allFields.push(f));
-    });
-    const hiddenFields = allFields.filter(f => removedFields.has(f.name));
-    if (hiddenFields.length > 0) {
-      html += `<div class="form-section" style="border-top-color:#888;">
-        <h3>🗑️ हटाए गए Fields</h3>`;
-      hiddenFields.forEach(f => {
-        html += `<button onclick="restoreField('${f.name}')" style="display:block;width:100%;margin:6px 0;padding:8px;background:#f5f5f5;border:1px dashed #aaa;border-radius:6px;font-family:inherit;cursor:pointer;text-align:left;">↩️ ${f.label} वापस लाएं</button>`;
-      });
-      html += `</div>`;
-    }
-  }
-
-  document.getElementById('builderBody').innerHTML = html;
-}
-
-function renderField(field) {
-  const val = formData[field.name] || '';
-  const removeBtn = field.removable !== false ? 
-    `<div class="field-actions"><button class="field-action-btn" onclick="removeField('${field.name}')" title="Field हटाएं">✕</button></div>` : '';
-
-  let inputHTML = '';
-  if (field.type === 'select') {
-    inputHTML = `<select name="${field.name}" oninput="updateField(this)">
-      ${field.options.map(o => `<option value="${o}" ${val===o?'selected':''}>${o||'-- चुनें --'}</option>`).join('')}
-    </select>`;
-  } else if (field.type === 'textarea') {
-    inputHTML = `<textarea name="${field.name}" placeholder="${field.placeholder||''}" oninput="updateField(this)">${val}</textarea>`;
-  } else {
-    inputHTML = `<input type="${field.type}" name="${field.name}" placeholder="${field.placeholder||''}" value="${val}" oninput="updateField(this)">`;
-  }
-
-  return `
-    <div class="form-group">
-      ${removeBtn}
-      <label>${field.label}</label>
-      ${inputHTML}
-    </div>
-  `;
-}
-
-// ============================================
-// FIELD/SECTION MANAGEMENT
-// ============================================
-function updateField(input) {
-  formData[input.name] = input.value;
-  saveDraft();
-}
-
-function removeField(name) {
-  removedFields.add(name);
-  delete formData[name];
-  // Also check custom fields
-  customFields = customFields.filter(cf => cf.name !== name);
-  saveDraft();
-  renderBuilder();
-  showToast('Field हटा दिया');
-}
-
-function restoreField(name) {
-  removedFields.delete(name);
-  saveDraft();
-  renderBuilder();
-}
-
-function removeSection(id) {
-  removedSections.add(id);
-  saveDraft();
-  renderBuilder();
-  showToast('Section हटा दिया');
-}
-
-function restoreSection(id) {
-  removedSections.delete(id);
-  saveDraft();
-  renderBuilder();
-}
-
-function removePhoto() {
-  photoData = null;
-  saveDraft();
-  renderBuilder();
-}
-
-// ============================================
-// CUSTOM FIELDS
-// ============================================
-function openAddField(sectionId) {
-  const select = document.getElementById('newFieldSection');
-  const sections = (FORM_SCHEMAS[currentCategory] || []).filter(s => !s.type && !removedSections.has(s.id));
-  select.innerHTML = sections.map(s => 
-    `<option value="${s.id}" ${s.id===sectionId?'selected':''}>${s.title}</option>`
-  ).join('');
-  document.getElementById('newFieldLabel').value = '';
-  document.getElementById('addFieldModal').classList.add('active');
-}
-
-function closeAddField() {
-  document.getElementById('addFieldModal').classList.remove('active');
-}
-
-function saveCustomField() {
-  const label = document.getElementById('newFieldLabel').value.trim();
-  const sectionId = document.getElementById('newFieldSection').value;
-  const type = document.getElementById('newFieldType').value;
-  
-  if (!label) {
-    showToast('Field का नाम लिखें');
+function renderRecent(){
+  const section = document.getElementById('recentSection');
+  const grid = document.getElementById('recentGrid');
+  if(!state.recent || state.recent.length === 0){
+    section.style.display = 'none';
     return;
   }
+  section.style.display = 'block';
+  grid.innerHTML = state.recent.slice(0,6).map((r, idx)=>{
+    const doc = DOCS.find(d=>d.id===r.docId);
+    if(!doc) return '';
+    const timeAgo = formatTimeAgo(r.updatedAt);
+    return `
+      <div class="recent-card" onclick="openDoc('${r.docId}', '${r.id}')">
+        <button class="recent-del" onclick="event.stopPropagation();deleteRecent('${r.id}')">×</button>
+        <span class="recent-emoji">${doc.emoji}</span>
+        <h4>${esc(r.title||doc.title)}</h4>
+        <p>${doc.title}</p>
+        <time>${timeAgo}</time>
+      </div>`;
+  }).join('');
+}
+
+function formatTimeAgo(ts){
+  const diff = Date.now() - ts;
+  if(diff < 60000) return 'Just now';
+  if(diff < 3600000) return Math.floor(diff/60000) + ' min ago';
+  if(diff < 86400000) return Math.floor(diff/3600000) + ' hr ago';
+  return Math.floor(diff/86400000) + ' days ago';
+}
+
+function deleteRecent(id){
+  state.recent = state.recent.filter(r => r.id !== id);
+  if(state.data[id]) delete state.data[id];
+  saveState(true);
+  renderRecent();
+  toast('🗑 Delete kar diya');
+}
+
+function clearRecent(){
+  if(!confirm('Sab recent documents delete ho jayenge. Sure?')) return;
+  state.recent.forEach(r => delete state.data[r.id]);
+  state.recent = [];
+  saveState(true);
+  renderRecent();
+  toast('✓ Clear ho gaya');
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+function openDoc(docId, instanceId){
+  state.currentDoc = docId;
   
-  const name = 'custom_' + Date.now();
-  customFields.push({ name, label, type, sectionId });
-  saveDraft();
-  closeAddField();
-  renderBuilder();
-  showToast('✓ Field जोड़ दिया');
+  // Find or create instance
+  if(instanceId && state.data[instanceId]){
+    state.currentInstance = instanceId;
+  } else {
+    // Create new instance
+    const id = 'doc_' + Date.now();
+    state.currentInstance = id;
+    state.data[id] = {_docType: docId, _createdAt: Date.now()};
+  }
+
+  document.getElementById('homeView').classList.add('hidden');
+  document.getElementById('editorView').classList.add('active');
+  document.getElementById('editorTitle').textContent = DOCS.find(d=>d.id===docId).title;
+  renderForm();
+  renderPreview();
+  switchTab('content');
+  window.scrollTo(0,0);
 }
 
-// ============================================
-// CUSTOMIZATION
-// ============================================
-function setLang(lang) {
-  currentLang = lang;
-  saveDraft();
-  renderBuilder();
+function goHome(){
+  document.getElementById('homeView').classList.remove('hidden');
+  document.getElementById('editorView').classList.remove('active');
+  state.currentDoc = null;
+  state.currentInstance = null;
+  renderRecent();
+  window.scrollTo(0,0);
 }
 
-function setTheme(themeId) {
-  currentTheme = themeId;
-  saveDraft();
-  renderBuilder();
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  document.getElementById('contentPanel').style.display = tab==='content' ? 'block' : 'none';
+  document.getElementById('designPanel').style.display = tab==='design' ? 'block' : 'none';
+  if(tab==='preview'){
+    // Scroll to preview
+    setTimeout(()=>document.querySelector('.preview-wrap')?.scrollIntoView({behavior:'smooth',block:'start'}), 100);
+  }
 }
 
-function setTextSize(size) {
-  textSize = size;
-  saveDraft();
-  renderBuilder();
+function setTemplate(tpl){
+  state.template = tpl;
+  document.querySelectorAll('.template-chip').forEach(c=>c.classList.toggle('active', c.dataset.tpl===tpl));
+  saveState();
+  renderPreview();
 }
 
-// ============================================
-// PHOTO
-// ============================================
-function handlePhotoUpload(e) {
+function setTheme(id){
+  state.theme = id;
+  document.querySelectorAll('.theme-chip').forEach(c=>c.classList.toggle('active', c.dataset.theme===id));
+  saveState();
+  renderPreview();
+}
+
+function setPaperSize(size){
+  state.paperSize = size;
+  ['a4','letter','a5'].forEach(s=>{
+    const el = document.getElementById('paper'+s.charAt(0).toUpperCase()+s.slice(1));
+    if(el) el.style.background = s===size ? 'var(--saffron)' : 'var(--card)';
+    if(el) el.style.color = s===size ? '#fff' : 'var(--ink)';
+  });
+  saveState();
+}
+
+function toggleTheme(){
+  const isDark = document.body.getAttribute('data-theme')==='dark';
+  if(isDark){
+    document.body.removeAttribute('data-theme');
+    document.getElementById('themeBtn').textContent='🌙';
+    localStorage.setItem('sc_darkMode','0');
+  } else {
+    document.body.setAttribute('data-theme','dark');
+    document.getElementById('themeBtn').textContent='☀️';
+    localStorage.setItem('sc_darkMode','1');
+  }
+}
+
+/* ============================================================
+   FORM
+   ============================================================ */
+
+function renderForm(){
+  const schema = SCHEMAS[state.currentDoc] || [];
+  const data = state.data[state.currentInstance] || {};
+  const container = document.getElementById('formFields');
+  container.innerHTML = '';
+  let delay = 0;
+  schema.forEach(f=>{
+    const el = renderField(f, data);
+    el.style.animationDelay = (delay++ * 30) + 'ms';
+    container.appendChild(el);
+  });
+}
+
+function renderField(f, data){
+  const wrap = document.createElement('div');
+  wrap.className = 'form-group';
+  if(f.type==='row'){
+    const row = document.createElement('div');
+    row.className = 'row';
+    f.fields.forEach(sub=>row.appendChild(renderField(sub, data)));
+    return row;
+  }
+  if(f.type==='photo'){
+    wrap.innerHTML = `
+      <label>${f.label}</label>
+      <div class="photo-upload" onclick="document.getElementById('photoIn_${f.key}').click()">
+        ${data[f.key]
+          ? `<img src="${data[f.key]}"><button class="remove-photo" onclick="event.stopPropagation();removePhoto('${f.key}')">×</button>`
+          : '<div>+ Photo Upload<br><small>Tap here</small></div>'}
+      </div>
+      <input type="file" id="photoIn_${f.key}" accept="image/*" style="display:none" onchange="handlePhoto(event,'${f.key}')">
+    `;
+    return wrap;
+  }
+  const fieldId = `f_${f.key}`;
+  let input;
+  if(f.type==='textarea'){
+    input = `<textarea id="${fieldId}" placeholder="${esc(f.placeholder||'')}">${esc(data[f.key]||'')}</textarea>`;
+  } else if(f.type==='select'){
+    input = `<select id="${fieldId}">${(f.options||[]).map(o=>`<option value="${esc(o)}" ${data[f.key]===o?'selected':''}>${esc(o||'-- Select --')}</option>`).join('')}</select>`;
+  } else {
+    input = `<input type="text" id="${fieldId}" placeholder="${esc(f.placeholder||'')}" value="${esc(data[f.key]||'')}" autocomplete="off">`;
+  }
+  const voiceBtn = hasVoice() && f.type!=='select' 
+    ? `<button class="label-voice" onclick="startVoice('${fieldId}',this)" type="button">🎤 बोलें</button>` : '';
+  wrap.innerHTML = `<label><span>${f.label}${f.required?' <span class="req">*</span>':''}</span>${voiceBtn}</label>${input}`;
+  setTimeout(()=>{
+    const el = document.getElementById(fieldId);
+    if(el) el.addEventListener('input', ()=>{
+      state.data[state.currentInstance][f.key] = el.value;
+      debouncedSave();
+      debouncedRender();
+    });
+  },0);
+  return wrap;
+}
+
+function handlePhoto(e, key){
   const file = e.target.files[0];
-  if (!file) return;
+  if(!file) return;
+  if(file.size > 5*1024*1024){toast('Photo 5MB se chhota hona chahiye'); return}
+  
+  // Compress image
   const reader = new FileReader();
-  reader.onload = (ev) => {
-    photoData = ev.target.result;
-    saveDraft();
-    renderBuilder();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const maxSize = 800;
+      let w = img.width, h = img.height;
+      if(w > h && w > maxSize){ h = h*maxSize/w; w = maxSize; }
+      else if(h > maxSize){ w = w*maxSize/h; h = maxSize; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      state.data[state.currentInstance][key] = canvas.toDataURL('image/jpeg', 0.88);
+      saveState();
+      renderForm();
+      renderPreview();
+      toast('✓ Photo add ho gayi');
+    };
+    img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
 }
 
-// ============================================
-// DRAFT SAVE/LOAD
-// ============================================
-function saveDraft() {
-  if (!currentCategory) return;
-  try {
-    const drafts = JSON.parse(localStorage.getItem('shubhcard_drafts_v2') || '{}');
-    drafts[currentCategory] = {
-      formData, photoData,
-      removedFields: [...removedFields],
-      removedSections: [...removedSections],
-      customFields, currentTheme, textSize
-    };
-    localStorage.setItem('shubhcard_drafts_v2', JSON.stringify(drafts));
-  } catch(e) { console.error(e); }
+function removePhoto(key){
+  delete state.data[state.currentInstance][key];
+  saveState();
+  renderForm();
+  renderPreview();
 }
 
-function loadDraftFor(categoryId) {
-  try {
-    const drafts = JSON.parse(localStorage.getItem('shubhcard_drafts_v2') || '{}');
-    return drafts[categoryId] || {};
-  } catch(e) { return {}; }
+/* ============================================================
+   VOICE INPUT
+   ============================================================ */
+
+function hasVoice(){
+  return 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
 }
 
-// ============================================
-// HTML GENERATION FOR DOCUMENTS
-// ============================================
-function getTheme() {
-  return COLOR_THEMES.find(t => t.id === currentTheme) || COLOR_THEMES[0];
-}
-
-function getTextSizes() {
-  const sizes = {
-    small: { title: 32, name: 28, body: 12, label: 13 },
-    medium: { title: 36, name: 32, body: 14, label: 15 },
-    large: { title: 42, name: 38, body: 16, label: 17 }
+function startVoice(fieldId, btn){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){toast('Voice not supported on this browser'); return}
+  const rec = new SR();
+  rec.lang = 'hi-IN';
+  rec.continuous = false;
+  rec.interimResults = false;
+  btn.classList.add('listening');
+  btn.innerHTML = '🔴 सुन रहा हूँ...';
+  toast('🎤 Bolna shuru karo...');
+  rec.onresult = e => {
+    const text = e.results[0][0].transcript;
+    const el = document.getElementById(fieldId);
+    if(el){
+      el.value = (el.value ? el.value+' ' : '') + text;
+      el.dispatchEvent(new Event('input'));
+      toast('✓ Add ho gaya');
+    }
   };
-  return sizes[textSize];
+  rec.onerror = e => toast('Error: ' + (e.error || 'Try again'));
+  rec.onend = () => {
+    btn.classList.remove('listening');
+    btn.innerHTML = '🎤 बोलें';
+  };
+  try { rec.start(); } catch(e) { toast('Voice busy, try again'); btn.classList.remove('listening'); btn.innerHTML = '🎤 बोलें'; }
 }
 
-function generateDocHTML() {
-  switch(currentCategory) {
-    case 'biodata': return biodataHTML();
-    case 'shadicard': return shadiCardHTML();
-    case 'shokpatra': return shokPatraHTML();
-    case 'birthday': return birthdayHTML();
-    case 'anniversary': return anniversaryHTML();
-    case 'mundan': return mundanHTML();
-    case 'grihapravesh': return grihaPraveshHTML();
-    case 'visiting': return visitingHTML();
-    case 'resume': return resumeHTML();
-    case 'certificate': return certificateHTML();
-    case 'receipt': return receiptHTML();
-    case 'affidavit': return affidavitHTML();
-    default: return '<div>No template</div>';
-  }
+/* ============================================================
+   PREVIEW RENDERING
+   ============================================================ */
+
+function debouncedRender(){
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(renderPreview, 150);
 }
 
-const docStyles = `
-  font-family: 'Noto Sans Devanagari', 'Cormorant Garamond', serif;
-  width: 794px;
-  min-height: 1050px;
-  background: white;
-  padding: 40px 40px 70px 40px;
-  box-sizing: border-box;
-  position: relative;
-  color: #2C1810;
-`;
-
-// Helper to render rows for biodata table
-function bdRow(label, value, theme) {
-  if (!value || value === '') return '';
-  return `<tr><td style="color:${theme.primary}; font-weight:600; padding-right:15px; vertical-align:top;">${label}</td><td>: ${value}</td></tr>`;
-}
-
-function bdRowDouble(label1, val1, label2, val2, theme) {
-  if (!val1 && !val2) return '';
-  return `<tr>
-    <td style="color:${theme.primary}; font-weight:600;">${label1}</td><td>: ${val1||'—'}</td>
-    <td style="color:${theme.primary}; font-weight:600;">${label2}</td><td>: ${val2||'—'}</td>
-  </tr>`;
-}
-
-function biodataHTML() {
-  const f = formData;
-  const t = getTheme();
-  const s = getTextSizes();
-  const isShown = (name) => !removedFields.has(name);
-  const isSecShown = (id) => !removedSections.has(id);
+function renderPreview(){
+  const pv = document.getElementById('preview');
+  if(!state.currentDoc || !state.currentInstance){pv.innerHTML='';return}
+  const d = state.data[state.currentInstance] || {};
+  const theme = THEMES.find(t=>t.id===state.theme) || THEMES[0];
+  const renderer = RENDERERS[state.currentDoc];
+  if(!renderer){pv.innerHTML='<p>Coming soon</p>'; return}
+  pv.innerHTML = renderer(d, theme, state.template);
+  pv.style.transform = `scale(${state.zoom})`;
+  pv.className = 'preview' + (state.watermark && !state.isPro ? ' watermark' : '');
   
-  // Build personal section dynamically
-  const personalRows = [];
-  if (isShown('dob')) personalRows.push(bdRow('जन्म तिथि', formatDate(f.dob), t));
-  if (isShown('birthtime')) personalRows.push(bdRow('जन्म समय', f.birthtime, t));
-  if (isShown('birthplace')) personalRows.push(bdRow('जन्म स्थान', f.birthplace, t));
-  if ((isShown('rashi')||isShown('nakshatra')) && (f.rashi||f.nakshatra)) {
-    personalRows.push(bdRow('राशि / नक्षत्र', `${f.rashi||'—'} / ${f.nakshatra||'—'}`, t));
-  }
-  
-  const detailRows = [];
-  if (isShown('height') && f.height) detailRows.push(bdRow('कद / Height', f.height, t));
-  if (isShown('complexion') && f.complexion) detailRows.push(bdRow('रंग / Complexion', f.complexion, t));
-  if (isShown('manglik') && f.manglik) detailRows.push(bdRow('मांगलिक', f.manglik, t));
-  if (isShown('gotra') && f.gotra) detailRows.push(bdRow('गोत्र', f.gotra, t));
-  if (isShown('caste') && f.caste) detailRows.push(bdRow('जाति / समाज', f.caste, t));
-  
-  // Custom personal fields
-  customFields.filter(cf => cf.sectionId === 'personal').forEach(cf => {
-    if (f[cf.name]) detailRows.push(bdRow(cf.label, f[cf.name], t));
-  });
-
-  // Education section
-  const eduRows = [];
-  if (isSecShown('education')) {
-    if (isShown('education') && f.education) eduRows.push(bdRow('शिक्षा', f.education, t));
-    if (isShown('school') && f.school) eduRows.push(bdRow('विद्यालय / कॉलेज', f.school, t));
-    if (isShown('occupation') && f.occupation) eduRows.push(bdRow('व्यवसाय', f.occupation, t));
-    if (isShown('income') && f.income) eduRows.push(bdRow('वार्षिक आय', f.income, t));
-    if (isShown('workplace') && f.workplace) eduRows.push(bdRow('कार्यस्थल', f.workplace, t));
-    customFields.filter(cf => cf.sectionId === 'education').forEach(cf => {
-      if (f[cf.name]) eduRows.push(bdRow(cf.label, f[cf.name], t));
-    });
-  }
-
-  // Family section
-  const familyRows = [];
-  if (isSecShown('family')) {
-    if (isShown('father') && f.father) {
-      const occ = (isShown('fatherOcc') && f.fatherOcc) ? ` (${f.fatherOcc})` : '';
-      familyRows.push(bdRow('पिता का नाम', f.father + occ, t));
+  // QR for vcard
+  if(state.currentDoc==='vcard'){
+    const qrDiv = document.getElementById('vcardQR');
+    if(qrDiv && d.phone){
+      qrDiv.innerHTML = '';
+      try{
+        new QRCode(qrDiv,{
+          text:`BEGIN:VCARD\nVERSION:3.0\nFN:${d.name||''}\nTEL:${d.phone||''}\nEMAIL:${d.email||''}\nURL:${d.website||''}\nORG:${d.company||''}\nEND:VCARD`,
+          width:70,height:70,colorDark:theme.accent,colorLight:'#fff',
+          correctLevel:QRCode.CorrectLevel.M
+        });
+      }catch(e){}
     }
-    if (isShown('mother') && f.mother) {
-      const occ = (isShown('motherOcc') && f.motherOcc) ? ` (${f.motherOcc})` : '';
-      familyRows.push(bdRow('माता का नाम', f.mother + occ, t));
-    }
-    if ((isShown('brothers') || isShown('sisters')) && (f.brothers || f.sisters)) {
-      familyRows.push(bdRow('भाई / बहन', `${f.brothers||0} भाई, ${f.sisters||0} बहन`, t));
-    }
-    customFields.filter(cf => cf.sectionId === 'family').forEach(cf => {
-      if (f[cf.name]) familyRows.push(bdRow(cf.label, f[cf.name], t));
-    });
   }
 
-  // Contact section
-  const contactRows = [];
-  if (isSecShown('contact')) {
-    if (isShown('mobile') && f.mobile) contactRows.push(bdRow('मोबाइल', f.mobile, t));
-    if (isShown('email') && f.email) contactRows.push(bdRow('ईमेल', f.email, t));
-    if (isShown('address') && f.address) contactRows.push(bdRow('पता', f.address, t));
-    customFields.filter(cf => cf.sectionId === 'contact').forEach(cf => {
-      if (f[cf.name]) contactRows.push(bdRow(cf.label, f[cf.name], t));
-    });
+  // Update recent
+  updateRecent();
+}
+
+function zoomPreview(delta){
+  if(delta === 'fit'){
+    state.zoom = Math.min(1, (document.querySelector('.preview-box').clientWidth - 32) / 560);
+  } else {
+    state.zoom = Math.max(0.4, Math.min(1.5, state.zoom + delta));
   }
-
-  return `
-    <div style="${docStyles} background: ${t.bg}; border: 8px double ${t.primary}; padding: 30px 30px 70px 30px;">
-      <div style="text-align:center; margin-bottom:20px; border-bottom: 2px solid ${t.accent}; padding-bottom:15px;">
-        <div style="font-size:26px; color:${t.primary};">॥ ॐ श्री गणेशाय नमः ॥</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:${s.title}px; font-weight:700; color:${t.primary}; margin-top:8px;">बायो डेटा / Bio-Data</div>
-        <div style="font-size:13px; color:${t.accent}; margin-top:4px;">❁ ❁ ❁</div>
-      </div>
-
-      <div style="display:flex; gap:25px; margin-bottom:25px;">
-        ${photoData ? `
-          <div style="width:140px; height:180px; border:4px solid ${t.accent}; flex-shrink:0; background:#eee;">
-            <img src="${photoData}" style="width:100%;height:100%;object-fit:cover;">
-          </div>
-        ` : ''}
-        <div style="flex:1;">
-          <div style="font-size:${s.label-2}px; color:${t.primary};">नाम / Name</div>
-          <div style="font-size:${s.name}px; font-weight:700; color:${t.primary}; font-family:'Cormorant Garamond',serif; margin-bottom:8px;">${f.name||'____________'}</div>
-          <div style="height:2px; background:${t.accent}; width:60%; margin-bottom:12px;"></div>
-          <table style="font-size:${s.body}px; line-height:1.8;">
-            ${personalRows.join('')}
-          </table>
-        </div>
-      </div>
-
-      ${detailRows.length > 0 ? `
-        <div style="margin-bottom:20px;">
-          <div style="background:${t.primary}; color:white; padding:8px 15px; font-size:${s.label}px; font-weight:600;">व्यक्तिगत विवरण / Personal Details</div>
-          <table style="width:100%; font-size:${s.body}px; line-height:2; padding:10px 15px;">
-            ${detailRows.join('')}
-          </table>
-        </div>
-      ` : ''}
-
-      ${eduRows.length > 0 ? `
-        <div style="margin-bottom:20px;">
-          <div style="background:${t.primary}; color:white; padding:8px 15px; font-size:${s.label}px; font-weight:600;">शिक्षा व पेशा / Education & Profession</div>
-          <table style="width:100%; font-size:${s.body}px; line-height:2; padding:10px 15px;">
-            ${eduRows.join('')}
-          </table>
-        </div>
-      ` : ''}
-
-      ${familyRows.length > 0 ? `
-        <div style="margin-bottom:20px;">
-          <div style="background:${t.primary}; color:white; padding:8px 15px; font-size:${s.label}px; font-weight:600;">पारिवारिक विवरण / Family Details</div>
-          <table style="width:100%; font-size:${s.body}px; line-height:2; padding:10px 15px;">
-            ${familyRows.join('')}
-          </table>
-        </div>
-      ` : ''}
-
-      ${contactRows.length > 0 ? `
-        <div style="margin-bottom:20px;">
-          <div style="background:${t.primary}; color:white; padding:8px 15px; font-size:${s.label}px; font-weight:600;">संपर्क / Contact</div>
-          <table style="width:100%; font-size:${s.body}px; line-height:2; padding:10px 15px;">
-            ${contactRows.join('')}
-          </table>
-        </div>
-      ` : ''}
-
-      <div style="text-align:center; margin-top:20px; color:${t.primary}; font-size:13px; border-top:2px solid ${t.accent}; padding-top:15px;">
-        ❁ शुभम् भवतु ❁
-      </div>
-    </div>
-  `;
+  const pv = document.getElementById('preview');
+  pv.style.transform = `scale(${state.zoom})`;
+  document.getElementById('zoomDisplay').textContent = Math.round(state.zoom * 100) + '%';
 }
 
-function shadiCardHTML() {
-  const f = formData;
-  const t = getTheme();
-  return `
-    <div style="${docStyles} background: linear-gradient(135deg, ${t.bg} 0%, #FFE4C4 100%); border: 12px double ${t.primary}; padding: 50px 40px 80px 40px;">
-      <div style="text-align:center;">
-        <div style="font-size:30px; color:${t.primary};">॥ श्री गणेशाय नमः ॥</div>
-        <div style="font-size:60px; margin:20px 0; color:${t.accent};">❁</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:42px; color:${t.primary}; font-weight:700;">शुभ विवाह</div>
-        <div style="font-size:16px; color:#666; margin:10px 0 30px;">सादर निमंत्रण</div>
-        
-        <div style="border:2px solid ${t.accent}; padding:30px; margin:20px 0; background:rgba(255,255,255,0.7);">
-          <div style="font-size:14px; color:${t.primary};">वर / Groom</div>
-          <div style="font-family:'Cormorant Garamond',serif; font-size:34px; color:${t.primary}; font-weight:700; margin:8px 0;">${f.groomName||'____________'}</div>
-          ${f.groomFather?`<div style="font-size:13px; color:#555;">सुपुत्र: ${f.groomFather}</div>`:''}
-          
-          <div style="font-size:32px; color:${t.accent}; margin:20px 0;">❤</div>
-          
-          <div style="font-size:14px; color:${t.primary};">वधू / Bride</div>
-          <div style="font-family:'Cormorant Garamond',serif; font-size:34px; color:${t.primary}; font-weight:700; margin:8px 0;">${f.brideName||'____________'}</div>
-          ${f.brideFather?`<div style="font-size:13px; color:#555;">सुपुत्री: ${f.brideFather}</div>`:''}
-        </div>
-
-        <div style="margin:25px 0; padding:20px; background:${t.primary}; color:white;">
-          <div style="font-size:14px; opacity:0.9;">शुभ विवाह मुहूर्त</div>
-          <div style="font-size:24px; font-weight:700; margin:8px 0;">${formatDate(f.weddingDate)}</div>
-          ${f.weddingTime?`<div style="font-size:16px;">समय: ${f.weddingTime}</div>`:''}
-          ${f.venue?`<div style="font-size:14px; margin-top:10px;">📍 ${f.venue}</div>`:''}
-          ${f.venueAddress?`<div style="font-size:12px; opacity:0.9;">${f.venueAddress}</div>`:''}
-        </div>
-
-        ${(f.haldi||f.mehendi||f.sangeet||f.reception) ? `
-          <div style="margin:20px 0; font-size:13px;">
-            <div style="color:${t.primary}; font-weight:600; margin-bottom:8px;">अन्य कार्यक्रम</div>
-            ${f.haldi ? `<div>हल्दी: ${formatDate(f.haldi)}</div>` : ''}
-            ${f.mehendi ? `<div>मेहंदी: ${formatDate(f.mehendi)}</div>` : ''}
-            ${f.sangeet ? `<div>संगीत: ${formatDate(f.sangeet)}</div>` : ''}
-            ${f.reception ? `<div>रिसेप्शन: ${formatDate(f.reception)}</div>` : ''}
-          </div>
-        ` : ''}
-
-        ${f.hosts?`
-          <div style="margin-top:30px; padding-top:20px; border-top:1px solid ${t.accent};">
-            <div style="font-size:13px; color:#666;">सादर निवेदक</div>
-            <div style="font-size:15px; color:${t.primary}; font-weight:600; margin:6px 0; white-space:pre-line;">${f.hosts}</div>
-            ${f.contact ? `<div style="font-size:12px; color:#666;">📞 ${f.contact}</div>` : ''}
-          </div>
-        `:''}
-      </div>
-    </div>
-  `;
-}
-
-function shokPatraHTML() {
-  const f = formData;
-  return `
-    <div style="${docStyles} background:#FAFAFA; border: 6px solid #333; padding: 40px 40px 70px 40px;">
-      <div style="text-align:center; border-bottom:2px solid #555; padding-bottom:20px;">
-        <div style="font-size:28px; color:#333;">॥ ॐ शान्ति ॥</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:36px; color:#333; font-weight:700; margin-top:10px;">शोक संदेश</div>
-        <div style="font-size:14px; color:#888;">श्रद्धांजलि</div>
-      </div>
-
-      <div style="text-align:center; margin:30px 0;">
-        ${photoData ? `
-          <div style="width:150px; height:180px; margin:0 auto; border:5px solid #555; padding:4px; background:white;">
-            <img src="${photoData}" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);">
-          </div>
-        ` : ''}
-        <div style="font-family:'Cormorant Garamond',serif; font-size:32px; color:#333; font-weight:700; margin-top:15px;">स्व. ${f.deceasedName||'____________'}</div>
-        ${f.relation ? `<div style="font-size:14px; color:#666; margin-top:4px;">(${f.relation})</div>` : ''}
-        <div style="display:flex; justify-content:center; gap:30px; margin-top:15px; font-size:13px; color:#555;">
-          ${f.dob ? `<div><b>जन्म:</b> ${formatDate(f.dob)}</div>` : ''}
-          ${f.dod ? `<div><b>देहावसान:</b> ${formatDate(f.dod)}</div>` : ''}
-          ${f.age ? `<div><b>आयु:</b> ${f.age} वर्ष</div>` : ''}
-        </div>
-      </div>
-
-      <div style="background:white; padding:20px; margin:20px 0; border-left:4px solid #555; font-size:14px; line-height:1.8; text-align:center; font-style:italic; color:#444;">
-        ${f.message || 'अत्यंत दुख के साथ सूचित किया जाता है कि हमारे प्रिय का स्वर्गवास हो गया है। ईश्वर उनकी आत्मा को शांति प्रदान करें।'}
-      </div>
-
-      ${(f.tervi || f.terviVenue) ? `
-        <div style="margin:25px 0; padding:20px; background:#F0F0F0; border:1px solid #ccc;">
-          <div style="font-size:18px; color:#333; font-weight:700; text-align:center; margin-bottom:12px;">तेरहवीं संस्कार</div>
-          <table style="width:100%; font-size:14px; line-height:2;">
-            ${f.tervi ? `<tr><td style="font-weight:600; width:30%;">तिथि</td><td>: ${formatDate(f.tervi)}</td></tr>` : ''}
-            ${f.terviTime ? `<tr><td style="font-weight:600;">समय</td><td>: ${f.terviTime}</td></tr>` : ''}
-            ${f.terviVenue ? `<tr><td style="font-weight:600;">स्थान</td><td>: ${f.terviVenue}</td></tr>` : ''}
-            ${f.terviAddress ? `<tr><td style="font-weight:600; vertical-align:top;">पता</td><td>: ${f.terviAddress}</td></tr>` : ''}
-          </table>
-        </div>
-      ` : ''}
-
-      ${f.familyMembers?`
-        <div style="margin-top:30px; text-align:center;">
-          <div style="font-size:14px; color:#666; margin-bottom:10px;">शोक संतप्त परिवार</div>
-          <div style="font-size:14px; color:#333; white-space:pre-line; line-height:1.8;">${f.familyMembers}</div>
-          ${f.contactPerson ? `<div style="margin-top:15px; font-size:13px; color:#555;">संपर्क: ${f.contactPerson} ${f.contactNumber ? '| 📞 '+f.contactNumber : ''}</div>` : ''}
-        </div>
-      `:''}
-
-      <div style="text-align:center; margin-top:30px; padding-top:20px; border-top:1px solid #ccc; font-size:13px; color:#666;">
-        ॐ शान्तिः शान्तिः शान्तिः
-      </div>
-    </div>
-  `;
-}
-
-function birthdayHTML() {
-  const f = formData;
-  return `
-    <div style="${docStyles} background:linear-gradient(135deg,#FFE4E1,#FFF0F5); border:8px solid #FF1493; padding:40px 40px 70px 40px; text-align:center;">
-      <div style="font-size:60px;">🎂</div>
-      <div style="font-family:'Cormorant Garamond',serif; font-size:42px; color:#FF1493; font-weight:700; margin:20px 0;">जन्मदिन निमंत्रण</div>
-      ${photoData?`<div style="width:160px;height:160px;margin:20px auto;border-radius:50%;overflow:hidden;border:5px solid #FFD700;"><img src="${photoData}" style="width:100%;height:100%;object-fit:cover;"></div>`:''}
-      <div style="font-size:32px; color:#8B0000; font-weight:700;">${f.name||'____________'}</div>
-      ${f.age?`<div style="font-size:18px; margin:10px 0; color:#FF1493;">${f.age} वें जन्मदिन की खुशी में</div>`:''}
-      <div style="background:#FF1493; color:white; padding:20px; margin:20px 0; border-radius:10px;">
-        <div style="font-size:24px;">${formatDate(f.date)}</div>
-        ${f.time?`<div>समय: ${f.time}</div>`:''}
-        ${f.venue?`<div style="margin-top:8px;">📍 ${f.venue}</div>`:''}
-        ${f.venueAddress?`<div style="font-size:12px;">${f.venueAddress}</div>`:''}
-      </div>
-      ${f.hosts?`<div style="margin-top:20px;">${f.hosts}</div>`:''}
-      ${f.contact?`<div style="font-size:13px; color:#666;">📞 ${f.contact}</div>`:''}
-    </div>
-  `;
-}
-
-function anniversaryHTML() {
-  const f = formData;
-  const t = getTheme();
-  return `
-    <div style="${docStyles} background:${t.bg}; border:10px double ${t.primary}; padding:40px 40px 70px 40px; text-align:center;">
-      <div style="font-size:50px; color:${t.primary};">💐</div>
-      <div style="font-family:'Cormorant Garamond',serif; font-size:42px; color:${t.primary}; font-weight:700; margin:15px 0;">शुभ विवाह वर्षगांठ</div>
-      ${f.years?`<div style="font-size:80px; color:${t.accent}; font-weight:700; font-family:'Cormorant Garamond',serif;">${f.years}</div><div style="font-size:16px; color:#666;">वर्ष पूर्ण होने पर</div>`:''}
-      <div style="margin:30px 0;">
-        <div style="font-family:'Cormorant Garamond',serif; font-size:32px; color:${t.primary};">${f.husband||'____________'}</div>
-        <div style="font-size:24px; color:${t.accent}; margin:10px 0;">❤</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:32px; color:${t.primary};">${f.wife||'____________'}</div>
-      </div>
-      <div style="background:${t.primary}; color:white; padding:20px; margin:20px 0;">
-        <div style="font-size:22px;">${formatDate(f.date)}</div>
-        ${f.venue?`<div>📍 ${f.venue}</div>`:''}
-      </div>
-      ${f.hosts?`<div style="margin-top:20px; white-space:pre-line;">${f.hosts}</div>`:''}
-      ${f.contact?`<div style="font-size:13px; color:#666;">📞 ${f.contact}</div>`:''}
-    </div>
-  `;
-}
-
-function mundanHTML() {
-  const f = formData;
-  return `
-    <div style="${docStyles} background:#FFFEF7; border:8px double #FF9933; padding:40px 40px 70px 40px; text-align:center;">
-      <div style="font-size:28px; color:#8B0000;">॥ श्री गणेशाय नमः ॥</div>
-      <div style="font-family:'Cormorant Garamond',serif; font-size:38px; color:#8B0000; font-weight:700; margin:20px 0;">${f.ceremony||'मुंडन'} संस्कार</div>
-      <div style="font-size:60px;">👶</div>
-      <div style="font-size:18px; color:#666; margin:10px 0;">हमारे लाडले / लाडली</div>
-      <div style="font-family:'Cormorant Garamond',serif; font-size:36px; color:#FF9933; font-weight:700;">${f.childName||'____________'}</div>
-      <div style="background:#FF9933; color:white; padding:20px; margin:20px 0;">
-        <div style="font-size:22px;">${formatDate(f.date)}</div>
-        ${f.time?`<div>समय: ${f.time}</div>`:''}
-        ${f.venue?`<div style="margin-top:8px;">📍 ${f.venue}</div>`:''}
-      </div>
-      ${f.parents?`<div>${f.parents}</div>`:''}
-      ${f.contact?`<div style="font-size:13px; color:#666;">📞 ${f.contact}</div>`:''}
-    </div>
-  `;
-}
-
-function grihaPraveshHTML() {
-  const f = formData;
-  return `
-    <div style="${docStyles} background:#FFF8F0; border:8px double #8B0000; padding:40px 40px 70px 40px; text-align:center;">
-      <div style="font-size:28px; color:#8B0000;">॥ ॐ श्री गणेशाय नमः ॥</div>
-      <div style="font-family:'Cormorant Garamond',serif; font-size:42px; color:#8B0000; font-weight:700; margin:20px 0;">गृह प्रवेश</div>
-      <div style="font-size:80px;">🏠</div>
-      <div style="font-size:16px; color:#666; margin:15px 0;">सादर आमंत्रण</div>
-      <div style="font-family:'Cormorant Garamond',serif; font-size:28px; color:#8B0000;">${f.hostName||'____________'}</div>
-      <div style="background:#8B0000; color:white; padding:20px; margin:20px 0;">
-        <div style="font-size:22px;">${formatDate(f.date)}</div>
-        ${f.time?`<div>मुहूर्त: ${f.time}</div>`:''}
-        ${f.newAddress?`<div style="margin-top:10px; font-size:14px;">${f.newAddress}</div>`:''}
-      </div>
-      ${f.contact?`<div style="font-size:13px; color:#666;">📞 ${f.contact}</div>`:''}
-    </div>
-  `;
-}
-
-function visitingHTML() {
-  const f = formData;
-  return `
-    <div style="width:794px; padding:40px 40px 80px 40px; background:#f5f5f5; min-height:1050px; box-sizing:border-box; position:relative;">
-      <div style="width:500px; height:280px; margin:50px auto; background:linear-gradient(135deg,#1E4D8C,#2C5F9E); color:white; padding:30px; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:8px; position:relative;">
-        ${photoData?`<div style="position:absolute;top:30px;right:30px;width:80px;height:80px;border-radius:50%;overflow:hidden;border:3px solid #D4A017;"><img src="${photoData}" style="width:100%;height:100%;object-fit:cover;"></div>`:''}
-        <div style="font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:700;">${f.name||'Your Name'}</div>
-        ${f.designation?`<div style="font-size:14px; color:#D4A017; margin:4px 0;">${f.designation}</div>`:''}
-        ${f.company?`<div style="font-size:16px; margin:8px 0;">${f.company}</div>`:''}
-        <div style="height:2px; background:#D4A017; width:80px; margin:15px 0;"></div>
-        <div style="font-size:11px; line-height:1.8;">
-          ${f.mobile?`📞 ${f.mobile}<br>`:''}
-          ${f.email?`✉️ ${f.email}<br>`:''}
-          ${f.website?`🌐 ${f.website}<br>`:''}
-          ${f.address?`📍 ${f.address}`:''}
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function resumeHTML() {
-  const f = formData;
-  return `
-    <div style="${docStyles} padding:0 0 70px 0;">
-      <div style="background:#1E4D8C; color:white; padding:30px; display:flex; gap:20px; align-items:center;">
-        ${photoData?`<div style="width:120px;height:120px;border-radius:50%;overflow:hidden;border:4px solid #D4A017;flex-shrink:0;"><img src="${photoData}" style="width:100%;height:100%;object-fit:cover;"></div>`:''}
-        <div>
-          <div style="font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:700;">${f.name||'Your Name'}</div>
-          <div style="font-size:13px; margin-top:8px;">📞 ${f.mobile||'—'} | ✉️ ${f.email||'—'}</div>
-          ${f.address?`<div style="font-size:12px;">📍 ${f.address}</div>`:''}
-        </div>
-      </div>
-      <div style="padding:30px;">
-        ${f.objective?`<div style="margin-bottom:25px;">
-          <div style="background:#D4A017; color:white; padding:6px 12px; font-size:14px; font-weight:600;">CAREER OBJECTIVE</div>
-          <div style="padding:10px; font-size:13px; line-height:1.6;">${f.objective}</div>
-        </div>`:''}
-        ${f.education?`<div style="margin-bottom:25px;">
-          <div style="background:#D4A017; color:white; padding:6px 12px; font-size:14px; font-weight:600;">EDUCATION</div>
-          <div style="padding:10px; font-size:13px; line-height:1.6; white-space:pre-line;">${f.education}</div>
-        </div>`:''}
-        ${f.experience?`<div style="margin-bottom:25px;">
-          <div style="background:#D4A017; color:white; padding:6px 12px; font-size:14px; font-weight:600;">EXPERIENCE</div>
-          <div style="padding:10px; font-size:13px; line-height:1.6; white-space:pre-line;">${f.experience}</div>
-        </div>`:''}
-        ${f.skills?`<div style="margin-bottom:25px;">
-          <div style="background:#D4A017; color:white; padding:6px 12px; font-size:14px; font-weight:600;">SKILLS</div>
-          <div style="padding:10px; font-size:13px; line-height:1.6; white-space:pre-line;">${f.skills}</div>
-        </div>`:''}
-        ${f.languages?`<div>
-          <div style="background:#D4A017; color:white; padding:6px 12px; font-size:14px; font-weight:600;">LANGUAGES</div>
-          <div style="padding:10px; font-size:13px;">${f.languages}</div>
-        </div>`:''}
-      </div>
-    </div>
-  `;
-}
-
-function certificateHTML() {
-  const f = formData;
-  return `
-    <div style="${docStyles} background:#FFFEF7; border:15px double #D4A017; padding:60px 60px 80px 60px; text-align:center;">
-      <div style="font-family:'Cormorant Garamond',serif; font-size:50px; color:#8B0000; font-weight:700;">प्रमाण पत्र</div>
-      <div style="font-size:18px; color:#666; margin:10px 0;">Certificate of Achievement</div>
-      <div style="font-size:50px; margin:20px 0; color:#D4A017;">🏆</div>
-      <div style="font-size:16px; margin-top:30px;">यह प्रमाणित किया जाता है कि</div>
-      <div style="font-family:'Cormorant Garamond',serif; font-size:40px; color:#8B0000; font-weight:700; margin:20px 0; border-bottom:2px solid #D4A017; padding-bottom:10px;">${f.recipient||'____________'}</div>
-      ${f.reason?`<div style="font-size:16px; line-height:1.8; max-width:500px; margin:20px auto;">${f.reason}</div>`:''}
-      <div style="display:flex; justify-content:space-between; margin-top:60px; padding:0 40px;">
-        <div>
-          <div style="border-top:1px solid #333; padding-top:5px; font-size:13px;">${f.date?formatDate(f.date):'दिनांक'}</div>
-          <div style="font-size:11px; color:#666;">तिथि</div>
-        </div>
-        <div>
-          <div style="border-top:1px solid #333; padding-top:5px; font-size:13px;">${f.issuer||'जारीकर्ता'}</div>
-          <div style="font-size:11px; color:#666;">हस्ताक्षर</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function receiptHTML() {
-  const f = formData;
-  return `
-    <div style="${docStyles} padding:40px 40px 80px 40px;">
-      <div style="border:2px solid #333; padding:30px;">
-        <div style="text-align:center; border-bottom:2px solid #333; padding-bottom:15px; margin-bottom:20px;">
-          <div style="font-size:28px; font-weight:700;">रसीद / RECEIPT</div>
-        </div>
-        <table style="width:100%; font-size:15px; line-height:2.5;">
-          ${f.receiptNo?`<tr><td><b>रसीद नं:</b></td><td colspan="3">${f.receiptNo}</td></tr>`:''}
-          ${f.date?`<tr><td><b>तिथि:</b></td><td colspan="3">${formatDate(f.date)}</td></tr>`:''}
-          <tr><td><b>प्राप्त किया:</b></td><td colspan="3">${f.receivedFrom||'—'} से</td></tr>
-          <tr><td><b>राशि:</b></td><td colspan="3" style="font-size:24px; color:#8B0000; font-weight:700;">₹ ${f.amount||'0'}</td></tr>
-          ${f.amountWords?`<tr><td><b>शब्दों में:</b></td><td colspan="3">${f.amountWords}</td></tr>`:''}
-          ${f.purpose?`<tr><td><b>किस लिए:</b></td><td colspan="3">${f.purpose}</td></tr>`:''}
-        </table>
-        <div style="text-align:right; margin-top:60px;">
-          <div style="border-top:1px solid #333; display:inline-block; padding:5px 40px;">${f.receivedBy||'प्राप्तकर्ता'}</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function affidavitHTML() {
-  const f = formData;
-  return `
-    <div style="${docStyles} padding:50px 50px 80px 50px; font-size:14px; line-height:2;">
-      <div style="text-align:center; font-size:24px; font-weight:700; margin-bottom:30px;">शपथ पत्र / AFFIDAVIT</div>
-      <p>मैं, <b>${f.name||'____________'}</b>${f.fatherName?`, पुत्र/पुत्री श्री <b>${f.fatherName}</b>`:''}${f.age?`, आयु लगभग <b>${f.age}</b> वर्ष`:''}${f.address?`, निवासी <b>${f.address}</b>`:''}, शपथ लेकर बयान करता/करती हूं कि:</p>
-      <p style="margin:20px 0;">${f.declaration||'____________'}</p>
-      <p>उपरोक्त कथन मेरे ज्ञान और विश्वास के अनुसार सत्य है। यदि कोई बात असत्य पाई जाए तो मैं कानूनी कार्यवाही के लिए उत्तरदायी रहूंगा/रहूंगी।</p>
-      <div style="display:flex; justify-content:space-between; margin-top:50px;">
-        <div>
-          ${f.place?`स्थान: ${f.place}<br>`:''}
-          ${f.date?`तिथि: ${formatDate(f.date)}`:''}
-        </div>
-        <div style="text-align:center;">
-          <div style="border-top:1px solid #000; padding-top:5px; min-width:150px;">शपथकर्ता</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// ============================================
-// PDF / IMAGE GENERATION
-// ============================================
-async function captureCanvas() {
-  const docHTML = generateDocHTML();
-  const container = document.createElement('div');
-  container.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;background:white;';
-  container.innerHTML = docHTML;
-  document.body.appendChild(container);
-  
-  await new Promise(r => setTimeout(r, 600));
-  
-  const canvas = await html2canvas(container.firstElementChild, {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: '#ffffff',
-    logging: false
-  });
-  
-  document.body.removeChild(container);
-  return canvas;
-}
-
-async function downloadPDF() {
-  if (!currentCategory) return;
-  showLoader('PDF बन रहा है...');
-  try {
-    const canvas = await captureCanvas();
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, imgWidth, Math.min(imgHeight, 297));
-    
-    if (!isPremium) {
-      pdf.setFontSize(7);
-      pdf.setTextColor(180);
-      pdf.text('Made with ShubhCard App', 105, 293, { align: 'center' });
-    }
-    
-    const filename = `${currentCategory}_${Date.now()}.pdf`;
-    pdf.save(filename);
-    
-    // Store PDF blob for sharing
-    window._lastPdfBlob = pdf.output('blob');
-    window._lastPdfName = filename;
-    
-    hideLoader();
-    showToast('✓ PDF Download हो गया!');
-  } catch(err) {
-    console.error(err);
-    hideLoader();
-    showToast('❌ कुछ गड़बड़ हुई');
-  }
-}
-
-async function downloadJPG() {
-  if (!currentCategory) return;
-  showLoader('Image बन रही है...');
-  try {
-    const canvas = await captureCanvas();
-    const link = document.createElement('a');
-    link.download = `${currentCategory}_${Date.now()}.jpg`;
-    link.href = canvas.toDataURL('image/jpeg', 0.95);
-    link.click();
-    
-    // Store for sharing
-    canvas.toBlob(blob => {
-      window._lastImgBlob = blob;
-      window._lastImgName = link.download;
-    }, 'image/jpeg', 0.95);
-    
-    hideLoader();
-    showToast('✓ Image Download हो गई!');
-  } catch(err) {
-    console.error(err);
-    hideLoader();
-    showToast('❌ कुछ गड़बड़ हुई');
-  }
-}
-
-function previewDoc() {
-  const html = generateDocHTML();
-  const win = window.open('', '_blank');
-  if (!win) {
-    showToast('Popup blocked. Please allow popups');
+function toggleWatermark(){
+  if(!state.isPro){
+    openModal('proModal');
     return;
   }
-  win.document.write(`
-    <html><head><title>Preview - ShubhCard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>body{margin:0;padding:20px;background:#eee;display:flex;justify-content:center;}</style>
-    </head><body>${html}</body></html>
-  `);
-  win.document.close();
+  state.watermark = !state.watermark;
+  saveState();
+  renderPreview();
 }
 
-// ============================================
-// SHARE FUNCTIONS (FIXED!)
-// ============================================
-function openShareSheet() {
-  document.getElementById('shareSheet').classList.add('show');
+/* ============================================================
+   RENDERERS
+   ============================================================ */
+
+const RENDERERS = {
+  resume: (d,t,tpl) => {
+    const skills = (d.skills||'').split(',').map(s=>s.trim()).filter(Boolean);
+    if(tpl==='modern'){
+      return `
+        <div style="display:grid;grid-template-columns:1fr 2fr;min-height:500px;margin:-28px;height:calc(100% + 56px)">
+          <div style="background:${t.accent};color:#fff;padding:22px 18px">
+            ${d.photo?`<img src="${d.photo}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;margin-bottom:16px">`:''}
+            <h3 style="font-size:10px;letter-spacing:.15em;opacity:.8;text-transform:uppercase;margin-bottom:6px">Contact</h3>
+            <div style="font-size:10.5px;line-height:1.8;word-break:break-word">
+              ${d.phone?`📞 ${esc(d.phone)}<br>`:''}
+              ${d.email?`✉ ${esc(d.email)}<br>`:''}
+              ${d.address?`📍 ${esc(d.address)}<br>`:''}
+              ${d.linkedin?`🔗 ${esc(d.linkedin)}`:''}
+            </div>
+            ${skills.length?`<h3 style="font-size:10px;letter-spacing:.15em;opacity:.8;text-transform:uppercase;margin:20px 0 8px">Skills</h3>
+              <div>${skills.map(s=>`<div style="font-size:10.5px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.15)">${esc(s)}</div>`).join('')}</div>`:''}
+            ${d.languages?`<h3 style="font-size:10px;letter-spacing:.15em;opacity:.8;text-transform:uppercase;margin:20px 0 8px">Languages</h3>
+              <div style="font-size:10.5px;line-height:1.8">${esc(d.languages)}</div>`:''}
+          </div>
+          <div style="padding:22px 20px">
+            <h1 style="font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:${t.color};margin-bottom:4px">${esc(d.name||'आपका नाम')}</h1>
+            <p style="color:#555;margin-bottom:18px;font-size:13px">${esc(d.title||'')}</p>
+            ${sec('Summary',d.summary,t)}
+            ${sec('Experience',d.experience,t)}
+            ${sec('Education',d.education,t)}
+          </div>
+        </div>`;
+    }
+    if(tpl==='minimal'){
+      return `
+        <div style="max-width:620px;margin:0 auto">
+          <div style="text-align:center;padding-bottom:16px;border-bottom:1px solid #eee;margin-bottom:18px">
+            <h1 style="font-family:'Fraunces',serif;font-size:28px;font-weight:300;letter-spacing:.05em">${esc(d.name||'आपका नाम')}</h1>
+            <p style="color:#666;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-top:4px">${esc(d.title||'')}</p>
+            <p style="color:#888;font-size:10px;margin-top:6px">${[d.phone,d.email,d.address,d.linkedin].filter(Boolean).map(esc).join(' · ')}</p>
+          </div>
+          ${d.summary?`<p style="text-align:center;font-style:italic;color:#444;margin-bottom:18px;font-size:11px;line-height:1.7">${esc(d.summary)}</p>`:''}
+          ${sec('Skills',skills.join(' · '),t,true)}
+          ${sec('Experience',d.experience,t,true)}
+          ${sec('Education',d.education,t,true)}
+          ${sec('Languages',d.languages,t,true)}
+        </div>`;
+    }
+    // classic
+    return `
+      <div style="border-top:6px solid ${t.color};padding-top:16px">
+        <div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:14px">
+          ${d.photo?`<img src="${d.photo}" style="width:90px;height:110px;object-fit:cover;border:3px solid ${t.color};border-radius:4px;flex-shrink:0">`:''}
+          <div style="flex:1;min-width:0">
+            <h1 style="font-family:'Fraunces',serif;font-size:26px;color:${t.accent};margin-bottom:4px;line-height:1.1">${esc(d.name||'आपका नाम')}</h1>
+            <p style="color:${t.color};font-weight:600;margin-bottom:6px;font-size:13px">${esc(d.title||'')}</p>
+            <p style="color:#555;font-size:10px;word-break:break-word">${[d.phone,d.email,d.address,d.linkedin].filter(Boolean).map(esc).join(' • ')}</p>
+          </div>
+        </div>
+        ${sec('Summary',d.summary,t)}
+        ${sec('Skills',skills.join(' • '),t)}
+        ${sec('Experience',d.experience,t)}
+        ${sec('Education',d.education,t)}
+        ${sec('Languages',d.languages,t)}
+      </div>`;
+  },
+
+  biodata: (d,t) => `
+    <div style="border:2px solid ${t.color};padding:18px;position:relative;min-height:500px">
+      <div style="text-align:center;margin-bottom:16px;border-bottom:2px solid ${t.color};padding-bottom:12px">
+        <div style="color:${t.color};font-size:16px">॥ श्री गणेशाय नमः ॥</div>
+        <h1 style="font-family:'Fraunces',serif;font-size:22px;color:${t.accent};margin:6px 0">वैवाहिक परिचय</h1>
+        <div style="font-size:11px;color:#666">Marriage Biodata</div>
+      </div>
+      <div style="display:grid;grid-template-columns:${d.photo?'1fr 120px':'1fr'};gap:16px">
+        <div style="font-size:11px;line-height:1.9">
+          ${bioRow('नाम / Name',d.name,t)}
+          ${bioRow('जन्म तिथि / DOB',d.dob,t)}
+          ${bioRow('जन्म स्थान',d.birthplace,t)}
+          ${bioRow('ऊँचाई / Height',d.height,t)}
+          ${bioRow('वज़न / Weight',d.weight,t)}
+          ${bioRow('धर्म / Religion',d.religion,t)}
+          ${bioRow('जाति / Caste',d.caste,t)}
+          ${bioRow('गोत्र / Gotra',d.gotra,t)}
+          ${bioRow('मांगलिक',d.mangal,t)}
+          ${bioRow('शिक्षा / Education',d.education,t)}
+          ${bioRow('व्यवसाय / Occupation',d.occupation,t)}
+          ${bioRow('वार्षिक आय / Income',d.income,t)}
+        </div>
+        ${d.photo?`<img src="${d.photo}" style="width:120px;aspect-ratio:3/4;object-fit:cover;border:3px solid ${t.color};border-radius:4px">`:''}
+      </div>
+      <h3 style="color:${t.color};margin:16px 0 8px;font-size:13px;border-bottom:1px dashed ${t.color};padding-bottom:4px">पारिवारिक विवरण / Family</h3>
+      <div style="font-size:11px;line-height:1.9">
+        ${bioRow('पिता / Father',d.father,t)}
+        ${bioRow('पिता का व्यवसाय',d.fatherOcc,t)}
+        ${bioRow('माता / Mother',d.mother,t)}
+        ${bioRow('माता का व्यवसाय',d.motherOcc,t)}
+        ${bioRow('भाई-बहन',d.siblings,t)}
+      </div>
+      <h3 style="color:${t.color};margin:16px 0 8px;font-size:13px;border-bottom:1px dashed ${t.color};padding-bottom:4px">संपर्क / Contact</h3>
+      <div style="font-size:11px;line-height:1.9">
+        ${bioRow('पता / Address',d.address,t)}
+        ${bioRow('संपर्क / Contact',d.contact,t)}
+      </div>
+    </div>`,
+
+  vcard: (d,t) => `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:500px;gap:16px">
+      <div style="width:360px;height:210px;background:linear-gradient(135deg,${t.color},${t.accent});border-radius:12px;padding:18px;color:#fff;position:relative;box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden">
+        <div style="position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:rgba(255,255,255,.08);border-radius:50%"></div>
+        <div style="position:absolute;top:14px;right:14px;width:70px;height:70px;background:#fff;border-radius:4px;padding:3px;z-index:2" id="vcardQR"></div>
+        <div style="position:relative;z-index:1">
+          <h2 style="font-family:'Fraunces',serif;font-size:18px;margin-top:4px;max-width:240px;line-height:1.1">${esc(d.name||'Your Name')}</h2>
+          <p style="font-size:10px;opacity:.85;margin-top:3px">${esc(d.title||'')}</p>
+          <p style="font-size:13px;font-weight:700;margin-top:6px">${esc(d.company||'')}</p>
+        </div>
+        <div style="position:absolute;bottom:14px;left:18px;font-size:9.5px;line-height:1.6;z-index:1">
+          ${d.phone?`📞 ${esc(d.phone)}<br>`:''}
+          ${d.email?`✉ ${esc(d.email)}<br>`:''}
+          ${d.website?`🌐 ${esc(d.website)}`:''}
+        </div>
+      </div>
+      <div style="width:360px;height:210px;background:#fff;border:2px solid ${t.color};border-radius:12px;padding:18px;position:relative;overflow:hidden">
+        <div style="text-align:center;margin-bottom:10px">
+          <div style="width:40px;height:3px;background:${t.color};margin:0 auto;border-radius:2px"></div>
+          <h3 style="color:${t.accent};font-family:'Fraunces',serif;margin-top:10px;font-size:14px">${esc(d.name||'Your Name')}</h3>
+        </div>
+        <p style="text-align:center;font-style:italic;color:#666;font-size:10px;margin-bottom:10px">"${esc(d.tagline||'Your tagline here')}"</p>
+        <div style="text-align:center;font-size:10px;color:#333;line-height:1.6">${esc(d.address||'')}</div>
+      </div>
+    </div>`,
+
+  idcard: (d,t) => `
+    <div style="display:flex;justify-content:center;align-items:center;min-height:500px">
+      <div style="width:320px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.15);border:1px solid #eee">
+        <div style="background:linear-gradient(135deg,${t.color},${t.accent});color:#fff;padding:14px;text-align:center">
+          <h2 style="font-family:'Fraunces',serif;font-size:14px;font-weight:700">${esc(d.orgName||'Organization Name')}</h2>
+          <p style="font-size:9px;opacity:.9;letter-spacing:.15em;margin-top:2px">IDENTITY CARD</p>
+        </div>
+        <div style="padding:20px;text-align:center">
+          ${d.photo?`<img src="${d.photo}" style="width:90px;height:110px;object-fit:cover;border:3px solid ${t.color};border-radius:4px;margin-bottom:10px">`
+            :`<div style="width:90px;height:110px;background:#f0f0f0;border:3px solid ${t.color};margin:0 auto 10px;display:grid;place-items:center;font-size:10px;color:#999;border-radius:4px">Photo</div>`}
+          <h3 style="font-size:14px;font-weight:700;color:${t.accent}">${esc(d.name||'Full Name')}</h3>
+          <p style="font-size:11px;color:#666;margin:2px 0 10px">${esc(d.designation||'Designation')}</p>
+          <div style="text-align:left;font-size:10px;line-height:1.8;background:#fafafa;padding:10px;border-radius:6px">
+            ${d.idNo?`<div><strong>ID:</strong> ${esc(d.idNo)}</div>`:''}
+            ${d.blood?`<div><strong>Blood:</strong> ${esc(d.blood)}</div>`:''}
+            ${d.validFrom||d.validTo?`<div><strong>Valid:</strong> ${esc(d.validFrom||'')} - ${esc(d.validTo||'')}</div>`:''}
+            ${d.phone?`<div><strong>Phone:</strong> ${esc(d.phone)}</div>`:''}
+            ${d.emergency?`<div><strong>Emergency:</strong> ${esc(d.emergency)}</div>`:''}
+          </div>
+        </div>
+        <div style="background:${t.color};height:18px"></div>
+      </div>
+    </div>`,
+
+  certificate: (d,t) => `
+    <div style="border:8px double ${t.color};padding:26px;text-align:center;min-height:500px;background:linear-gradient(135deg,#FFFEF8,#FFF8EE);position:relative;overflow:hidden">
+      <div style="position:absolute;top:10px;left:10px;width:40px;height:40px;border-top:3px solid ${t.color};border-left:3px solid ${t.color}"></div>
+      <div style="position:absolute;top:10px;right:10px;width:40px;height:40px;border-top:3px solid ${t.color};border-right:3px solid ${t.color}"></div>
+      <div style="position:absolute;bottom:10px;left:10px;width:40px;height:40px;border-bottom:3px solid ${t.color};border-left:3px solid ${t.color}"></div>
+      <div style="position:absolute;bottom:10px;right:10px;width:40px;height:40px;border-bottom:3px solid ${t.color};border-right:3px solid ${t.color}"></div>
+      <div style="color:${t.color};font-size:11px;letter-spacing:.3em;margin-top:16px">${esc(d.orgName||'ORGANIZATION')}</div>
+      <h1 style="font-family:'Fraunces',serif;font-size:32px;color:${t.accent};margin:16px 0;font-weight:800">${esc(d.title||'Certificate of Achievement')}</h1>
+      <div style="width:80px;height:2px;background:${t.color};margin:10px auto"></div>
+      <p style="color:#666;margin:20px 0 10px;font-size:11px;letter-spacing:.05em">यह प्रमाणित किया जाता है कि</p>
+      <h2 style="font-family:'Fraunces',serif;font-size:26px;color:${t.accent};font-weight:600;font-style:italic">${esc(d.name||'Recipient Name')}</h2>
+      <p style="margin:20px 40px;color:#444;font-size:12px;line-height:1.7">${esc(d.reason||'has successfully completed the requirements.')}</p>
+      <div style="display:flex;justify-content:space-around;margin-top:40px">
+        <div style="text-align:center">
+          <div style="border-top:1px solid #888;padding-top:4px;min-width:110px;font-size:10px"><strong>${esc(d.sign1||'Signature')}</strong></div>
+        </div>
+        <div style="text-align:center">
+          <div style="color:${t.color};font-weight:700;font-size:10px">${esc(d.date||'Date')}</div>
+        </div>
+        <div style="text-align:center">
+          <div style="border-top:1px solid #888;padding-top:4px;min-width:110px;font-size:10px"><strong>${esc(d.sign2||'Signature')}</strong></div>
+        </div>
+      </div>
+    </div>`,
+
+  invoice: (d,t) => {
+    const items = parseItems(d.items);
+    const subtotal = items.reduce((s,i)=>s+i.qty*i.price,0);
+    const gst = parseFloat(d.gst||0);
+    const discount = parseFloat(d.discount||0);
+    const discAmount = subtotal * discount/100;
+    const tax = (subtotal-discAmount) * gst/100;
+    const total = subtotal - discAmount + tax;
+    return `
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid ${t.color};padding-bottom:14px;margin-bottom:16px;gap:10px">
+          <div style="min-width:0;flex:1">
+            <h1 style="font-family:'Fraunces',serif;color:${t.accent};font-size:20px;line-height:1.1">${esc(d.businessName||'Business Name')}</h1>
+            <p style="color:#666;white-space:pre-line;font-size:10px;margin-top:4px">${esc(d.businessAddress||'')}</p>
+            ${d.businessContact?`<p style="color:${t.color};font-size:10px;margin-top:3px">${esc(d.businessContact)}</p>`:''}
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-family:'Fraunces',serif;font-size:26px;color:${t.color};font-weight:700">INVOICE</div>
+            <div style="font-size:11px;margin-top:4px">#${esc(d.invoiceNo||'001')}</div>
+            <div style="font-size:11px">${esc(d.date||'')}</div>
+          </div>
+        </div>
+        <div style="background:#fafafa;padding:12px;border-radius:6px;margin-bottom:14px;font-size:11px">
+          <strong style="color:${t.color};font-size:10px;letter-spacing:.1em">BILL TO:</strong><br>
+          <strong>${esc(d.clientName||'')}</strong><br>
+          <span style="color:#666;white-space:pre-line">${esc(d.clientAddress||'')}</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead>
+            <tr style="background:${t.color};color:#fff">
+              <th style="padding:8px;text-align:left">Item</th>
+              <th style="padding:8px;text-align:center">Qty</th>
+              <th style="padding:8px;text-align:right">Price</th>
+              <th style="padding:8px;text-align:right">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map(i=>`<tr style="border-bottom:1px solid #eee">
+              <td style="padding:8px">${esc(i.name)}</td>
+              <td style="padding:8px;text-align:center">${i.qty}</td>
+              <td style="padding:8px;text-align:right">₹${i.price.toLocaleString('en-IN')}</td>
+              <td style="padding:8px;text-align:right">₹${(i.qty*i.price).toLocaleString('en-IN')}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:14px;text-align:right;font-size:11px">
+          <div style="margin:4px 0">Subtotal: <strong>₹${subtotal.toLocaleString('en-IN')}</strong></div>
+          ${discount?`<div style="margin:4px 0;color:#DC2626">Discount (${discount}%): <strong>-₹${discAmount.toLocaleString('en-IN')}</strong></div>`:''}
+          ${gst?`<div style="margin:4px 0">GST (${gst}%): <strong>₹${tax.toLocaleString('en-IN')}</strong></div>`:''}
+          <div style="background:${t.color};color:#fff;padding:10px 16px;display:inline-block;border-radius:6px;margin-top:8px;font-size:14px;font-weight:700">TOTAL: ₹${total.toLocaleString('en-IN')}</div>
+        </div>
+        ${d.notes?`<div style="margin-top:20px;padding-top:14px;border-top:1px dashed #ccc;font-size:11px;color:#666"><strong>Notes:</strong> ${esc(d.notes)}</div>`:''}
+      </div>`;
+  },
+
+  letter: (d,t) => `
+    <div style="padding:14px;font-family:'Tiro Devanagari Hindi',serif;line-height:1.9;font-size:12px">
+      <div style="text-align:right;margin-bottom:20px">${esc(d.date||'')}</div>
+      <div style="margin-bottom:14px;white-space:pre-line">${esc(d.to||'प्रति,')}</div>
+      <div style="margin-bottom:14px"><strong>विषय: ${esc(d.subject||'')}</strong></div>
+      <div style="margin-bottom:14px">${esc(d.salutation||'महोदय,')}</div>
+      <div style="text-align:justify;margin-bottom:20px;white-space:pre-line">${esc(d.body||'')}</div>
+      <div>${esc(d.closing||'धन्यवाद,')}</div>
+      <div style="margin-top:30px"><strong>${esc(d.name||'')}</strong></div>
+    </div>`,
+
+  affidavit: (d,t) => `
+    <div style="padding:14px;font-family:'Tiro Devanagari Hindi',serif;line-height:1.9;font-size:12px">
+      <h1 style="text-align:center;color:${t.accent};font-family:'Fraunces',serif;margin-bottom:6px;font-size:18px">शपथ पत्र / AFFIDAVIT</h1>
+      <div style="text-align:center;color:${t.color};margin-bottom:24px;font-size:10px">(On Non-Judicial Stamp Paper)</div>
+      <p style="text-align:justify">मैं <strong>${esc(d.name||'________')}</strong> पुत्र/पत्नी <strong>${esc(d.father||'________')}</strong>, 
+      आयु <strong>${esc(d.age||'__')}</strong> वर्ष, निवासी <strong>${esc(d.address||'________')}</strong> 
+      सत्यनिष्ठा से शपथ पूर्वक यह घोषणा करता/करती हूँ कि:</p>
+      <div style="margin:20px 0;padding:14px;border-left:4px solid ${t.color};background:#fafafa;white-space:pre-line">${esc(d.content||'')}</div>
+      <p>उपरोक्त सभी कथन सत्य एवं सही हैं। इसमें कुछ भी छिपाया या मिथ्या नहीं है।</p>
+      <div style="display:flex;justify-content:space-between;margin-top:30px">
+        <div>स्थान: ${esc(d.place||'')}<br>दिनांक: ${esc(d.date||'')}</div>
+        <div style="text-align:center;min-width:160px">
+          <div style="border-top:1px solid #333;padding-top:6px">शपथकर्ता</div>
+        </div>
+      </div>
+    </div>`,
+
+  nda: (d,t) => `
+    <div style="padding:14px;font-size:11px;line-height:1.7">
+      <h1 style="text-align:center;color:${t.accent};font-family:'Fraunces',serif;font-size:18px">NON-DISCLOSURE AGREEMENT</h1>
+      <p style="text-align:center;color:#666;margin-bottom:20px;font-size:10px">Effective Date: ${esc(d.date||'')}</p>
+      <p>This Non-Disclosure Agreement is entered into between:</p>
+      <div style="margin:12px 0;padding:10px;background:#fafafa;border-left:3px solid ${t.color}">
+        <strong>Disclosing Party:</strong> ${esc(d.party1||'')}<br>
+        <strong>Receiving Party:</strong> ${esc(d.party2||'')}
+      </div>
+      <h3 style="color:${t.color};margin:14px 0 4px;font-size:12px">1. Purpose</h3>
+      <p>${esc(d.purpose||'')}</p>
+      <h3 style="color:${t.color};margin:14px 0 4px;font-size:12px">2. Confidentiality</h3>
+      <p>The Receiving Party agrees to hold all confidential information in strict confidence.</p>
+      <h3 style="color:${t.color};margin:14px 0 4px;font-size:12px">3. Duration</h3>
+      <p>This agreement shall remain in effect for <strong>${esc(d.duration||'2 years')}</strong>.</p>
+      <h3 style="color:${t.color};margin:14px 0 4px;font-size:12px">4. Jurisdiction</h3>
+      <p>Governed by the laws of <strong>${esc(d.jurisdiction||'India')}</strong>.</p>
+      <div style="display:flex;justify-content:space-between;margin-top:40px">
+        <div style="min-width:160px;text-align:center"><div style="border-top:1px solid #333;padding-top:4px">${esc(d.party1||'Party 1')}</div></div>
+        <div style="min-width:160px;text-align:center"><div style="border-top:1px solid #333;padding-top:4px">${esc(d.party2||'Party 2')}</div></div>
+      </div>
+    </div>`,
+
+  rentagreement: (d,t) => `
+    <div style="padding:14px;font-family:'Tiro Devanagari Hindi',serif;line-height:1.8;font-size:11px">
+      <h1 style="text-align:center;color:${t.accent};font-family:'Fraunces',serif;font-size:18px">किराया अनुबंध</h1>
+      <div style="text-align:center;color:${t.color};margin-bottom:20px;font-size:10px">${esc(d.startDate||'')}</div>
+      <p>यह अनुबंध निम्नलिखित पक्षों के बीच है:</p>
+      <div style="margin:12px 0;padding:10px;border-left:3px solid ${t.color};background:#fafafa">
+        <strong>मकान मालिक:</strong> ${esc(d.landlord||'')}<br>
+        <strong>किराएदार:</strong> ${esc(d.tenant||'')}
+      </div>
+      <h3 style="color:${t.color};margin:14px 0 4px;font-size:12px">संपत्ति विवरण</h3>
+      <p style="white-space:pre-line">${esc(d.property||'')}</p>
+      <h3 style="color:${t.color};margin:14px 0 4px;font-size:12px">शर्तें</h3>
+      <p>• मासिक किराया: <strong>₹${esc(d.rent||'0')}</strong></p>
+      <p>• सिक्योरिटी डिपॉजिट: <strong>₹${esc(d.deposit||'0')}</strong></p>
+      <p>• अवधि: <strong>${esc(d.duration||'')}</strong></p>
+      <p>• प्रारंभ तिथि: <strong>${esc(d.startDate||'')}</strong></p>
+      ${d.terms?`<h3 style="color:${t.color};margin:14px 0 4px;font-size:12px">अतिरिक्त शर्तें</h3><p style="white-space:pre-line">${esc(d.terms)}</p>`:''}
+      <div style="display:flex;justify-content:space-between;margin-top:40px">
+        <div style="min-width:140px;text-align:center"><div style="border-top:1px solid #333;padding-top:4px">मकान मालिक</div></div>
+        <div style="min-width:140px;text-align:center"><div style="border-top:1px solid #333;padding-top:4px">किराएदार</div></div>
+      </div>
+    </div>`,
+
+  noc: (d,t) => `
+    <div style="padding:14px;line-height:1.8;font-size:11px">
+      <h1 style="text-align:center;color:${t.accent};font-family:'Fraunces',serif;font-size:18px">NO OBJECTION CERTIFICATE</h1>
+      <p style="text-align:right;margin:20px 0">Date: ${esc(d.date||'')}</p>
+      <h3 style="color:${t.color};font-size:12px">To Whom It May Concern,</h3>
+      <p style="margin:16px 0">This is to certify that I, <strong>${esc(d.issuer||'')}</strong>, have no objection regarding <strong>${esc(d.recipient||'')}</strong> for:</p>
+      <div style="padding:12px;background:#fafafa;border-left:3px solid ${t.color};margin:12px 0">${esc(d.purpose||'')}</div>
+      ${d.details?`<p style="white-space:pre-line;margin:16px 0">${esc(d.details)}</p>`:''}
+      <p style="margin-top:30px">Sincerely,</p>
+      <div style="margin-top:40px"><strong>${esc(d.issuer||'')}</strong></div>
+    </div>`,
+
+  experience: (d,t) => `
+    <div style="padding:14px;line-height:1.8;font-size:11px">
+      <div style="text-align:center;border-bottom:3px solid ${t.color};padding-bottom:14px;margin-bottom:20px">
+        <h1 style="font-family:'Fraunces',serif;color:${t.accent};font-size:18px">${esc(d.company||'Company Name')}</h1>
+      </div>
+      <h2 style="text-align:center;color:${t.color};margin-bottom:20px;font-size:14px">EXPERIENCE CERTIFICATE</h2>
+      <p>To Whom It May Concern,</p>
+      <p style="margin:14px 0">This is to certify that <strong>${esc(d.employee||'')}</strong> was employed with us as <strong>${esc(d.designation||'')}</strong> from <strong>${esc(d.from||'')}</strong> to <strong>${esc(d.to||'')}</strong>.</p>
+      ${d.responsibilities?`<p style="white-space:pre-line;margin:14px 0">${esc(d.responsibilities)}</p>`:''}
+      <p style="margin-top:20px">We wish them success in future endeavors.</p>
+      <div style="margin-top:40px"><strong>${esc(d.issuer||'HR Department')}</strong></div>
+    </div>`,
+
+  offer: (d,t) => `
+    <div style="padding:14px;line-height:1.8;font-size:11px">
+      <div style="border-bottom:3px solid ${t.color};padding-bottom:14px;margin-bottom:20px">
+        <h1 style="font-family:'Fraunces',serif;color:${t.accent};font-size:20px">${esc(d.company||'Company Name')}</h1>
+        <h2 style="color:${t.color};margin-top:4px;font-size:14px">OFFER LETTER</h2>
+      </div>
+      <p style="margin-bottom:14px">Dear <strong>${esc(d.candidate||'')}</strong>,</p>
+      <p>We are delighted to offer you the position of <strong style="color:${t.color}">${esc(d.position||'')}</strong> at ${esc(d.company||'')}.</p>
+      <div style="margin:18px 0;padding:12px;background:#fafafa;border-left:3px solid ${t.color}">
+        <div><strong>Position:</strong> ${esc(d.position||'')}</div>
+        <div><strong>Salary (CTC):</strong> ₹${esc(d.salary||'')}</div>
+        <div><strong>Joining Date:</strong> ${esc(d.joining||'')}</div>
+      </div>
+      ${d.terms?`<h3 style="color:${t.color};margin:14px 0 4px;font-size:12px">Terms & Conditions</h3><p style="white-space:pre-line">${esc(d.terms)}</p>`:''}
+      <p style="margin-top:20px">Looking forward to having you on our team.</p>
+      <p style="margin-top:14px">Sincerely,</p>
+      <div style="margin-top:30px"><strong>${esc(d.issuer||'HR Department')}</strong></div>
+    </div>`,
+
+  receipt: (d,t) => `
+    <div style="padding:14px;font-size:11px;line-height:1.8">
+      <div style="text-align:center;border:2px solid ${t.color};padding:14px;margin-bottom:14px">
+        <h1 style="font-family:'Fraunces',serif;color:${t.accent};font-size:18px">${esc(d.businessName||'Business Name')}</h1>
+        <h2 style="color:${t.color};font-size:14px">रसीद / RECEIPT</h2>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:14px">
+        <div>No: <strong>${esc(d.receiptNo||'001')}</strong></div>
+        <div>Date: <strong>${esc(d.date||'')}</strong></div>
+      </div>
+      <div style="padding:14px;background:#fafafa;border-radius:6px;line-height:2">
+        Received with thanks from <strong>${esc(d.receivedFrom||'')}</strong><br>
+        The sum of <strong style="color:${t.color};font-size:16px">₹${esc(d.amount||'0')}</strong><br>
+        (In words: <em>${esc(d.amountWords||'')}</em>)<br>
+        For: ${esc(d.forPayment||'')}
+      </div>
+      <div style="text-align:right;margin-top:40px">
+        <div style="border-top:1px solid #333;display:inline-block;padding-top:4px;min-width:160px">
+          <strong>${esc(d.signatory||'Authorized Signatory')}</strong>
+        </div>
+      </div>
+    </div>`,
+
+  quotation: (d,t) => {
+    const items = parseItems(d.items);
+    const total = items.reduce((s,i)=>s+i.qty*i.price,0);
+    return `
+      <div style="padding:14px;font-size:11px">
+        <div style="display:flex;justify-content:space-between;border-bottom:3px solid ${t.color};padding-bottom:14px;margin-bottom:16px;gap:10px">
+          <h1 style="font-family:'Fraunces',serif;color:${t.accent};font-size:20px;flex:1;min-width:0">${esc(d.businessName||'')}</h1>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="color:${t.color};font-size:20px;font-weight:700">QUOTATION</div>
+            <div>#${esc(d.quoteNo||'')}</div>
+            <div>${esc(d.date||'')}</div>
+          </div>
+        </div>
+        <p style="margin-bottom:14px">To: <strong>${esc(d.clientName||'')}</strong></p>
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr style="background:${t.color};color:#fff">
+            <th style="padding:8px;text-align:left">Item</th>
+            <th style="padding:8px">Qty</th>
+            <th style="padding:8px;text-align:right">Rate</th>
+            <th style="padding:8px;text-align:right">Amount</th>
+          </tr></thead>
+          <tbody>
+            ${items.map(i=>`<tr style="border-bottom:1px solid #eee">
+              <td style="padding:8px">${esc(i.name)}</td>
+              <td style="padding:8px;text-align:center">${i.qty}</td>
+              <td style="padding:8px;text-align:right">₹${i.price.toLocaleString('en-IN')}</td>
+              <td style="padding:8px;text-align:right">₹${(i.qty*i.price).toLocaleString('en-IN')}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        <div style="text-align:right;margin-top:14px">
+          <div style="background:${t.color};color:#fff;padding:10px 16px;display:inline-block;border-radius:6px;font-size:13px"><strong>TOTAL: ₹${total.toLocaleString('en-IN')}</strong></div>
+        </div>
+        ${d.validity?`<p style="margin-top:14px;color:#666">Valid Until: <strong>${esc(d.validity)}</strong></p>`:''}
+        ${d.terms?`<div style="margin-top:14px;padding:10px;background:#fafafa;border-radius:6px"><strong>Terms:</strong><br>${esc(d.terms)}</div>`:''}
+      </div>`;
+  },
+};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+function esc(s){return String(s==null?'':s).replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function sec(title, content, t, compact){
+  if(!content) return '';
+  return `<h3 style="color:${t.color};font-size:${compact?'10px':'11px'};letter-spacing:.15em;text-transform:uppercase;margin:${compact?'16px 0 6px':'14px 0 6px'};${compact?'text-align:center':'border-bottom:2px solid '+t.color+';padding-bottom:3px'}">${title}</h3>
+  <div style="white-space:pre-line;margin-bottom:10px;font-size:11px;line-height:1.6">${esc(content)}</div>`;
 }
 
-function closeShareSheet() {
-  document.getElementById('shareSheet').classList.remove('show');
+function bioRow(label, val, t){
+  if(!val) return '';
+  return `<div style="display:grid;grid-template-columns:130px 1fr;gap:10px;padding:3px 0"><div style="color:${t.color};font-weight:600">${label}</div><div>${esc(val)}</div></div>`;
 }
 
-async function shareWhatsAppPDF() {
-  closeShareSheet();
-  showLoader('PDF तैयार हो रहा है...');
+function parseItems(text){
+  return (text||'').split('\n').map(l=>{
+    const p = l.split('|').map(s=>s.trim());
+    return {name:p[0]||'',qty:parseFloat(p[1])||1,price:parseFloat(p[2])||0};
+  }).filter(i=>i.name);
+}
+
+/* ============================================================
+   PDF GENERATION (High Quality + Multi-page)
+   ============================================================ */
+
+async function downloadPDF(){
+  const overlay = document.getElementById('pdfOverlay');
+  const progress = document.getElementById('pdfProgress');
+  const status = document.getElementById('pdfStatus');
+  overlay.classList.add('show');
+
   try {
-    const canvas = await captureCanvas();
+    progress.textContent = 'Preparing...';
+    status.textContent = 'Document setup ho raha hai';
+    await sleep(100);
+
+    const el = document.getElementById('preview');
+    const prevTransform = el.style.transform;
+    const prevWidth = el.style.width;
     
-    // Try Web Share API with file (modern browsers)
-    canvas.toBlob(async (blob) => {
-      const file = new File([blob], `shubhcard_${Date.now()}.jpg`, { type: 'image/jpeg' });
-      
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: 'ShubhCard',
-            text: 'मैंने ShubhCard app से बनाया है'
-          });
-          hideLoader();
-          showToast('✓ Share हो गया');
-        } catch(err) {
-          if (err.name !== 'AbortError') {
-            hideLoader();
-            // Fallback: download then open WhatsApp
-            fallbackWhatsAppShare();
-          } else {
-            hideLoader();
+    // Set to fixed width for consistent rendering
+    el.style.transform = 'scale(1)';
+    el.style.width = '800px';
+    
+    progress.textContent = 'Rendering...';
+    status.textContent = 'High quality image ban rahi hai';
+    await sleep(100);
+
+    const canvas = await html2canvas(el, {
+      scale: 2.5,
+      backgroundColor: '#ffffff',
+      logging: false,
+      useCORS: true,
+      allowTaint: true,
+      imageTimeout: 15000,
+      windowWidth: 800,
+      onclone: (clonedDoc) => {
+        const clonedPreview = clonedDoc.getElementById('preview');
+        if(clonedPreview){
+          clonedPreview.style.transform = 'scale(1)';
+          clonedPreview.style.boxShadow = 'none';
+          clonedPreview.classList.remove('watermark');
+          if(state.watermark && !state.isPro){
+            clonedPreview.classList.add('watermark');
           }
         }
-      } else {
-        hideLoader();
-        fallbackWhatsAppShare();
       }
-    }, 'image/jpeg', 0.95);
-  } catch(err) {
-    console.error(err);
-    hideLoader();
-    fallbackWhatsAppShare();
-  }
-}
-
-function fallbackWhatsAppShare() {
-  // Download image first, then open WhatsApp
-  showToast('Image download हो रही है, फिर WhatsApp खुलेगा');
-  downloadJPG().then(() => {
-    setTimeout(() => {
-      const text = encodeURIComponent('मैंने ShubhCard app से ये बनाया है। आप भी free में बनाएं: ' + window.location.href);
-      window.open(`https://wa.me/?text=${text}`, '_blank');
-    }, 1000);
-  });
-}
-
-async function shareGeneric() {
-  closeShareSheet();
-  showLoader('तैयार हो रहा है...');
-  try {
-    const canvas = await captureCanvas();
-    canvas.toBlob(async (blob) => {
-      const file = new File([blob], `shubhcard_${Date.now()}.jpg`, { type: 'image/jpeg' });
-      
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: 'ShubhCard',
-            text: 'मैंने ShubhCard app से बनाया है'
-          });
-        } catch(err) {
-          if (err.name !== 'AbortError') showToast('Share नहीं हो पाया');
-        }
-      } else if (navigator.share) {
-        await navigator.share({
-          title: 'ShubhCard',
-          text: 'ShubhCard app try करें: ' + window.location.href,
-          url: window.location.href
-        });
-      } else {
-        copyShareLink();
-      }
-      hideLoader();
-    }, 'image/jpeg', 0.95);
-  } catch(err) {
-    hideLoader();
-    showToast('Share नहीं हो पाया');
-  }
-}
-
-function copyShareLink() {
-  closeShareSheet();
-  const text = `ShubhCard app — Free में Bio-data, Shadi Card, Shok Patra बनाएं! ${window.location.href}`;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('✓ Link copy हो गया');
     });
-  } else {
-    showToast('Copy नहीं हो पाया');
+    
+    el.style.transform = prevTransform;
+    el.style.width = prevWidth;
+
+    progress.textContent = 'Building PDF...';
+    status.textContent = 'PDF compile ho raha hai';
+    await sleep(100);
+
+    const { jsPDF } = window.jspdf;
+    
+    // Paper size mapping
+    const sizes = {
+      a4: {w:210, h:297},
+      letter: {w:215.9, h:279.4},
+      a5: {w:148, h:210},
+    };
+    const sz = sizes[state.paperSize] || sizes.a4;
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: [sz.w, sz.h],
+      compress: true,
+    });
+
+    // Calculate dimensions maintaining aspect ratio
+    const margin = 0; // full bleed
+    const pdfW = sz.w - margin*2;
+    const imgH = (canvas.height * pdfW) / canvas.width;
+    const pageH = sz.h - margin*2;
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+    if(imgH <= pageH + 2){
+      // Single page
+      pdf.addImage(imgData, 'JPEG', margin, margin, pdfW, imgH, undefined, 'FAST');
+    } else {
+      // Multi-page: slice the canvas
+      const pageHeightInPx = (pageH * canvas.width) / pdfW;
+      let currentY = 0;
+      let pageNum = 0;
+      
+      while(currentY < canvas.height){
+        if(pageNum > 0) pdf.addPage();
+        
+        const sliceHeight = Math.min(pageHeightInPx, canvas.height - currentY);
+        const sliceCanvas = document.createElement('canvas');
+        sliceCanvas.width = canvas.width;
+        sliceCanvas.height = sliceHeight;
+        const ctx = sliceCanvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+        ctx.drawImage(canvas, 0, currentY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+        
+        const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.92);
+        const sliceHmm = (sliceHeight * pdfW) / canvas.width;
+        pdf.addImage(sliceData, 'JPEG', margin, margin, pdfW, sliceHmm, undefined, 'FAST');
+        
+        // Add footer with page number
+        if(!state.isPro){
+          pdf.setFontSize(7);
+          pdf.setTextColor(150);
+          pdf.text('Made with ShubhCard Pro · shubhcard.vercel.app', sz.w/2, sz.h - 4, {align:'center'});
+        }
+        
+        currentY += pageHeightInPx;
+        pageNum++;
+        
+        progress.textContent = `Page ${pageNum}...`;
+        await sleep(50);
+      }
+    }
+
+    // Add footer on single page
+    if(imgH <= pageH + 2 && !state.isPro){
+      pdf.setFontSize(7);
+      pdf.setTextColor(150);
+      pdf.text('Made with ShubhCard Pro · shubhcard.vercel.app', sz.w/2, sz.h - 4, {align:'center'});
+    }
+
+    progress.textContent = 'Done!';
+    status.textContent = 'Download ho raha hai';
+
+    const docTitle = DOCS.find(d=>d.id===state.currentDoc).title.replace(/ /g,'_');
+    const userName = (state.data[state.currentInstance]?.name || '').replace(/[^a-zA-Z0-9]/g,'_').substring(0,20);
+    const filename = `${docTitle}${userName?'_'+userName:''}_${Date.now()}.pdf`;
+    
+    pdf.save(filename);
+    
+    await sleep(500);
+    overlay.classList.remove('show');
+    toast('✅ PDF downloaded!');
+    
+    // Update recent
+    updateRecent();
+    
+  } catch(e) {
+    console.error(e);
+    overlay.classList.remove('show');
+    toast('❌ Error: ' + (e.message || 'Try again'));
   }
 }
 
-function printDoc() {
-  closeShareSheet();
-  const html = generateDocHTML();
-  const win = window.open('', '_blank');
-  if (!win) { showToast('Popup blocked'); return; }
-  win.document.write(`
-    <html><head><title>Print - ShubhCard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>body{margin:0;padding:0;}@media print{body{margin:0;}}</style>
-    </head><body onload="setTimeout(()=>window.print(),500)">${html}</body></html>
-  `);
-  win.document.close();
-}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
-// ============================================
-// HELPERS
-// ============================================
-function formatDate(dateStr) {
-  if (!dateStr) return '—';
+/* ============================================================
+   SHARE
+   ============================================================ */
+
+async function shareDocument(){
   try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
-    const months = ['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
-    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-  } catch(e) { return dateStr; }
+    if(!navigator.share){
+      // Fallback: WhatsApp
+      window.open('https://wa.me/?text=' + encodeURIComponent('Check out my document made with ShubhCard Pro! https://shubhcard.vercel.app'), '_blank');
+      return;
+    }
+
+    toast('📤 Image tayyar ho rahi hai...');
+    const el = document.getElementById('preview');
+    const prevTransform = el.style.transform;
+    el.style.transform = 'scale(1)';
+    
+    const canvas = await html2canvas(el, {scale:2.5, backgroundColor:'#fff', useCORS:true, logging:false});
+    el.style.transform = prevTransform;
+    
+    canvas.toBlob(async blob => {
+      const file = new File([blob], 'shubhcard.png', {type:'image/png'});
+      try {
+        if(navigator.canShare && navigator.canShare({files:[file]})){
+          await navigator.share({
+            title: 'ShubhCard Document',
+            text: 'Made with ShubhCard Pro',
+            files: [file]
+          });
+        } else {
+          // Fallback to WhatsApp
+          window.open('https://wa.me/?text=' + encodeURIComponent('Check out my document: https://shubhcard.vercel.app'), '_blank');
+        }
+      } catch(e) {
+        if(e.name !== 'AbortError'){
+          window.open('https://wa.me/?text=' + encodeURIComponent('Check out ShubhCard: https://shubhcard.vercel.app'), '_blank');
+        }
+      }
+    }, 'image/png');
+  } catch(e) {
+    console.error(e);
+    toast('Share failed');
+  }
 }
 
-function showToast(msg) {
+/* ============================================================
+   STATE PERSISTENCE
+   ============================================================ */
+
+function debouncedSave(){
+  document.getElementById('savePill').classList.add('saving');
+  document.getElementById('savePill').textContent = 'Saving...';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    saveState();
+    const pill = document.getElementById('savePill');
+    pill.classList.remove('saving');
+    pill.textContent = 'Saved';
+  }, 500);
+}
+
+function saveState(silent){
+  try {
+    localStorage.setItem('shubhcard_v21', JSON.stringify({
+      data: state.data,
+      theme: state.theme,
+      template: state.template,
+      paperSize: state.paperSize,
+      isPro: state.isPro,
+      watermark: state.watermark,
+      recent: state.recent,
+    }));
+  } catch(e){
+    console.error('Save failed:', e);
+    if(!silent) toast('⚠️ Storage full. Purane drafts delete karo.');
+  }
+}
+
+function loadState(){
+  try {
+    const s = localStorage.getItem('shubhcard_v21');
+    if(s){
+      const obj = JSON.parse(s);
+      state.data = obj.data || {};
+      state.theme = obj.theme || 'saffron';
+      state.template = obj.template || 'classic';
+      state.paperSize = obj.paperSize || 'a4';
+      state.isPro = obj.isPro || false;
+      state.watermark = obj.watermark !== false;
+      state.recent = obj.recent || [];
+    }
+    // Migrate v2 data
+    const oldV2 = localStorage.getItem('shubhcard_v2');
+    if(oldV2 && !s){
+      const obj = JSON.parse(oldV2);
+      Object.entries(obj.data || {}).forEach(([key, data])=>{
+        const id = 'doc_' + Date.now() + Math.random();
+        state.data[id] = {...data, _docType: key, _createdAt: Date.now()};
+        state.recent.push({id, docId: key, title: data.name || data.title || '', updatedAt: Date.now()});
+      });
+      saveState(true);
+      localStorage.removeItem('shubhcard_v2');
+    }
+  } catch(e){console.error('Load failed:', e)}
+}
+
+function updateRecent(){
+  if(!state.currentInstance || !state.currentDoc) return;
+  const data = state.data[state.currentInstance] || {};
+  const title = data.name || data.businessName || data.candidate || data.employee || data.orgName || DOCS.find(d=>d.id===state.currentDoc).title;
+  
+  // Remove old entry for this instance
+  state.recent = state.recent.filter(r => r.id !== state.currentInstance);
+  // Add at top
+  state.recent.unshift({
+    id: state.currentInstance,
+    docId: state.currentDoc,
+    title: title.substring(0, 30),
+    updatedAt: Date.now(),
+  });
+  // Keep only 12 most recent
+  state.recent = state.recent.slice(0, 12);
+}
+
+/* ============================================================
+   MODALS & MENU
+   ============================================================ */
+
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+
+function upgradePro(){
+  // Placeholder for Razorpay integration
+  if(typeof Razorpay !== 'undefined'){
+    const options = {
+      key: 'rzp_test_PLACEHOLDER',
+      amount: 9900,
+      currency: 'INR',
+      name: 'ShubhCard Pro',
+      description: 'Monthly subscription',
+      handler: function(response){
+        state.isPro = true;
+        state.watermark = false;
+        saveState();
+        toast('✅ Pro activated!');
+        closeModal('proModal');
+        renderPreview();
+      }
+    };
+    new Razorpay(options).open();
+  } else {
+    toast('Razorpay key add karo — Pro activate ho jayega');
+    closeModal('proModal');
+  }
+}
+
+function exportAllData(){
+  try {
+    const data = localStorage.getItem('shubhcard_v21');
+    const blob = new Blob([data], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `shubhcard_backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('✅ Backup downloaded');
+    closeModal('menuModal');
+  } catch(e){toast('Export failed')}
+}
+
+function importData(){
+  document.getElementById('importFile').click();
+}
+
+function handleImport(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if(confirm('Current data replace ho jayega. Continue?')){
+        localStorage.setItem('shubhcard_v21', JSON.stringify(data));
+        location.reload();
+      }
+    } catch(err){toast('Invalid file')}
+  };
+  reader.readAsText(file);
+}
+
+function showAbout(){
+  closeModal('menuModal');
+  alert('ShubhCard Pro v2.1\n\nMade in India 🇮🇳\nHindi Document Maker\n\nBy Lokesh Patel\nshubhcard.vercel.app');
+}
+
+/* ============================================================
+   PWA INSTALL
+   ============================================================ */
+
+async function installPWA(){
+  if(!deferredPrompt){toast('Install via browser menu');return}
+  deferredPrompt.prompt();
+  const result = await deferredPrompt.userChoice;
+  if(result.outcome === 'accepted'){
+    toast('✅ Installed!');
+    document.getElementById('installBanner').style.display = 'none';
+  }
+  deferredPrompt = null;
+}
+
+function dismissInstall(){
+  document.getElementById('installBanner').style.display = 'none';
+  localStorage.setItem('sc_installDismissed','1');
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+let toastTimer;
+function toast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2500);
 }
 
-function showLoader(text) {
-  document.getElementById('loaderText').textContent = text || 'Loading...';
-  document.getElementById('loader').classList.add('show');
-}
-
-function hideLoader() {
-  document.getElementById('loader').classList.remove('show');
-}
-
-// ============================================
-// PREMIUM
-// ============================================
-function openPremium() { document.getElementById('premiumModal').classList.add('active'); }
-function closePremium() { document.getElementById('premiumModal').classList.remove('active'); }
-function subscribePremium() { showToast('Payment gateway जल्द ही...'); }
-
-// ============================================
-// SERVICE WORKER
-// ============================================
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    const swCode = `
-      const CACHE = 'shubhcard-v2';
-      self.addEventListener('install', e => {
-        e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./'])));
-      });
-      self.addEventListener('fetch', e => {
-        e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
-      });
-    `;
-    const blob = new Blob([swCode], { type: 'application/javascript' });
-    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-  });
-}
+// Start
+document.addEventListener('DOMContentLoaded', init);
+if(document.readyState !== 'loading') init();
 </script>
 </body>
 </html>
