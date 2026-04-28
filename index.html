@@ -65,17 +65,19 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{overflow-x:hidden;overscroll-behavior-y:none}
+html,body{overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
 html{scroll-behavior:smooth}
 body{
-  font-family:'Inter','Tiro Devanagari Hindi',system-ui,sans-serif;
-  background:var(--bg);
-  color:var(--ink);
-  line-height:1.6;
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-  transition:background .3s var(--ease),color .3s var(--ease);
-  padding-top:var(--safe-top);
+font-family:'Inter','Tiro Devanagari Hindi',system-ui,sans-serif;
+background:var(--bg);
+color:var(--ink);
+line-height:1.6;
+min-height:100vh;
+height:auto;
+overflow-y:auto;
+-webkit-font-smoothing:antialiased;
+transition:background .3s var(--ease),color .3s var(--ease);
+padding-top:var(--safe-top);
 }
 .hindi{font-family:'Tiro Devanagari Hindi',serif;font-weight:400}
 .display{font-family:'Fraunces',serif;font-weight:600;letter-spacing:-.02em}
@@ -398,9 +400,10 @@ textarea{min-height:84px;resize:vertical;line-height:1.5}
 .zoom-display{font-size:11px;color:var(--ink-soft);font-weight:600;min-width:38px;text-align:center}
 
 .preview-box{
-  background:var(--bg-2);border-radius:12px;padding:16px;
-  overflow-x:auto;overflow-y:hidden;
-  -webkit-overflow-scrolling:touch;
+background:var(--bg-2);border-radius:12px;padding:16px;
+overflow:auto;
+-webkit-overflow-scrolling:touch;
+max-height:70vh;
 }
 .preview{
   background:#fff;color:#000;min-height:500px;padding:28px;
