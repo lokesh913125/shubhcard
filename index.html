@@ -681,6 +681,7 @@ max-height:70vh;
   <div class="cat-scroll" id="categoryChips">
     <div class="cat-chip active" data-cat="all" onclick="filterCat('all')">All</div>
     <div class="cat-chip" data-cat="career" onclick="filterCat('career')">📄 Career</div>
+    <div class="cat-chip" data-cat="wedding" onclick="filterCat('wedding')">💒 Wedding</div>
     <div class="cat-chip" data-cat="personal" onclick="filterCat('personal')">👤 Personal</div>
     <div class="cat-chip" data-cat="business" onclick="filterCat('business')">💼 Business</div>
     <div class="cat-chip" data-cat="legal" onclick="filterCat('legal')">⚖️ Legal</div>
@@ -908,6 +909,7 @@ Account banane se aap hamari <a href="#" style="color:var(--saffron)">Terms</a> 
 
 const DOCS = [
   {id:'resume',emoji:'📄',title:'Resume',desc:'Professional CV',badge:'hot',cat:'career'},
+  {id:'shaadicard',emoji:'💒',title:'Shaadi Card',desc:'विवाह निमंत्रण',badge:'hot',cat:'wedding'},
   {id:'biodata',emoji:'💍',title:'Marriage Biodata',desc:'शादी के लिए',badge:'new',cat:'personal'},
   {id:'vcard',emoji:'💼',title:'Visiting Card',desc:'With QR code',badge:'new',cat:'business'},
   {id:'idcard',emoji:'🪪',title:'ID Card',desc:'Student/Employee',badge:'new',cat:'personal'},
@@ -956,6 +958,30 @@ const SCHEMAS = {
     {type:'textarea',key:'education',label:'शिक्षा / Education',placeholder:'B.Com - DLS PG College (2023-2026)'},
     {type:'textarea',key:'languages',label:'भाषा / Languages',placeholder:'Hindi, English, Chhattisgarhi'},
   ],
+  shaadicard: [
+{type:'select',key:'cardStyle',label:'कार्ड स्टाइल / Card Style',options:['Royal Hindu','Modern Minimal','Cultural Indian','Muslim Wedding','Reception/Sangeet']},
+{type:'photo',key:'photo',label:'Wedding Photo (optional)'},
+{type:'row',fields:[
+{type:'text',key:'brideName',label:'दुल्हन का नाम / Bride Name',required:true},
+{type:'text',key:'groomName',label:'दूल्हे का नाम / Groom Name',required:true},
+]},
+{type:'row',fields:[
+{type:'text',key:'brideParents',label:'दुल्हन के माता-पिता',placeholder:'श्री/श्रीमती ...'},
+{type:'text',key:'groomParents',label:'दूल्हे के माता-पिता',placeholder:'श्री/श्रीमती ...'},
+]},
+{type:'row',fields:[
+{type:'text',key:'weddingDate',label:'विवाह दिनांक / Wedding Date',placeholder:'15 दिसंबर 2026'},
+{type:'text',key:'weddingTime',label:'समय / Time',placeholder:'7:00 PM'},
+]},
+{type:'text',key:'tithi',label:'तिथि / Hindu Calendar Date',placeholder:'मार्गशीर्ष शुक्ल पंचमी'},
+{type:'textarea',key:'venue',label:'विवाह स्थल / Venue',placeholder:'XYZ Hall, Address...'},
+{type:'text',key:'venueLink',label:'Google Maps Link (optional)',placeholder:'maps.google.com/...'},
+{type:'textarea',key:'mehendi',label:'मेहंदी / Mehendi (optional)',placeholder:'14 दिसंबर, 6:00 PM at home'},
+{type:'textarea',key:'sangeet',label:'संगीत / Sangeet (optional)',placeholder:'14 दिसंबर, 8:00 PM'},
+{type:'textarea',key:'reception',label:'रिसेप्शन / Reception (optional)',placeholder:'16 दिसंबर, 7:00 PM'},
+{type:'textarea',key:'message',label:'निमंत्रण संदेश / Invitation Message',placeholder:'सपरिवार पधारकर वर-वधू को आशीर्वाद दें'},
+{type:'text',key:'rsvp',label:'RSVP Contact',placeholder:'+91 98765 43210'},
+],
   biodata: [
     {type:'photo',key:'photo',label:'Photo'},
     {type:'text',key:'name',label:'नाम / Name',required:true},
@@ -2406,6 +2432,88 @@ function toast(msg){
 // Start
 document.addEventListener('DOMContentLoaded', init);
 if(document.readyState !== 'loading') init();
+
+// ============ SHAADI CARD RENDER ============
+function renderShaadiCard(data) {
+  const style = data.cardStyle || 'Royal Hindu';
+  const styleColors = {
+    'Royal Hindu': {bg:'linear-gradient(135deg,#FFF8DC,#FFE4B5)',accent:'#8B0000',gold:'#DAA520',text:'#3D1A0B'},
+    'Modern Minimal': {bg:'#fff',accent:'#1A1208',gold:'#D4AF37',text:'#1A1208'},
+    'Cultural Indian': {bg:'linear-gradient(135deg,#FFE5B4,#FFB6C1)',accent:'#8B4513',gold:'#FFD700',text:'#2F1B0C'},
+    'Muslim Wedding': {bg:'linear-gradient(135deg,#F0FFF0,#E0FFE0)',accent:'#0F5132',gold:'#DAA520',text:'#0F2818'},
+    'Reception/Sangeet': {bg:'linear-gradient(135deg,#FFE4E1,#FFC0CB)',accent:'#C71585',gold:'#FFD700',text:'#4B0082'}
+  };
+  const c = styleColors[style] || styleColors['Royal Hindu'];
+  const isMuslim = style === 'Muslim Wedding';
+  
+  return `
+    <div style="background:${c.bg};color:${c.text};padding:40px 30px;font-family:'Tiro Devanagari Hindi',serif;text-align:center;border:8px double ${c.gold};border-radius:12px;position:relative;min-height:600px">
+      <div style="font-size:24px;color:${c.gold};margin-bottom:14px">
+        ${isMuslim ? '☪ ❁ ☪' : '🕉️ ❁ श्री गणेशाय नमः ❁ 🕉️'}
+      </div>
+      <div style="display:inline-block;background:${c.accent};color:#fff;padding:6px 18px;border-radius:20px;font-size:11px;letter-spacing:.2em;margin-bottom:16px;font-family:'Inter',sans-serif">
+        SAVE THE DATE
+      </div>
+      <div style="margin:20px 0">
+        <div style="font-size:20px;color:${c.accent};margin-bottom:4px">${isMuslim ? 'Walima' : 'विवाह संस्कार'}</div>
+        <h1 style="font-family:'Fraunces',serif;font-size:42px;color:${c.accent};font-weight:800;line-height:1.1;margin:8px 0">
+          ${data.brideName || 'दुल्हन'}
+          <span style="display:block;font-size:24px;color:${c.gold};margin:8px 0;font-weight:400">⚭ weds ⚭</span>
+          ${data.groomName || 'दूल्हा'}
+        </h1>
+      </div>
+      ${data.photo ? `<img src="${data.photo}" style="width:140px;height:140px;border-radius:50%;border:4px solid ${c.gold};margin:14px 0;object-fit:cover">` : ''}
+      ${(data.brideParents || data.groomParents) ? `
+      <div style="margin:18px 0;font-size:13px;line-height:1.8">
+        ${data.brideParents ? `<div>पुत्री: ${data.brideParents}</div>` : ''}
+        ${data.groomParents ? `<div>पुत्र: ${data.groomParents}</div>` : ''}
+      </div>` : ''}
+      <div style="border:2px solid ${c.gold};padding:18px;margin:22px auto;max-width:380px;border-radius:8px;background:rgba(255,255,255,0.5)">
+        <div style="font-size:11px;letter-spacing:.2em;color:${c.accent};margin-bottom:6px;font-family:'Inter',sans-serif">
+          ${isMuslim ? 'NIKAAH CEREMONY' : 'विवाह तिथि'}
+        </div>
+        <div style="font-size:22px;font-weight:700;color:${c.accent};font-family:'Fraunces',serif">
+          ${data.weddingDate || 'दिनांक'}
+        </div>
+        ${data.tithi ? `<div style="font-size:12px;color:${c.text};margin:4px 0;opacity:.8">${data.tithi}</div>` : ''}
+        <div style="font-size:14px;color:${c.text};margin-top:6px">⏰ ${data.weddingTime || 'समय'}</div>
+      </div>
+      ${data.venue ? `
+      <div style="margin:18px 0;font-size:13px;line-height:1.6">
+        <div style="font-size:11px;letter-spacing:.2em;color:${c.accent};margin-bottom:4px;font-family:'Inter',sans-serif">📍 VENUE</div>
+        <div style="white-space:pre-line">${data.venue}</div>
+        ${data.venueLink ? `<a href="${data.venueLink}" style="color:${c.accent};font-size:11px;text-decoration:underline">🗺️ View on Maps</a>` : ''}
+      </div>` : ''}
+      ${(data.mehendi || data.sangeet || data.reception) ? `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:20px 0;font-size:11px">
+        ${data.mehendi ? `<div style="padding:10px;background:rgba(255,255,255,0.6);border-radius:6px;border:1px solid ${c.gold}"><strong style="color:${c.accent}">🌿 मेहंदी</strong><br>${data.mehendi}</div>` : ''}
+        ${data.sangeet ? `<div style="padding:10px;background:rgba(255,255,255,0.6);border-radius:6px;border:1px solid ${c.gold}"><strong style="color:${c.accent}">🎵 संगीत</strong><br>${data.sangeet}</div>` : ''}
+        ${data.reception ? `<div style="padding:10px;background:rgba(255,255,255,0.6);border-radius:6px;border:1px solid ${c.gold}"><strong style="color:${c.accent}">🥂 रिसेप्शन</strong><br>${data.reception}</div>` : ''}
+      </div>` : ''}
+      ${data.message ? `
+      <div style="margin:24px 0;padding:14px;background:rgba(255,255,255,0.4);border-radius:8px;font-style:italic;font-size:13px;line-height:1.6">
+        "${data.message}"
+      </div>` : ''}
+      ${data.rsvp ? `<div style="margin-top:18px;font-size:12px;color:${c.accent}"><strong>RSVP:</strong> ${data.rsvp}</div>` : ''}
+      <div style="margin-top:24px;font-size:20px;color:${c.gold}">
+        ${isMuslim ? '☪ ❁ ☪' : '❁ ⚜️ ❁'}
+      </div>
+    </div>
+  `;
+}
+
+// Hook into existing render system
+const _origRenderPreview = window.renderPreview;
+window.renderPreview = function() {
+  if (typeof currentDoc !== 'undefined' && currentDoc === 'shaadicard') {
+    const previewEl = document.getElementById('preview');
+    if (previewEl) {
+      previewEl.innerHTML = renderShaadiCard(formData || {});
+      return;
+    }
+  }
+  if (_origRenderPreview) _origRenderPreview.apply(this, arguments);
+};
 </script>
 <script type="module" src="auth.js"></script>
 </body>
